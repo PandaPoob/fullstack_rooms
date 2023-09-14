@@ -10,21 +10,51 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Post {
-  id        String     @default(cuid()) @id
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
+model Room {
+  id                  String      @default(cuid()) @id
+  title               String
+  created_at          DateTime
+  updated_at          DateTime
+  admin               User   @relation(fields: [admin_fk], references: [id]) //one to one
+  admin_fk            String
+  location            String?
+  participants        Participant[]   // Define the many-to-many relationship
+}
+
+model Participant {
+  id            String     @default(cuid()) @id
+  user          User       @relation(fields: [user_id], references: [id])
+  user_id       String
+  room          Room       @relation(fields: [room_id], references: [id])
+  room_id       String
+  is_favourited Boolean
+  created_at    DateTime
+
+  @@unique([user_id, room_id]) // Ensure each user is in a room only once
+}
+
+model Status {
+  id                  String      @default(cuid()) @id
+  title               String      @unique
+  users               User[]      //one to many
 }
 
 model User {
-  id            String       @default(cuid()) @id
-  name          String?
-  email         String?   @unique
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-  posts         Post[]
+  id                  String      @default(cuid()) @id
+  first_name          String    
+  last_name           String
+  email               String      @unique
+  email_verified_at   DateTime?
+  created_at          DateTime
+  updated_at          DateTime
+  password            String
+  birthday            String
+  avatar_img          String?
+  location            String
+  status              Status   @relation(fields: [status_fk], references: [id])
+  status_fk           String
+  rooms               Room[]     //many-to-many
+  participants        Participant[]  //defining opposite relation
   @@map(name: "users")
 }
+
