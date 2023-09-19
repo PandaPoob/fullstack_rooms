@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import * as z from "zod";
 import createuserschema from "../../utils/validation/schemas/create-user-schema";
-//import { UserCreateInput } from "@/lib/prisma-types";
+import { UserCreateInput } from "@/lib/prisma-types";
 //import { UserCreateInput } from "@prisma/client";
 
 export async function POST(req: Request) {
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         birthday,
         status: { connect: { id: defaultStatusId } },
       },
-    });
+    } as UserCreateInput);
 
     //SUCCESS
     return NextResponse.json(
