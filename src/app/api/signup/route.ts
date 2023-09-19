@@ -45,6 +45,7 @@ export async function POST(req: Request) {
       },
     });
 
+    //SUCCESS
     return NextResponse.json(
       {
         user: newUser,
