@@ -1,10 +1,9 @@
 import { db } from "@/lib/prisma-client";
-import { NextResponse } from "next/server";
 import { hash } from "bcrypt";
 import * as z from "zod";
 import createuserschema from "../../utils/validation/schemas/create-user-schema";
 import { UserCreateInput } from "@/lib/prisma-types";
-//import { UserCreateInput } from "@prisma/client";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
@@ -18,6 +17,7 @@ export async function POST(req: Request) {
       where: { email: email },
     });
 
+
     if (emailAlreadyExists) {
       return NextResponse.json(
         {
@@ -27,8 +27,9 @@ export async function POST(req: Request) {
         //409 is used when a request conflicts with the current state of server
         { status: 409 }
       );
+    
     }
-
+    console.log("GOT HERE")
     //HASHING PW
     const hashedPassword = await hash(password, 10);
 
@@ -46,7 +47,6 @@ export async function POST(req: Request) {
         status: { connect: { id: defaultStatusId } },
       },
     } as UserCreateInput);
-
     //SUCCESS
     return NextResponse.json(
       {
