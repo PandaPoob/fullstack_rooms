@@ -1,7 +1,7 @@
 import { db } from "@/lib/prisma-client";
 import { hash } from "bcrypt";
 import * as z from "zod";
-import createuserschema from "../../utils/validation/schemas/create-user-schema";
+import createuserschema from "../../_utils/validation/schemas/create-user-schema";
 import { UserCreateInput } from "@/lib/prisma-types";
 import { NextResponse } from "next/server";
 
@@ -29,7 +29,6 @@ export async function POST(req: Request) {
       );
     
     }
-    console.log("GOT HERE")
     //HASHING PW
     const hashedPassword = await hash(password, 10);
 
