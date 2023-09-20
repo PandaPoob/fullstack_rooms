@@ -1,7 +1,9 @@
+import SignUp from "@/app/_views/SignUp"
+
 function SignupPage() {
 
 
-    return <div>signup here</div>
+    return <SignUp/>
 }
 
 export default SignupPage

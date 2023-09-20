@@ -1,9 +1,7 @@
-import Image from 'next/image'
+import Home from "@/app/_views/Home"
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main>
-      <h1>Frontpage</h1>
-    </main>
+   <Home/>
   )
 }
