@@ -2,10 +2,10 @@ import { Field, ErrorMessage } from "formik";
 
 function LastNameInput() {
   return (
-    <div>
+    <div className="grid">
       <label htmlFor="last_name">Last name</label>
-      <Field type="last_name" name="last_name" />
-      <ErrorMessage name="last_name" component="div" />
+      <Field type="last_name" name="last_name" id="last_name" />
+      <ErrorMessage className="text-warning" name="last_name" component="div" />
     </div>
   );
 }

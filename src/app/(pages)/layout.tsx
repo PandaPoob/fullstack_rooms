@@ -1,10 +1,11 @@
+import BaseLayout from "../_components/layout/BaseLayout";
 import "../globals.css";
 
 //import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+//import { Inter } from "next/font/google";
 import localFont from "next/font/local";
 
-const inter = Inter({ subsets: ["latin"] });
+//const inter = Inter({ subsets: ["latin"] });
 
 const gotham = localFont({
   src: "../_fonts/GothamBook.ttf",
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={gotham.className}>
-        <div className="bg-warning">{children}</div>
+        <BaseLayout>{children}</BaseLayout>
       </body>
     </html>
   );

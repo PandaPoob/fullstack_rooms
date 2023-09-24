@@ -2,10 +2,14 @@ import { Field, ErrorMessage } from "formik";
 
 function ConfirmPasswordInput() {
   return (
-    <div>
+    <div className="grid">
       <label htmlFor="password_confirm">Confirm password</label>
       <Field type="password_confirm" name="password_confirm" />
-      <ErrorMessage name="password_confirm" component="div" />
+      <ErrorMessage
+        className="text-warning"
+        name="password_confirm"
+        component="div"
+      />
     </div>
   );
 }

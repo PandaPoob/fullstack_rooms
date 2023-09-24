@@ -27,6 +27,10 @@ const config: Config = {
       info: "#B17E30", //yellow
     },
     extend: {
+      backgroundImage: {
+        "btn-gradient":
+          "linear-gradient(90deg, rgba(85, 85, 97, 0.60) 0%, #2F2F33 90%)",
+      },
       fontSize: {
         "2xl": [
           "1.5rem",

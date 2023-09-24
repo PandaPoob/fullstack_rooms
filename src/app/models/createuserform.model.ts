@@ -1,4 +1,4 @@
-interface CreateUserForm {
+export interface CreateUserForm {
   first_name: string;
   last_name: string;
   email: string;

@@ -7,7 +7,7 @@ type BirthdayInputProps = {
 
 function BirthdayInput(props: BirthdayInputProps) {
   return (
-    <div>
+    <div className="grid">
       <label htmlFor="birthday">Birthday</label>
       <Field name="birthday">
         {({ field }: { field: FieldInputProps<string> }) => (
@@ -15,7 +15,7 @@ function BirthdayInput(props: BirthdayInputProps) {
         )}
       </Field>
       {props.errors.birthday && props.touched.birthday && (
-        <p>{props.errors.birthday}</p>
+        <p className="text-warning">{props.errors.birthday}</p>
       )}
     </div>
   );
