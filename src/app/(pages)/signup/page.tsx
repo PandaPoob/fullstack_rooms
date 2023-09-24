@@ -1,9 +1,7 @@
-import SignUp from "@/app/_views/SignUp"
+import SignUp from "@/app/_views/SignUp";
 
 function SignupPage() {
-
-
-    return <SignUp/>
+  return <SignUp />;
 }
 
-export default SignupPage
+export default SignupPage;

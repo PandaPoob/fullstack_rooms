@@ -25,7 +25,7 @@ const isOver13YearsOld = (dateString: string) => {
 };
 
 export const birthday = z
-  .string()
+  .string({ required_error: "Birthday is required" })
   .refine((value) => isValidDate(value), {
     message: "Invalid date format. Please use YYYY-MM-DD.",
   })
