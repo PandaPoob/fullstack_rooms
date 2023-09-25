@@ -4,7 +4,7 @@ function LastNameInput() {
   return (
     <div className="grid">
       <label htmlFor="last_name">Last name</label>
-      <Field type="last_name" name="last_name" id="last_name" />
+      <Field type="last_name" name="last_name" id="last_name" className="bg-primary text-white"/>
       <ErrorMessage className="text-warning" name="last_name" component="div" />
     </div>
   );

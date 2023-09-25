@@ -12,7 +12,16 @@ const createuserschema = z.object({
   last_name: last_name,
   email: email,
   password: password,
+  password_confirm: password,
   birthday: birthday,
+}).superRefine(({ password_confirm, password }, ctx) => {
+  if (password_confirm !== password) {
+    ctx.addIssue({
+      code: "custom",
+      message: "Passwords must match",
+      path: ['password_confirm']
+    });
+  }
 });
 
 export default createuserschema;
