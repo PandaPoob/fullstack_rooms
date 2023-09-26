@@ -15,38 +15,31 @@ function LoginForm() {
     <div>
       <Formik
         initialValues={{
-          first_name: "",
-          last_name: "",
           email: "",
           password: "",
-          password_confirm: "",
-          birthday: "",
         }}
         validationSchema={toFormikValidationSchema(userloginschema)}
         onSubmit={async (values: UserCredentials, actions) => {
           actions.setSubmitting(false);
-       
 
-        const loginData = await signIn("credentials", {
-                email: values.email,
-                password: values.password,
-                redirect: false,
-            })
+          const loginData = await signIn("credentials", {
+            email: values.email,
+            password: values.password,
+            redirect: false,
+          });
 
-            console.log(loginData);
-            
-             if(loginData?.error) {
-                //show alert
-                console.log(loginData.error)
-            } else {
-                router.push("/")
-            }
-
+          if (loginData?.error) {
+            //show alert
+            console.log("error", loginData.error);
+          } else {
+            console.log("succes", loginData);
+            router.refresh();
+            router.push("/");
+          }
         }}
       >
         {({ isSubmitting }) => (
           <Form className="grid gap-3">
-
             <EmailInput />
 
             <PasswordInput />

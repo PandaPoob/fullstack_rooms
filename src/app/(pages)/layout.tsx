@@ -1,4 +1,5 @@
 import BaseLayout from "../_components/layout/BaseLayout";
+import Provider from "../_components/providers/Provider";
 import "../globals.css";
 
 //import type { Metadata } from "next";
@@ -29,7 +30,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={gotham.className}>
-        <BaseLayout>{children}</BaseLayout>
+        <Provider>
+          <BaseLayout>{children}</BaseLayout>
+        </Provider>
       </body>
     </html>
   );
