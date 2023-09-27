@@ -6,7 +6,7 @@ function LogoutButton() {
   return (
     <button
       onClick={() => signOut()}
-      className="bg-btn-gradient p-2 rounded-2xl mt-3"
+      className="bg-btn-gradient p-2 rounded-2xl"
     >
       Logout
     </button>
