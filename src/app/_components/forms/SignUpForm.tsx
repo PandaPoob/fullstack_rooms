@@ -1,7 +1,7 @@
 "use client";
 import { Form, Formik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { UserSignupForm } from "@/app/models/usersignupform.model";
+import { UserSignupForm } from "@/app/_models/usersignupform.model";
 import { useRouter } from "next/navigation";
 import BirthdayInput from "./formInputs/BirthdayInput";
 import ConfirmPasswordInput from "./formInputs/ConfirmPasswordInput";
@@ -30,7 +30,7 @@ function SignUpForm() {
         onSubmit={async (values: UserSignupForm, actions) => {
           //console.log(values);
           actions.setSubmitting(false);
-            const resp = await fetch("api/user/signup", {
+          const resp = await fetch("api/user/signup", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -51,8 +51,7 @@ function SignUpForm() {
             const data = await resp.json();
             //display alert
             console.log("An error occurred");
-            console.log(data.error[0].message)
-
+            console.log(data.error[0].message);
           }
         }}
       >
@@ -69,8 +68,6 @@ function SignUpForm() {
             <PasswordInput />
 
             <ConfirmPasswordInput />
-
-      
 
             <button
               type="submit"
