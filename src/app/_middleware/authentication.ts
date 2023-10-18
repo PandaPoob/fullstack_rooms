@@ -8,7 +8,6 @@ export function requireAuthentication(
 ) {
   return async (sess: Session) => {
     const session = await getServerSession(authOptions);
-
     if (!session) {
       redirect("/");
     }
