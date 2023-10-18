@@ -1,4 +1,4 @@
-import MainNavigation from "../Navigation/MainNavigation";
+import MainNavigation from "../navigation/MainNavigation";
 
 function BaseLayout({ children }: { children: React.ReactNode }) {
   return (
