@@ -1,7 +1,7 @@
 "use client";
 import { Form, Formik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { UserSignupForm } from "@/app/_models/usersignupform.model";
+import { UserSignupForm } from "@/app/_models/user";
 import { useRouter } from "next/navigation";
 import BirthdayInput from "./formInputs/BirthdayInput";
 import ConfirmPasswordInput from "./formInputs/ConfirmPasswordInput";

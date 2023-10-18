@@ -1,7 +1,7 @@
 "use client";
 import { Form, Formik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { UserCredentials } from "@/app/_models/usercredentials.model";
+import { UserCredentials } from "@/app/_models/user";
 import userloginschema from "@/app/_utils/validation/schemas/user-login-schema";
 import EmailInput from "./formInputs/EmailInput";
 import PasswordInput from "./formInputs/PasswordInput";

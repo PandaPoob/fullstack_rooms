@@ -1,10 +1,15 @@
-import ClientSideSessionExample from "@/app/_components/ClientSideSessionExample";
+import { Room } from "@prisma/client";
+import RoomsList from "./RoomsList";
 
-function Rooms() {
+interface RoomsProps {
+  data: { userRooms: Room[] };
+}
+
+function Rooms(props: RoomsProps) {
   return (
     <div>
       <h1>Your Rooms</h1>
-      <ClientSideSessionExample />
+      <RoomsList rooms={props.data.userRooms} />
     </div>
   );
 }
