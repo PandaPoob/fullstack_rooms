@@ -2,7 +2,7 @@ import { z } from "zod";
 import { minPasswordLen, maxPasswordLen } from "../validationVariables";
 
 export const password = z
-  .string()
+  .string({ required_error: "Password is required" })
   .min(minPasswordLen, {
     message: `Password must be at least ${minPasswordLen} characters long`,
   })

@@ -1,7 +1,6 @@
-import Home from "@/app/_views/Home"
+import Home from "@/app/_views/Home";
 
 export default function HomePage() {
-  return (
-   <Home/>
-  )
+  //display landing page if not logged in or display profile if logged in
+  return <Home />;
 }

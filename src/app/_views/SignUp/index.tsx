@@ -1,6 +1,12 @@
-function SignUp(){
+import SignUpForm from "@/app/_components/forms/SignUpForm";
 
-return <div><h1>Sign up</h1></div>
+function SignUp() {
+  return (
+    <div>
+      <h1 className="text-h2 pb-2">Create your account</h1>
+      <SignUpForm />
+    </div>
+  );
 }
 
-export default SignUp
+export default SignUp;
