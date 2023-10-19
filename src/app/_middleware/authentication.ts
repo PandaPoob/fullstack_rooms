@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { db } from "@/lib/prisma-client";
 
 export function requireAuthentication(
-  page: (session: Session) => Promise<JSX.Element | undefined>
+  page: (props: Session) => Promise<JSX.Element | undefined>
 ) {
   return async (sess: Session) => {
     const session = await getServerSession(authOptions);

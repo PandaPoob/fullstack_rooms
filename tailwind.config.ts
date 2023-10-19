@@ -40,7 +40,7 @@ const config: Config = {
             fontWeight: "500",
           },
         ],
-        display: ["8.5rem", { lineHeight: "normal", fontWeight: "500" }], //136px
+        display: ["7rem", { lineHeight: "normal", fontWeight: "500" }], //112px 136px == 8.5
         h1: ["3.25rem", { lineHeight: "normal", fontWeight: "500" }], //52px
         h2: ["2rem", { lineHeight: "normal", fontWeight: "500" }], //32px
         h3: ["1.25rem", { lineHeight: "normal", fontWeight: "500" }], //20px

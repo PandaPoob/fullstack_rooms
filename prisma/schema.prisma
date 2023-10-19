@@ -38,7 +38,7 @@ model Participant {
   room_id       String 
   is_favourited Boolean 
   created_at    DateTime  @default(now())
-  visisted_at   DateTime  @default(now())
+  visited_at    DateTime  @default(now())
 
   @@unique([user_id, room_id]) // Ensure each user is in a room only once 
 } 
