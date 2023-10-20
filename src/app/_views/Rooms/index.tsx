@@ -13,13 +13,12 @@ function Rooms(props: RoomsProps) {
 
   return (
     <div>
-      <div className="hidden md:block pt-7">
-        <DigitalClock />
-        <h2 className="text-h3 mt-2">
-          Welcome, {sessionUser.first_name + " " + sessionUser.last_name}
-        </h2>
-      </div>
-      <div className="md:mt-20">
+      <DigitalClock
+        title={`Welcome, ${
+          sessionUser.first_name + " " + sessionUser.last_name
+        }`}
+      />
+      <div>
         <h1 className="text-h2 font-medium text-center md:text-h2">
           {sessionUser.first_name + " " + sessionUser.last_name}, Pick your
           dashboard
