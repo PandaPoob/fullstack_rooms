@@ -38,11 +38,11 @@ function LoginForm() {
           }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, errors, touched }) => (
           <Form className="grid gap-3">
-            <EmailInput />
+            <EmailInput error={errors.email} touched={touched.email} />
 
-            <PasswordInput />
+            <PasswordInput error={errors.password} touched={touched.password} />
 
             <button
               type="submit"

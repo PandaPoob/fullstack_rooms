@@ -57,17 +57,26 @@ function SignUpForm() {
       >
         {({ isSubmitting, errors, touched }) => (
           <Form className="grid gap-3">
-            <FirstNameInput />
+            <FirstNameInput
+              error={errors.first_name}
+              touched={touched.first_name}
+            />
 
-            <LastNameInput />
+            <LastNameInput
+              error={errors.last_name}
+              touched={touched.last_name}
+            />
 
             <BirthdayInput errors={errors} touched={touched} />
 
-            <EmailInput />
+            <EmailInput error={errors.email} touched={touched.email} />
 
-            <PasswordInput />
+            <PasswordInput error={errors.password} touched={touched.password} />
 
-            <ConfirmPasswordInput />
+            <ConfirmPasswordInput
+              error={errors.password_confirm}
+              touched={touched.password_confirm}
+            />
 
             <button
               type="submit"
