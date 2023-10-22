@@ -1,5 +1,6 @@
 import { hash } from "bcrypt";
 import { PrismaClient } from "@prisma/client";
+import { UserCreateInput } from "@/lib/prisma-types";
 const prisma = new PrismaClient();
 
 async function main() {
@@ -26,7 +27,7 @@ async function main() {
       birthday: "30/11/1998",
       status: { connect: { id: defaultStatus?.id } },
     },
-  });
+  } as UserCreateInput);
   const user2 = await prisma.user.create({
     data: {
       first_name: "Freddy",
@@ -36,7 +37,7 @@ async function main() {
       birthday: "10/11/1997",
       status: { connect: { id: defaultStatus?.id } },
     },
-  });
+  } as UserCreateInput);
   const user3 = await prisma.user.create({
     data: {
       first_name: "Cleo",
@@ -46,7 +47,7 @@ async function main() {
       birthday: "30/11/1998",
       status: { connect: { id: defaultStatus?.id } },
     },
-  });
+  } as UserCreateInput);
 
   //ROOMS
   const room1 = await prisma.room.create({
