@@ -3,26 +3,22 @@ import { Session, getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/prisma-client";
 
-export function requireAuthentication(
-  page: (props: Session) => Promise<JSX.Element | undefined>
-) {
-  return async (sess: Session) => {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      redirect("/");
-    }
+export async function requireAuthentication(authOptions: any) {
+  const session = (await getServerSession(authOptions)) as Session;
 
-    //Check if user exists
-    const user = await db.user.findUnique({
-      where: {
-        id: session.user.id as string,
-      },
-    });
+  if (!session) {
+    redirect("/");
+  }
+  //Check if user exists
+  const user = await db.user.findUnique({
+    where: {
+      id: session.user.id as string,
+    },
+  });
 
-    if (!user) {
-      redirect("/error");
-    }
+  if (!user) {
+    redirect("/error");
+  }
 
-    return page(session);
-  };
+  return session;
 }

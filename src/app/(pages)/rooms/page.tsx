@@ -1,5 +1,6 @@
 import { requireAuthentication } from "@/app/_middleware/authentication";
 import Rooms from "@/app/_views/Rooms";
+import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { Room } from "@prisma/client";
 import { Session } from "next-auth";
@@ -49,10 +50,13 @@ async function getData(props: Session) {
   }
 }
 
-async function RoomsPage(props: Session) {
-  const data = await getData(props);
+async function RoomsPage() {
+  //Validate and getSession
+  const session = await requireAuthentication(authOptions);
 
-  return data && <Rooms data={data} sessionUser={props.user} />;
+  const data = await getData(session);
+
+  return data && <Rooms data={data} sessionUser={session.user} />;
 }
 
-export default requireAuthentication(RoomsPage);
+export default RoomsPage;
