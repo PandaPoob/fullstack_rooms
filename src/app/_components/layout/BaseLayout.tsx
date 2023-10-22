@@ -4,9 +4,9 @@ function BaseLayout({ children }: { children: React.ReactNode }) {
   return (
     //@TODO create background animation
     <div className="bg-bg_black text-white min-h-screen">
-      <div className="flex md:flex-row">
+      <div className="grid md:grid-cols-[8.125rem,1fr] md:h-screen">
         <MainNavigation />
-        <div className="w-full md:md:w-10/12 px-6">{children}</div>
+        <div className="w-full px-6">{children}</div>
       </div>
     </div>
   );

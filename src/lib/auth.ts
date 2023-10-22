@@ -56,6 +56,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         return {
           ...token,
+          id: user.id,
           first_name: user.first_name,
           last_name: user.last_name,
         };
@@ -64,12 +65,13 @@ export const authOptions: NextAuthOptions = {
     },
     //jwt function sends value into session
     async session({ session, user, token }) {
-      console.log("session", token, user);
+      //console.log("session", token, user);
 
       return {
         ...session,
         user: {
           ...session.user,
+          id: token.id,
           first_name: token.first_name,
           last_name: token.last_name,
         },
