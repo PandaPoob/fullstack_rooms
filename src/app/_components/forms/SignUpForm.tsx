@@ -56,17 +56,18 @@ function SignUpForm() {
         }}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="grid gap-3">
-            <FirstNameInput
-              error={errors.first_name}
-              touched={touched.first_name}
-            />
+          <Form className="grid gap-3" autoComplete="off">
+            <div className="grid md:grid-cols-2 gap-3">
+              <FirstNameInput
+                error={errors.first_name}
+                touched={touched.first_name}
+              />
 
-            <LastNameInput
-              error={errors.last_name}
-              touched={touched.last_name}
-            />
-
+              <LastNameInput
+                error={errors.last_name}
+                touched={touched.last_name}
+              />
+            </div>
             <BirthdayInput errors={errors} touched={touched} />
 
             <EmailInput error={errors.email} touched={touched.email} />
@@ -81,9 +82,9 @@ function SignUpForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-btn-gradient"
+              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl"
             >
-              Submit
+              Sign up
             </button>
           </Form>
         )}

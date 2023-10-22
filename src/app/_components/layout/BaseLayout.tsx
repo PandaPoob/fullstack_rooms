@@ -5,7 +5,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
     //@TODO create background animation
     <div className="bg-bg_black text-white min-h-screen">
       <div
-        className={`grid  md:h-screen ${
+        className={`grid  md:min-h-screen ${
           props.session && "md:grid-cols-[8.125rem,1fr]"
         }`}
       >

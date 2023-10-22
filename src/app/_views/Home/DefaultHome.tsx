@@ -8,7 +8,7 @@ function DefaultHome() {
       <div className="grid lg:grid-cols-2">
         <div className="relative min-h-[6.25rem] max-h-[28rem] min-w-[5.5rem] lg:min-h-[28rem] lg:min-w-[28rem] hidden lg:block">
           <Image
-            src={"/test.svg"}
+            src={"/logo.svg"}
             fill={true}
             alt={"Logo"}
             style={{ objectFit: "contain" }}
