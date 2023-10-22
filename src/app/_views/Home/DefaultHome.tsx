@@ -1,21 +1,17 @@
 import Image from "next/image";
-import Logo from "../../assets/svgs/logo.svg";
 import Link from "next/link";
 
 function DefaultHome() {
   return (
     <main className="pt-16 lg:h-screen lg:grid lg:items-center">
       <div className="grid lg:grid-cols-2">
-        <div className="relative min-h-[6.25rem] max-h-[28rem] min-w-[5.5rem] lg:min-h-[28rem] lg:min-w-[28rem] hidden lg:block">
+        <div className="relative min-h-[6.25rem] max-h-[28rem] min-w-[5.5rem] lg:min-h-[28rem] lg:min-w-[28rem]">
           <Image
             src={"/logo.svg"}
             fill={true}
             alt={"Logo"}
             style={{ objectFit: "contain" }}
           />
-        </div>
-        <div className="lg:hidden">
-          <Logo />
         </div>
 
         <div className="mt-10 lg:mt-0 grid gap-20">
