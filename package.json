@@ -33,6 +33,7 @@
     "zod-formik-adapter": "^1.2.0"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/node": "^20.8.7",
     "prisma": "^5.3.1",

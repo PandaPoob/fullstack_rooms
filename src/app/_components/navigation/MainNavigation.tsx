@@ -1,67 +1,61 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import LogoutButton from "../LogoutButton";
-import homeIcon from "../../../../public/home.svg";
-import roomsIcon from "../../../../public/rooms.svg";
-import notificationIcon from "../../../../public/notification.svg";
-import settingsIcon from "../../../../public/settings.svg";
-
-import Image from "next/image";
+import Home from "../../assets/svgs/home.svg";
+import Rooms from "../../assets/svgs/rooms.svg";
+import Notifications from "../../assets/svgs/notification.svg";
+import Settings from "../../assets/svgs/settings.svg";
+import Link from "next/link";
 
 async function MainNavigation() {
   const session = await getServerSession(authOptions);
 
   return (
     <>
-      {session?.user ? (
+      {session?.user && (
         <>
-          <a href="/" className="md:hidden py-9 px-7">
+          <Link href="/" className="md:hidden py-9 px-7">
             Logo here
-          </a>
+          </Link>
+
           <div className="h-full w-full md:auto md:h-auto">
             <nav className="fixed bottom-0 left-0 w-screen md:relative md:w-auto">
               <ul className="flex w-full justify-evenly items-center pb-3 pt-2 md:pt-7 md:w-auto md:flex-col md:items-start md:gap-6 md:px-9">
                 <li>
-                  <a
+                  <Link
                     href="/"
                     className="flex p-3 rounded-full border border-primary"
                   >
-                    <Image src={homeIcon} alt="home" width={30} />
-                  </a>
+                    <Home />
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href="/rooms"
                     className="flex p-3 rounded-full border border-primary"
                   >
-                    <Image src={roomsIcon} alt="home" width={28} />
-                  </a>
+                    <Rooms />
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href="/"
                     className="flex p-3 rounded-full border border-primary"
                   >
-                    <Image src={notificationIcon} alt="home" width={28} />
-                  </a>
+                    <Notifications />
+                  </Link>
                 </li>
                 <li>
-                  <a
+                  <Link
                     href="/"
                     className="flex p-3 rounded-full border border-primary"
                   >
-                    <Image src={settingsIcon} alt="home" width={28} />
-                  </a>
+                    <Settings />
+                  </Link>
                 </li>
-                {/*               <li>
-                  <LogoutButton />
-                </li> */}
               </ul>
             </nav>
           </div>
         </>
-      ) : (
-        <div>Logo here</div>
       )}
     </>
   );

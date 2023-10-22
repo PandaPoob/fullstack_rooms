@@ -1,12 +1,16 @@
 import MainNavigation from "../navigation/MainNavigation";
 
-function BaseLayout({ children }: { children: React.ReactNode }) {
+function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
   return (
     //@TODO create background animation
     <div className="bg-bg_black text-white min-h-screen">
-      <div className="grid md:grid-cols-[8.125rem,1fr] md:h-screen">
+      <div
+        className={`grid  md:h-screen ${
+          props.session && "md:grid-cols-[8.125rem,1fr]"
+        }`}
+      >
         <MainNavigation />
-        <div className="w-full px-6">{children}</div>
+        <div className="w-full px-6">{props.children}</div>
       </div>
     </div>
   );
