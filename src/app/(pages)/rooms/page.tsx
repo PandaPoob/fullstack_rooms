@@ -53,7 +53,6 @@ async function getData(props: Session) {
 async function RoomsPage() {
   //Validate and getSession
   const session = await requireAuthentication(authOptions);
-
   const data = await getData(session);
 
   return data && <Rooms data={data} sessionUser={session.user} />;
