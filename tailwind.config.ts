@@ -21,6 +21,7 @@ const config: Config = {
       primary: "#1F1F21", //dark grey
       secondary: "#8B9093", //light grey
       white: "#E9E9E9",
+      darkGrey: "#8F8F8F", //dark grey, not oficially in figma yet
       link: "#4496F6", //blue
       success: "#77B184", //green
       warning: "#E85959", //red
@@ -46,6 +47,7 @@ const config: Config = {
         h3: ["1.25rem", { lineHeight: "normal", fontWeight: "500" }], //20px
         h4: ["1.25rem", { lineHeight: "normal" }], //20px
         h5: ["1rem", { lineHeight: "normal" }], //16px
+        mini: ["0.625rem", { lineHeight: "normal" }], //10px
       },
     },
   },

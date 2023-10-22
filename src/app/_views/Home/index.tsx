@@ -1,20 +1,12 @@
+import { requireAuthentication } from "@/app/_middleware/authentication";
 import { authOptions } from "@/lib/auth";
+import UserHome from "./UserHome";
+import DefaultHome from "./DefaultHome";
 import { getServerSession } from "next-auth";
 
 async function Home() {
-  //server session
   const session = await getServerSession(authOptions);
 
-  console.log(session);
-  return (
-    <main>
-      <h1 className="text-h2">Home page</h1>
-      {session && (
-        <h2>
-          Welcome home {`${session.user.first_name} ${session.user.last_name}`}
-        </h2>
-      )}
-    </main>
-  );
+  return session ? <UserHome session={session} /> : <DefaultHome />;
 }
 export default Home;
