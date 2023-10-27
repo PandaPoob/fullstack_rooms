@@ -1,23 +1,12 @@
-function Home() {
-  return (
-    // skal kopieres over i notes index.tsx
-    <div>
-      <h1 className="text-4xl font-bold mt-4">New note</h1>
-      <form
-        method="POST"
-        onSubmit={(e) => {
-          e.preventDefault;
-        }}
-        className="w-auto max-w-min mx-auto space-y-6 flex flex-col items-stretch"
-      >
-        <input type="text" placeholder="Title" />
-        <input type="text" placeholder="Text" />
-      </form>
-    </div>
+import { requireAuthentication } from "@/app/_middleware/authentication";
+import { authOptions } from "@/lib/auth";
+import UserHome from "./UserHome";
+import DefaultHome from "./DefaultHome";
+import { getServerSession } from "next-auth";
 
-    // <main>
-    //   <h1>Home</h1>
-    // </main>
-  );
+async function Home() {
+  const session = await getServerSession(authOptions);
+
+  return session ? <UserHome session={session} /> : <DefaultHome />;
 }
 export default Home;

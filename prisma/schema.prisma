@@ -18,14 +18,15 @@ model Room {
   id                  String      @default(cuid()) @id 
   title               String 
   created_at          DateTime    @default(now())
-  updated_at          DateTime 
+  updated_at          DateTime    @default(now())
   admin               User   @relation(fields: [admin_fk], references: [id]) //one to one 
   admin_fk            String 
   location            String? 
-  participants        Participant[]   // Define the many-to-many relationship 
+  participants        Participant[]   // Define the many-to-many relationship
+  cover_img           String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
 } 
 
- 
+
 
 model Participant { 
   id            String     @default(cuid()) @id 
@@ -35,6 +36,7 @@ model Participant {
   room_id       String 
   is_favourited Boolean 
   created_at    DateTime  @default(now())
+  visited_at    DateTime  @default(now())
 
   @@unique([user_id, room_id]) // Ensure each user is in a room only once 
 } 
