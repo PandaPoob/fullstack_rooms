@@ -1,8 +1,6 @@
 // schema.prisma 
 
- 
-
-generator client { 
+ generator client { 
   provider = "prisma-client-js" 
 } 
 
@@ -49,7 +47,6 @@ model Status {
   users               User[]      //one to many 
 }
 
- 
 
 model User { 
   id                  String      @default(cuid()) @id 
@@ -69,3 +66,17 @@ model User {
   participants        Participant[]  //defining opposite relation 
   @@map(name: "users") 
 } 
+
+model NotesWidget {
+  id                  String       @default(cuid()) @id
+  room_fk             String
+  updated_at          String
+}
+
+model NotesItems {
+  id                String         @default(cuid()) @id
+  title             String
+  text              String          
+  created_at        DateTime?       @default(now())
+  updated_at        DateTime?       @default(now())
+}

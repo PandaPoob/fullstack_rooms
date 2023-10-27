@@ -15,3 +15,12 @@ export const dateFormat = /^\d{4}-\d{2}-\d{2}$/; //YYYY-MM-DD
 
 //AGE//
 export const minAge = 13;
+
+// ---------- Notes
+
+// TITLE
+export const minTitleNoteLen = 2;
+export const maxTitleNoteLen = 50;
+
+export const minTextNoteLen = 2;
+export const maxTextNoteLen = 50;
