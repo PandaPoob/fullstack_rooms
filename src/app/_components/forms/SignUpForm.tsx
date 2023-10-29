@@ -10,10 +10,16 @@ import FirstNameInput from "./formInputs/FirstNameInput";
 import LastNameInput from "./formInputs/LastNameInput";
 import PasswordInput from "./formInputs/PasswordInput";
 import createuserschema from "@/app/_utils/validation/schemas/user-signup-schema";
+import ErrorToast from "../toasts/ErrorToast";
+import { useState } from "react";
 
 function SignUpForm() {
   const router = useRouter();
-  //add api and error handling email
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const clearError = () => {
+    setErrorMsg("");
+  };
 
   return (
     <div>
@@ -45,13 +51,16 @@ function SignUpForm() {
             }),
           });
           if (resp.ok) {
-            //router
             router.push("/login");
           } else {
             const data = await resp.json();
-            //display alert
-            console.log("An error occurred");
-            console.log(data.error[0].message);
+            actions.setSubmitting(false);
+
+            if (data.msg) {
+              setErrorMsg(data.msg);
+            } else {
+              setErrorMsg(data.error[0].message);
+            }
           }
         }}
       >
@@ -106,12 +115,13 @@ function SignUpForm() {
                   ></path>
                 </svg>
               ) : (
-                <span>Log in</span>
+                <span>Sign up</span>
               )}
             </button>
           </Form>
         )}
       </Formik>
+      <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </div>
   );
 }
