@@ -19,15 +19,15 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error("Please fill out required fields");
         }
-
         //check email
         const existingUser = await db.user.findUnique({
           where: { email: credentials?.email },
         });
+
         if (!existingUser) {
-          return null;
+          throw new Error("Invalid credentials");
         }
         //check password
         const passwordMatch = await compare(
@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
         );
 
         if (!passwordMatch) {
-          return null;
+          throw new Error("Invalid credentials");
         }
 
         return {
@@ -79,7 +79,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/login",
-    signOut: "/",
+    signIn: "/",
+    signOut: "/login",
   },
 };
