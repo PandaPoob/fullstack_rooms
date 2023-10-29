@@ -24,7 +24,7 @@ async function main() {
       last_name: "Smith",
       email: "freja@mail.com",
       password: hashedPassword,
-      birthday: "30/11/1998",
+      birthday: "1998-11-30",
       status: { connect: { id: defaultStatus?.id } },
     },
   } as UserCreateInput);
@@ -34,7 +34,7 @@ async function main() {
       last_name: "Frog",
       email: "fred@mail.com",
       password: hashedPassword,
-      birthday: "10/11/1997",
+      birthday: "1997-11-10",
       status: { connect: { id: defaultStatus?.id } },
     },
   } as UserCreateInput);
@@ -44,7 +44,7 @@ async function main() {
       last_name: "Zalli",
       email: "cleo@mail.com",
       password: hashedPassword,
-      birthday: "30/11/1998",
+      birthday: "1998-11-30",
       status: { connect: { id: defaultStatus?.id } },
     },
   } as UserCreateInput);

@@ -39,6 +39,8 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        //check if user is confirmed
+
         return {
           id: existingUser.id,
           email: existingUser.email,
