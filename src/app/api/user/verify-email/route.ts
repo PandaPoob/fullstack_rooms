@@ -20,3 +20,4 @@ export async function PUT(req: Request, res: NextApiResponse) {
     //res.status(400).json({ error: "Email verification failed" });
   }
 }
+

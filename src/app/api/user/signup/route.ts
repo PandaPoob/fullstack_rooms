@@ -6,7 +6,6 @@ import { UserCreateInput } from "@/lib/prisma-types";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import { sendEmail } from "@/app/_utils/email/sendEmail";
-import getConfig from "next/config";
 
 export async function POST(req: Request) {
   try {
