@@ -70,4 +70,17 @@ model User {
   rooms               Room[]     //many-to-many 
   participants        Participant[]  //defining opposite relation 
   @@map(name: "users") 
-} 
+}
+model NotesWidget {
+  id                  String       @default(cuid()) @id
+  room_fk             String
+  updated_at          String
+}
+
+model NotesItems {
+  id                String         @default(cuid()) @id
+  title             String
+  text              String          
+  created_at        DateTime?       @default(now())
+  updated_at        DateTime?       @default(now())
+}
