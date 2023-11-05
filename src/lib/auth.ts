@@ -39,7 +39,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
-        //check if user is confirmed
+        //check if email is verified
+        if (!existingUser.email_verified_at) {
+          throw new Error("Email not verified");
+        }
 
         return {
           id: existingUser.id,

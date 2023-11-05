@@ -15,16 +15,16 @@ function DefaultHome() {
         </div>
 
         <div className="mt-10 lg:mt-0 grid gap-20">
-          <h2 className="text-h2 lg:text-h1 font-semibold leading-[134%]">
+          <h2 className="text-h2 lg:text-h1 font-medium leading-[134%]">
             Share and organize your daily life with Rooms
           </h2>
-          <Link href="/signup" className="text-h3 lg:text-h2 font-semibold">
-            <span className="font-semibold">Sign up today</span>
+          <Link href="/signup" className="text-h3 lg:text-h2 font-medium">
+            <span className="font-medium">Sign up today</span>
           </Link>
 
           <span className="text-h3 leading-[134%] font-medium lg:text-h2">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold">
+            <Link href="/login" className="font-medium">
               Log in
             </Link>
           </span>
