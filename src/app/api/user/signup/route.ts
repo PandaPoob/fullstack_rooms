@@ -25,7 +25,7 @@ export async function POST(req: Request) {
           user: null,
           msg: "This email is already in use",
         },
-        //409 is used when a  request conflicts with the current state of server
+        //409 is used when a request conflicts with the current state of server
         { status: 409 }
       );
     }
