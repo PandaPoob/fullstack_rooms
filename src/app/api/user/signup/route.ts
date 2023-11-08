@@ -94,8 +94,17 @@ export async function POST(req: Request) {
 </html>`,
     };
 
-    sendEmail(emailData);
+    const res = await sendEmail(emailData);
 
+    if (res.status !== 200) {
+      return NextResponse.json(
+        {
+          msg: "Internal server error, email not sent",
+        },
+        { status: 500 }
+      );
+    }
+    console.log("HERE", res)
     //send email
 
     //SUCCESS
