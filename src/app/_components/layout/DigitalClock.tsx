@@ -5,7 +5,7 @@ function DigitalClockHeader({ title }: { title: string }) {
   return (
     <div className="hidden md:block pt-7 md:mb-20">
       <LiveClock
-        className="text-display font-semibold"
+        className="text-display font-medium"
         ticking={true}
         noSsr
         format={"HH:mm"}

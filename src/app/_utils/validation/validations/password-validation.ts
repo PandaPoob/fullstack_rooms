@@ -22,6 +22,6 @@ export const password = z
     },
     {
       message:
-        "Password must include at least one uppercase letter, one lowercase letter and one digit",
+        "Password must include one uppercase letter, one lowercase letter and one digit",
     }
   );

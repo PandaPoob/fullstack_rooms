@@ -6,7 +6,18 @@ import localFont from "next/font/local";
 import { authOptions } from "@/lib/auth";
 
 const gotham = localFont({
-  src: "../_fonts/GothamBook.ttf",
+  // src: "../_fonts/GothamBook.ttf",
+  src: [
+    {
+      path: "../_fonts/GothamBook.ttf",
+      weight: "400",
+    },
+    {
+      path: "../_fonts/GothamMedium.ttf",
+      weight: "500",
+    },
+  ],
+
   display: "swap",
 });
 
