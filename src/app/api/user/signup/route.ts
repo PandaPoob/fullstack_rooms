@@ -1,9 +1,11 @@
 import { db } from "@/lib/prisma-client";
 import { hash } from "bcrypt";
 import * as z from "zod";
-import createuserschema from "../../_utils/validation/schemas/create-user-schema";
+import createuserschema from "../../../_utils/validation/schemas/user-signup-schema";
 import { UserCreateInput } from "@/lib/prisma-types";
 import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+import { sendEmail } from "@/app/_utils/email/sendEmail";
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +19,6 @@ export async function POST(req: Request) {
       where: { email: email },
     });
 
-
     if (emailAlreadyExists) {
       return NextResponse.json(
         {
@@ -27,14 +28,27 @@ export async function POST(req: Request) {
         //409 is used when a request conflicts with the current state of server
         { status: 409 }
       );
-    
     }
+
     //HASHING PW
     const hashedPassword = await hash(password, 10);
 
-    //DEFAULT ID AVAILABLE
-    const defaultStatusId = "clmp41qr50000v9fwfcjsv0q1";
-
+    const statusId = await db.status.findUnique({
+      where: {
+        title: "Available",
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!statusId) {
+      return NextResponse.json(
+        {
+          msg: "Internal server error",
+        },
+        { status: 500 }
+      );
+    }
     //NEW USER
     const newUser = await db.user.create({
       data: {
@@ -43,9 +57,47 @@ export async function POST(req: Request) {
         email,
         password: hashedPassword,
         birthday,
-        status: { connect: { id: defaultStatusId } },
+        status: { connect: { id: statusId.id } },
       },
     } as UserCreateInput);
+
+    //EMAIL
+    const token = jwt.sign(
+      {
+        userEmail: newUser.email,
+      },
+      "secret",
+      { expiresIn: "1h" }
+    );
+    let root;
+    if (process.env.NODE_ENV === "development") {
+      root = "http://localhost:3000/";
+    } else {
+      root = "https://fullstack-rooms.vercel.app/";
+    }
+
+    const link = root + "verify-email/" + token;
+    const emailData = {
+      to: newUser.email,
+      subject: "Rooms Fullstack project",
+      html: `<html>
+        <body>
+        <div>
+      <h2>Welcome!</h2>
+      <p>
+        Thank you for signing up to our exam project! You can verify your account
+        by clicking on the link below.
+      </p>
+      <a href="${link}" target="_blank">Verify account</a>
+    </div>
+  </body>
+</html>`,
+    };
+
+    sendEmail(emailData);
+
+    //send email
+
     //SUCCESS
     return NextResponse.json(
       {

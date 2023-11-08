@@ -2,7 +2,7 @@ import { z } from "zod";
 import { minPasswordLen, maxPasswordLen } from "../validationVariables";
 
 export const password = z
-  .string()
+  .string({ required_error: "Password is required" })
   .min(minPasswordLen, {
     message: `Password must be at least ${minPasswordLen} characters long`,
   })
@@ -22,6 +22,6 @@ export const password = z
     },
     {
       message:
-        "Password must include at least one uppercase letter, one lowercase letter and one digit",
+        "Password must include one uppercase letter, one lowercase letter and one digit",
     }
   );
