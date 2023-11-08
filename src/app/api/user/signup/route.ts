@@ -94,6 +94,7 @@ export async function POST(req: Request) {
 </html>`,
     };
 
+//send email
     const res = await sendEmail(emailData);
 
     if (res.status !== 200) {
@@ -104,9 +105,7 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-    console.log("HERE", res)
-    //send email
-
+    
     //SUCCESS
     return NextResponse.json(
       {

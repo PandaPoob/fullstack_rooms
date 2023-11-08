@@ -1,5 +1,4 @@
 import { EmailData } from "@/app/_models/email";
-import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
 export async function sendEmail(emailData: EmailData) {
