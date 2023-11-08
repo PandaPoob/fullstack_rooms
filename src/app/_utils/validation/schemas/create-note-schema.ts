@@ -7,6 +7,7 @@ const createnoteschema = z.object({
   //assembling our validations
   title: title,
   text: text,
+  note_widget_fk: z.string(),
 });
 
 export default createnoteschema;
