@@ -25,7 +25,6 @@ export async function PUT(
         { status: 401 }
       );
     }
-    console.log(token, userId);
     // Validate user ID from URL
     if (token !== userId) {
       return NextResponse.json(
@@ -63,7 +62,8 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const { first_name, last_name, birthday } = edituserschema.parse(body);
+    const { first_name, last_name, birthday, status } =
+      edituserschema.parse(body);
 
     const updates: { [key: string]: any } = {};
 
@@ -79,6 +79,11 @@ export async function PUT(
     if (birthday !== user.birthday) {
       updates.birthday = birthday;
     }
+
+    if (status !== user.status_fk) {
+      updates.status = { connect: { id: status } };
+    }
+
     if (Object.keys(updates).length === 0) {
       return NextResponse.json(
         {
@@ -95,6 +100,7 @@ export async function PUT(
         first_name: updates.first_name ? true : false,
         last_name: updates.last_name ? true : false,
         birthday: updates.last_name ? true : false,
+        status: updates.status ? true : false,
       },
     });
 

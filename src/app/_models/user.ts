@@ -14,6 +14,7 @@ export interface UserEdit {
   first_name: string;
   last_name: string;
   birthday: string;
-  status?: { id: string; title: string };
+  full_status?: { id: string; title: string };
+  status: string;
   avatar_img?: string;
 }

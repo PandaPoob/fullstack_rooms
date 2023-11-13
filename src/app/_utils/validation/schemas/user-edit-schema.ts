@@ -10,7 +10,7 @@ const edituserschema = z.object({
   first_name: first_name,
   last_name: last_name,
   birthday: birthday,
-  //status: status,
+  status: status,
   //image
 });
 

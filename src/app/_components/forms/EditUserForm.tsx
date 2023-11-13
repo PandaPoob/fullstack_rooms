@@ -8,12 +8,13 @@ import LastNameInput from "./formInputs/LastNameInput";
 import BirthdayInput from "./formInputs/BirthdayInput";
 import edituserschema from "@/app/_utils/validation/schemas/user-edit-schema";
 import { UserEdit } from "@/app/_models/user";
-import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import StatusSelect from "./formInputs/StatusSelect";
+import { Status } from "@prisma/client";
 
 interface EditUserFormProps {
   profile: UserEdit;
+  statusOptions: Status[];
 }
 
 function EditUserForm(props: EditUserFormProps) {
@@ -23,6 +24,7 @@ function EditUserForm(props: EditUserFormProps) {
     first_name: props.profile.first_name || "",
     last_name: props.profile.last_name || "",
     birthday: props.profile.birthday || "",
+    status: props.profile.status || "",
   });
 
   const clearError = () => {
@@ -40,6 +42,7 @@ function EditUserForm(props: EditUserFormProps) {
         onSubmit={async (values: UserEdit, actions) => {
           actions.setSubmitting(true);
           if (session) {
+            console.log(values);
             setEditValues(values);
             const resp = await fetch(`/api/user/edit/${session.user.id}`, {
               method: "PUT",
@@ -59,6 +62,7 @@ function EditUserForm(props: EditUserFormProps) {
                   update({ last_name: data.sessionUpdates.last_name });
                 }
               }
+              console.log("Updated user");
             } else {
               setErrorMsg("An error occurred");
             }
@@ -79,7 +83,11 @@ function EditUserForm(props: EditUserFormProps) {
 
             <BirthdayInput errors={errors} touched={touched} />
 
-            <StatusSelect />
+            <StatusSelect
+              options={props.statusOptions}
+              error={errors.status}
+              touched={touched.status}
+            />
 
             <button
               type="submit"

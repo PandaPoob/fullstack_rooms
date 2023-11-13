@@ -1,15 +1,19 @@
 import EditUserForm from "@/app/_components/forms/EditUserForm";
 import { UserEdit } from "@/app/_models/user";
-import { User } from "next-auth";
+import { Status } from "@prisma/client";
 
 interface Profileprops {
   profile: UserEdit;
+  statusOptions: Status[];
 }
 
 function ProfileView(props: Profileprops) {
   return (
     <div>
-      <EditUserForm profile={props.profile} />
+      <EditUserForm
+        profile={props.profile}
+        statusOptions={props.statusOptions}
+      />
     </div>
   );
 }
