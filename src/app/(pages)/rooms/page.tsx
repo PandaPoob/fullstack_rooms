@@ -22,7 +22,6 @@ async function getData(props: Session) {
         created_at: true,
         updated_at: true,
         admin_fk: true,
-        location: true,
         cover_img: true,
         participants: {
           select: {
