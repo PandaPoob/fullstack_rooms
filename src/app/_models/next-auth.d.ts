@@ -6,7 +6,7 @@ declare module "next-auth" {
     first_name: String;
     last_name: String;
   }
-interface Session {
+  interface Session {
     user: User & {
       id: String;
       first_name: String;
@@ -16,6 +16,7 @@ interface Session {
       id: String;
       first_name: String;
       last_name: String;
+      sub: String;
     };
   }
 }

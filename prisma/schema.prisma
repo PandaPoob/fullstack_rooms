@@ -63,9 +63,8 @@ model User {
   updated_at          DateTime    @default(now())
   password            String 
   birthday            String 
-  avatar_img          String? 
-  location            String? 
-  status              Status   @relation(fields: [status_fk], references: [id]) 
+  avatar_img          String     @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1699872613/default_avatar_kdobv7.png")
+  status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
   participants        Participant[]  //defining opposite relation 

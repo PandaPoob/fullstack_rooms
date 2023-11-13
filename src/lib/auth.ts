@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Please fill out required fields");
         }
+
         //check email
         const existingUser = await db.user.findUnique({
           where: { email: credentials?.email },
@@ -43,7 +44,6 @@ export const authOptions: NextAuthOptions = {
         if (!existingUser.email_verified_at) {
           throw new Error("Email not verified");
         }
-
         return {
           id: existingUser.id,
           email: existingUser.email,
@@ -80,6 +80,7 @@ export const authOptions: NextAuthOptions = {
           first_name: token.first_name,
           last_name: token.last_name,
         },
+        token,
       };
     },
   },

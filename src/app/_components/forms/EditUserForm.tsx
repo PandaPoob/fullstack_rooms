@@ -1,18 +1,24 @@
 "use client";
 import { Form, Formik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
-import { UserCredentials } from "@/app/_models/user";
-import userloginschema from "@/app/_utils/validation/schemas/user-login-schema";
-import EmailInput from "./formInputs/EmailInput";
-import PasswordInput from "./formInputs/PasswordInput";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
+import FirstNameInput from "./formInputs/FirstNameInput";
+import LastNameInput from "./formInputs/LastNameInput";
+import BirthdayInput from "./formInputs/BirthdayInput";
+import edituserschema from "@/app/_utils/validation/schemas/user-edit-schema";
+import { UserEdit } from "@/app/_models/user";
+import { User } from "next-auth";
+import { useSession } from "next-auth/react";
 
-function LoginForm() {
-  const router = useRouter();
+interface EditUserFormProps {
+  profile: UserEdit;
+  sessionUser: User;
+}
+
+function EditUserForm(props: EditUserFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
+  const { data: session } = useSession();
 
   const clearError = () => {
     setErrorMsg("");
@@ -22,34 +28,45 @@ function LoginForm() {
     <div>
       <Formik
         initialValues={{
-          email: "",
-          password: "",
+          first_name: props.sessionUser.first_name as string,
+          last_name: props.sessionUser.last_name as string,
+          birthday: props.profile.birthday,
         }}
-        validationSchema={toFormikValidationSchema(userloginschema)}
-        onSubmit={async (values: UserCredentials, actions) => {
+        validationSchema={toFormikValidationSchema(edituserschema)}
+        onSubmit={async (values: UserEdit, actions) => {
           actions.setSubmitting(true);
-
-          const loginData = await signIn("credentials", {
-            email: values.email,
-            password: values.password,
-            redirect: false,
-          });
-
-          if (loginData?.error) {
-            //next-auth bug, returns ok 200 even if error occurs
-            setErrorMsg(loginData.error);
-            actions.setSubmitting(false);
-          } else {
-            console.log(loginData);
-            router.refresh();
+          if (session) {
+            const resp = await fetch(`/api/user/edit/${session.user.id}`, {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session.token.sub}`,
+              },
+              body: JSON.stringify(values),
+            });
+            console.log(resp);
+            if (resp.ok) {
+              console.log("success");
+            } else {
+              console.log("error");
+              //add toast
+            }
           }
         }}
       >
         {({ isSubmitting, errors, touched }) => (
           <Form className="grid gap-3">
-            <EmailInput error={errors.email} touched={touched.email} />
+            <FirstNameInput
+              error={errors.first_name}
+              touched={touched.first_name}
+            />
 
-            <PasswordInput error={errors.password} touched={touched.password} />
+            <LastNameInput
+              error={errors.last_name}
+              touched={touched.last_name}
+            />
+
+            <BirthdayInput errors={errors} touched={touched} />
 
             <button
               type="submit"
@@ -78,7 +95,7 @@ function LoginForm() {
                   ></path>
                 </svg>
               ) : (
-                <span>Log in</span>
+                <span>Save</span>
               )}
             </button>
           </Form>
@@ -89,4 +106,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default EditUserForm;
