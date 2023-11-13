@@ -1,5 +1,5 @@
 import { Status } from "@prisma/client";
-import { Field, useField, FormikErrors, FormikTouched } from "formik";
+import { Field } from "formik";
 
 interface StatusSelectProps {
   options: Status[];
