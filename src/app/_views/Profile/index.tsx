@@ -4,14 +4,12 @@ import { User } from "next-auth";
 
 interface Profileprops {
   profile: UserEdit;
-  sessionUser: User;
 }
 
 function ProfileView(props: Profileprops) {
   return (
     <div>
-      profile
-      <EditUserForm profile={props.profile} sessionUser={props.sessionUser} />
+      <EditUserForm profile={props.profile} />
     </div>
   );
 }

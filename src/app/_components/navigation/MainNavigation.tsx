@@ -99,7 +99,7 @@ async function MainNavigation() {
                 </li>
                 <li>
                   <Link
-                    href={`/profile/${session?.user.id}`}
+                    href={`/profile`}
                     className="flex p-3 rounded-full border border-primary"
                   >
                     <svg

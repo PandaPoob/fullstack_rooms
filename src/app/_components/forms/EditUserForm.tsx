@@ -10,15 +10,20 @@ import edituserschema from "@/app/_utils/validation/schemas/user-edit-schema";
 import { UserEdit } from "@/app/_models/user";
 import { User } from "next-auth";
 import { useSession } from "next-auth/react";
+import StatusSelect from "./formInputs/StatusSelect";
 
 interface EditUserFormProps {
   profile: UserEdit;
-  sessionUser: User;
 }
 
 function EditUserForm(props: EditUserFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const [editValues, setEditValues] = useState<UserEdit>({
+    first_name: props.profile.first_name || "",
+    last_name: props.profile.last_name || "",
+    birthday: props.profile.birthday || "",
+  });
 
   const clearError = () => {
     setErrorMsg("");
@@ -26,16 +31,16 @@ function EditUserForm(props: EditUserFormProps) {
 
   return (
     <div>
+      <div>
+        {session?.user.first_name} {session?.user.last_name}
+      </div>
       <Formik
-        initialValues={{
-          first_name: props.sessionUser.first_name as string,
-          last_name: props.sessionUser.last_name as string,
-          birthday: props.profile.birthday,
-        }}
+        initialValues={editValues}
         validationSchema={toFormikValidationSchema(edituserschema)}
         onSubmit={async (values: UserEdit, actions) => {
           actions.setSubmitting(true);
           if (session) {
+            setEditValues(values);
             const resp = await fetch(`/api/user/edit/${session.user.id}`, {
               method: "PUT",
               headers: {
@@ -44,12 +49,18 @@ function EditUserForm(props: EditUserFormProps) {
               },
               body: JSON.stringify(values),
             });
-            console.log(resp);
             if (resp.ok) {
-              console.log("success");
+              const data = await resp.json();
+              if (data.updatedUser) {
+                if (data.sessionUpdates.first_name) {
+                  update({ first_name: data.sessionUpdates.first_name });
+                }
+                if (data.sessionUpdates.last_name) {
+                  update({ last_name: data.sessionUpdates.last_name });
+                }
+              }
             } else {
-              console.log("error");
-              //add toast
+              setErrorMsg("An error occurred");
             }
           }
         }}
@@ -67,6 +78,8 @@ function EditUserForm(props: EditUserFormProps) {
             />
 
             <BirthdayInput errors={errors} touched={touched} />
+
+            <StatusSelect />
 
             <button
               type="submit"

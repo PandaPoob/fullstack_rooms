@@ -25,7 +25,7 @@ export async function PUT(
         { status: 401 }
       );
     }
-
+    console.log(token, userId);
     // Validate user ID from URL
     if (token !== userId) {
       return NextResponse.json(
@@ -79,16 +79,41 @@ export async function PUT(
     if (birthday !== user.birthday) {
       updates.birthday = birthday;
     }
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        {
+          msg: "No changes made",
+        },
+        { status: 200 }
+      );
+    }
 
     const updatedUser = await db.user.update({
       where: { id: user.id },
       data: updates,
+      select: {
+        first_name: updates.first_name ? true : false,
+        last_name: updates.last_name ? true : false,
+        birthday: updates.last_name ? true : false,
+      },
     });
+
+    const sessionUpdates: { [key: string]: any } = {};
+
+    // Conditionally add first_name and last_name if they exist on updatedUser
+    if (updatedUser.first_name) {
+      sessionUpdates.first_name = updatedUser.first_name;
+    }
+
+    if (updatedUser.last_name) {
+      sessionUpdates.last_name = updatedUser.last_name;
+    }
 
     return NextResponse.json(
       {
-        user: updatedUser,
-        msg: "Ok",
+        updatedUser: { updatedUser },
+        sessionUpdates: sessionUpdates,
+        msg: "Succesfully updated user",
       },
       { status: 200 }
     );
