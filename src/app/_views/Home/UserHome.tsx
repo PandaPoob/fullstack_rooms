@@ -8,6 +8,7 @@ function UserHome({ session }: { session: Session }) {
       <h2>
         Welcome home {`${session.user.first_name} ${session.user.last_name}`}
       </h2>
+      
       <LogoutButton />
     </main>
   );

@@ -11,7 +11,6 @@ export async function POST(req: Request) {
     console.log(body);
     const { title, text, note_widget_fk } = createnoteschema.parse(body);
     // console.log("Parsed request body:", { title, text, note_widget_fk });
-    const defaultStatusId = "clmp41qr50000v9fwfcjsv0q1";
 
     // Post a new note to the database
     const newNote = await db.noteItem.create({
@@ -54,46 +53,46 @@ export async function POST(req: Request) {
   }
 }
 
-// Handle DELETE requests
-export async function DELETE(req: Request) {
-  try {
-    const noteId = await req.json();
+// // Handle DELETE requests
+// export async function DELETE(req: Request) {
+//   try {
+//     const noteId = await req.json();
 
-    // Prisma delete the note ID
-    await db.noteWidget.delete({
-      where: {
-        id: noteId,
-      },
-    });
+//     // Prisma delete the note ID
+//     await db.noteWidget.delete({
+//       where: {
+//         id: noteId,
+//       },
+//     });
 
-    // Success response for note deletion
-    return NextResponse.json(
-      {
-        msg: "Note deleted",
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      // Zod validation errors
-      const validationErrors = error.issues.map((issue) => {
-        return {
-          message: issue.message,
-        };
-      });
+//     // Success response for note deletion
+//     return NextResponse.json(
+//       {
+//         msg: "Note deleted",
+//       },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     if (error instanceof z.ZodError) {
+//       // Zod validation errors
+//       const validationErrors = error.issues.map((issue) => {
+//         return {
+//           message: issue.message,
+//         };
+//       });
 
-      // Return a validation error response
-      return NextResponse.json({ error: validationErrors }, { status: 400 });
-    } else {
-      // Other errors
-      console.error(error);
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 }
-      );
-    }
-  }
-}
+//       // Return a validation error response
+//       return NextResponse.json({ error: validationErrors }, { status: 400 });
+//     } else {
+//       // Other errors
+//       console.error(error);
+//       return NextResponse.json(
+//         { error: "Internal Server Error" },
+//         { status: 500 }
+//       );
+//     }
+//   }
+// }
 
 // export async function POST(req: Request) {
 //   try {

@@ -3,6 +3,9 @@ import { db } from "@/lib/prisma-client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
+import { NoteItem } from "@prisma/client";
+import { NoteWidget } from "@prisma/client";
+import NoteCard from "@/app/_views/Notes/NoteCard";
 
 async function getData(params: { slug: string }) {
   const session = await getServerSession(authOptions);
@@ -22,23 +25,27 @@ async function getData(params: { slug: string }) {
           },
         },
       },
-      include: {
-        // Include NoteWidget and its NoteItems
-        noteWidget: {
-          include: {
-            noteItem: true,
-          },
-        },
-      },
     });
 
     if (!room) {
       redirect("/error");
     }
 
+    // Fetch data for NoteWidget and NoteItem
+    const note = await db.noteWidget.findUnique({
+      where: {
+        room_fk: room.id,
+      },
+      include: {
+        noteItem: true,
+      },
+    });
+    console.log(note);
+
     const data = {
       room,
       session,
+      note,
     };
 
     return data;
@@ -48,7 +55,19 @@ async function getData(params: { slug: string }) {
 async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
   console.log(data.room);
-  return data && <RoomView room={data.room} sessionUser={data.session.user} />;
+
+  // Render RoomView, NoteWidget, and NoteItems
+  return (
+    data && (
+      <>
+        <RoomView
+          room={data.room}
+          note={data.note}
+          sessionUser={data.session.user}
+        />
+      </>
+    )
+  );
 }
 
 export default RoomPage;

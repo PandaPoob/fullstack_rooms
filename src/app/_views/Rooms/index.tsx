@@ -10,6 +10,7 @@ interface RoomsProps {
 
 function Rooms(props: RoomsProps) {
   const { data, sessionUser } = props;
+  console.log(data.userRooms);
 
   return (
     <div>
@@ -23,7 +24,6 @@ function Rooms(props: RoomsProps) {
           {sessionUser.first_name + " " + sessionUser.last_name}, Pick your
           dashboard
         </h1>
-
         <RoomsList rooms={data.userRooms} />
       </div>
     </div>

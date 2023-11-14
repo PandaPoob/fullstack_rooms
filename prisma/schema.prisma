@@ -49,7 +49,7 @@ model User {
   created_at          DateTime    @default(now())
   updated_at          DateTime    @default(now())
   password            String
-  birthday            DateTime   // Change to DateTime
+  birthday            String?   // Change to DateTime
   avatar_img          String?
   location            String?
   status              Status   @relation(fields: [status_fk], references: [id])
@@ -74,6 +74,6 @@ model NoteItem {
   created_at        DateTime?       @default(now())
   updated_at        DateTime?       @default(now())
   note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
-  note_widget_fk    String
+  note_widget_fk    String         
 }
 
