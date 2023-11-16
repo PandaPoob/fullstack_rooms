@@ -1,4 +1,3 @@
-import edituserschema from "@/app/_utils/validation/schemas/user-edit-schema";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getServerSession } from "next-auth";
@@ -6,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { getToken } from "next-auth/jwt";
 import backendedituserschema from "@/app/_utils/validation/schemas/backend-user-edit-schema";
-import { UserEdit } from "@/app/_models/user";
+import generateSignature from "@/app/_utils/helpers/cloudinary";
 
 export async function PUT(
   req: NextRequest,
@@ -83,15 +82,14 @@ export async function PUT(
     const updates: { [key: string]: any } = {};
 
     let newImageData = {
-      newurl: "", // string for the new URL
-      cloudinarypublicid: "", // string for the Cloudinary public ID
+      newurl: "",
+      cloudinarypublicid: "",
     };
-    //if there is avatar img
+
     if (avatar_img) {
       const formData = new FormData();
       formData.append("file", avatar_img);
       formData.append("upload_preset", "fullstack-rooms");
-      //validate magic type
 
       const resp = await fetch(
         "https://api.cloudinary.com/v1_1/dceom4kf4/image/upload",
@@ -100,15 +98,21 @@ export async function PUT(
           body: formData,
         }
       );
+
+      const data = await resp.json();
+
       if (!resp.ok) {
         return NextResponse.json(
           {
             msg: "An error occurred regarding image upload",
           },
-          { status: 500 }
+          {
+            status: data.error.message.includes("Invalid image file")
+              ? 400
+              : 500,
+          }
         );
       }
-      const data = await resp.json();
 
       newImageData.cloudinarypublicid = data.public_id;
       //Format image
@@ -240,25 +244,22 @@ export async function PUT(
           updatedAvatarPromise,
           updatedUserPromise,
         ]);
-        //cloudinary delete old img
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy`;
 
-        const deleteResp = await fetch(
-          `${cloudinaryUrl}/${user.avatar.cloudinaryPublicId}`,
-          {
-            method: "DELETE",
-            headers: {
-              Authorization: `Basic ${btoa(
-                `${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`
-              )}`,
-            },
-          }
-        );
+        //cloudinary delete old img
+        const params = {
+          public_id: user.avatar.cloudinaryPublicId,
+        };
+        const { timestamp, signature } = generateSignature(params);
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy?public_id=${user.avatar.cloudinaryPublicId}&api_key=${process.env.CLOUDINARY_API_KEY}&signature=${signature}&timestamp=${timestamp}`;
+        const deleteResp = await fetch(`${cloudinaryUrl}`, {
+          method: "DELETE",
+        });
 
         if (deleteResp.ok) {
           console.log("Old image deleted successfully from Cloudinary");
         } else {
-          console.error("Failed to delete old image from Cloudinary");
+          const errorText = await deleteResp.text();
+          console.error("Delete request failed:", errorText);
         }
 
         //return success
