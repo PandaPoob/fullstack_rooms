@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import StatusSelect from "./formInputs/StatusSelect";
 import { Status } from "@prisma/client";
 import AvatarFileInput from "./formInputs/AvatarFileInput";
+import Image from "next/image";
 
 interface EditUserFormProps {
   profile: UserEdit;
@@ -38,6 +39,13 @@ function EditUserForm(props: EditUserFormProps) {
       <div>
         {session?.user.first_name} {session?.user.last_name}{" "}
         {session?.user.status}
+        <Image
+          src={session?.user.image ? session.user.image : "/default_avatar.png"}
+          alt={"avatar picture"}
+          width={100}
+          height={100}
+          className="filter group-hover:brightness-90 transition"
+        />
       </div>
       <Formik
         initialValues={editValues}
@@ -63,17 +71,9 @@ function EditUserForm(props: EditUserFormProps) {
             });
             if (resp.ok) {
               const data = await resp.json();
+              console.log(data);
               if (data.updatedUser) {
-                if (data.sessionUpdates.first_name) {
-                  update({ first_name: data.sessionUpdates.first_name });
-                }
-                if (data.sessionUpdates.last_name) {
-                  update({ last_name: data.sessionUpdates.last_name });
-                }
-                if (data.sessionUpdates.status) {
-                  console.log(data.sessionUpdates.status);
-                  update({ status: data.sessionUpdates.status });
-                }
+                update(data.updatedUser);
               }
               console.log("Updated user");
             } else {

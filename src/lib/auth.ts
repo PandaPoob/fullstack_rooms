@@ -65,6 +65,9 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     //authorize function sends value into jwt
     async jwt({ token, session, trigger, user }) {
+      //next-auth session is refering to client side session data
+      //next-auth token is refering to server side session data
+
       if (trigger === "update" && session) {
         if (session.first_name) {
           token.first_name = session.first_name;
@@ -75,7 +78,10 @@ export const authOptions: NextAuthOptions = {
         }
 
         if (session.status) {
-          token.status = session.status;
+          token.status = session.status.title;
+        }
+        if (session.avatar) {
+          token.picture = session.avatar.formattedUrl;
         }
       }
 

@@ -11,7 +11,6 @@ export const avatar_img_backend = z
   }, "Max image size is 5MB")
   .refine(
     (file) => {
-      console.log(file);
       if (!file) return true;
       return acceptedImageTypes.includes(file.type.toLowerCase());
     },

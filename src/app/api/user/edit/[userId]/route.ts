@@ -13,7 +13,6 @@ export async function PUT(
   { params }: { params: { userId: string } }
 ) {
   try {
-    // Extract user ID from URL (slug)
     const { userId } = params;
 
     const secret = process.env.SECRET;
@@ -53,6 +52,9 @@ export async function PUT(
       where: {
         id: session.user.id as string,
       },
+      include: {
+        avatar: true,
+      },
     });
 
     if (!user) {
@@ -63,8 +65,6 @@ export async function PUT(
         { status: 404 }
       );
     }
-
-    console.log(user);
 
     const formDataToObject = (body: FormData): Record<string, unknown> => {
       const object: Record<string, unknown> = {};
@@ -80,6 +80,13 @@ export async function PUT(
     const { first_name, last_name, birthday, status, avatar_img } =
       await backendedituserschema.parseAsync(bodyObject);
 
+    const updates: { [key: string]: any } = {};
+
+    let newImageData = {
+      newurl: "", // string for the new URL
+      cloudinarypublicid: "", // string for the Cloudinary public ID
+    };
+    //if there is avatar img
     if (avatar_img) {
       const formData = new FormData();
       formData.append("file", avatar_img);
@@ -102,24 +109,19 @@ export async function PUT(
         );
       }
       const data = await resp.json();
-      //if image is small
 
-      let newImageUrl;
+      newImageData.cloudinarypublicid = data.public_id;
+      //Format image
       const url = data.secure_url.split("upload/");
 
       if (data.width < 400 || data.height < 400) {
-        newImageUrl = `${url[0]}upload/w_400,h_400,c_scale/${url[1]}`;
+        newImageData.newurl = `${url[0]}upload/w_400,h_400,c_scale/${url[1]}`;
       } else if (data.width > 400 || data.height > 400) {
-        newImageUrl = `${url[0]}upload/w_400,h_400,c_crop/${url[1]}`;
+        newImageData.newurl = `${url[0]}upload/w_400,h_400,c_crop/${url[1]}`;
       } else if (data.width === 400 && data.height === 400) {
-        newImageUrl = data.secure_url;
+        newImageData.newurl = data.secure_url;
       }
     }
-
-    //if there is new image update image
-
-    const updates: { [key: string]: any } = {};
-
     // Compare and update each attribute
     if (first_name !== user.first_name) {
       updates.first_name = first_name;
@@ -137,7 +139,8 @@ export async function PUT(
       updates.status = { connect: { id: status } };
     }
 
-    if (Object.keys(updates).length === 0) {
+    //no updates
+    if (Object.keys(updates).length === 0 && !avatar_img) {
       return NextResponse.json(
         {
           msg: "No changes made",
@@ -147,63 +150,149 @@ export async function PUT(
     }
 
     //updated at
+    const currentDate = new Date();
+    const isoDateString = currentDate.toISOString();
+    updates.updated_at = isoDateString;
 
-    const updatedUser = await db.user.update({
-      where: { id: user.id },
-      data: updates,
-      select: {
-        first_name: updates.first_name ? true : false,
-        last_name: updates.last_name ? true : false,
-        birthday: updates.last_name ? true : false,
-        status: updates.status ? true : false,
-      },
-    });
-    //if old image is no default delete old image
+    //if new img
+    if (
+      newImageData.newurl &&
+      newImageData.cloudinarypublicid &&
+      !user.avatar
+    ) {
+      let response: any = null;
 
-    /*     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy`;
+      //Transaction
+      await db.$transaction(async (prisma) => {
+        //Create avatar
+        const newAvatar = await prisma.avatar.create({
+          data: {
+            formattedUrl: newImageData.newurl,
+            cloudinaryPublicId: newImageData.cloudinarypublicid,
+            user: {
+              connect: {
+                id: user.id,
+              },
+            },
+          },
+          select: {
+            id: true,
+          },
+        });
 
-    const publicId = "your_image_public_id";
+        //Update user
+        const updatedUser = await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            ...updates,
+            avatar: {
+              connect: {
+                id: newAvatar.id,
+              },
+            },
+          },
+          select: {
+            id: true,
+            first_name: updates.first_name ? true : false,
+            last_name: updates.last_name ? true : false,
+            birthday: updates.birthday ? true : false,
+            status: updates.status ? true : false,
+            avatar: true,
+          },
+        });
 
-    fetch(`${cloudinaryUrl}/${publicId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`, // Replace with your API key and secret
-      },
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log("Image deleted successfully");
-        } else {
-          console.error("Failed to delete image");
-        }
-      })
-      .catch((error) => {
-        console.error("Error deleting image:", error);
+        response = NextResponse.json(
+          {
+            updatedUser: updatedUser,
+            msg: "Succesfully updated user here",
+          },
+          { status: 200 }
+        );
       });
- */
-    const sessionUpdates: { [key: string]: any } = {};
 
-    // Conditionally add first_name and last_name if they exist on updatedUser
-    if (updatedUser.first_name) {
-      sessionUpdates.first_name = updatedUser.first_name;
+      return response;
     }
+    if (newImageData.newurl && newImageData.cloudinarypublicid && user.avatar) {
+      try {
+        //update avatar
+        const updatedAvatarPromise = db.avatar.update({
+          where: { id: user.avatar.id },
+          data: {
+            formattedUrl: newImageData.newurl,
+            cloudinaryPublicId: newImageData.cloudinarypublicid,
+          },
+        });
+        //update user
+        const updatedUserPromise = db.user.update({
+          where: { id: user.id },
+          data: updates,
+          select: {
+            id: true,
+            first_name: updates.first_name ? true : false,
+            last_name: updates.last_name ? true : false,
+            birthday: updates.birthday ? true : false,
+            status: updates.status ? true : false,
+            avatar: true,
+          },
+        });
 
-    if (updatedUser.last_name) {
-      sessionUpdates.last_name = updatedUser.last_name;
+        const [updatedAvatar, updatedUser] = await db.$transaction([
+          updatedAvatarPromise,
+          updatedUserPromise,
+        ]);
+        //cloudinary delete old img
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy`;
+
+        const deleteResp = await fetch(
+          `${cloudinaryUrl}/${user.avatar.cloudinaryPublicId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Basic ${btoa(
+                `${process.env.CLOUDINARY_API_KEY}:${process.env.CLOUDINARY_API_SECRET}`
+              )}`,
+            },
+          }
+        );
+
+        if (deleteResp.ok) {
+          console.log("Old image deleted successfully from Cloudinary");
+        } else {
+          console.error("Failed to delete old image from Cloudinary");
+        }
+
+        //return success
+        return NextResponse.json(
+          {
+            updatedUser: updatedUser,
+            msg: "Succesfully updated user",
+          },
+          { status: 200 }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (Object.keys(updates).length !== 0 && !avatar_img) {
+      //update user only
+      const updatedUser = await db.user.update({
+        where: { id: user.id },
+        data: updates,
+        select: {
+          id: true,
+          first_name: updates.first_name ? true : false,
+          last_name: updates.last_name ? true : false,
+          birthday: updates.birthday ? true : false,
+          status: updates.status ? true : false,
+        },
+      });
+      return NextResponse.json(
+        {
+          updatedUser: updatedUser,
+          msg: "Succesfully updated user",
+        },
+        { status: 200 }
+      );
     }
-
-    if (updatedUser.status) {
-      sessionUpdates.status = updatedUser.status.title;
-    }
-
-    return NextResponse.json(
-      {
-        updatedUser: { updatedUser },
-        sessionUpdates: sessionUpdates,
-        msg: "Succesfully updated user",
-      },
-      { status: 200 }
-    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       //Zod errors
