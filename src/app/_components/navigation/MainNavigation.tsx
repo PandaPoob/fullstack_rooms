@@ -1,12 +1,10 @@
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
-import Image from "next/image";
-import getStatusColor from "@/app/_utils/helpers/getStatus";
+import ProfileLink from "./ProfileLink";
 
 async function MainNavigation() {
   const session = await getServerSession(authOptions);
-  console.log(session);
   return (
     <>
       {session?.user && (
@@ -80,30 +78,7 @@ async function MainNavigation() {
                     </svg>
                   </Link>
                 </li>
-                <li className="relative md:mt-auto md:mb-7">
-                  <Link
-                    href={`/profile`}
-                    className="relative flex rounded-full border border-primary overflow-hidden"
-                  >
-                    <div className="relative min-w-[3rem] h-full min-h-[3rem] overflow-hidden">
-                      <Image
-                        src={
-                          session.user.image
-                            ? session.user.image
-                            : "/default_avatar.png"
-                        }
-                        alt={"avatar picture"}
-                        style={{ objectFit: "cover" }}
-                        fill={true}
-                        className="filter group-hover:brightness-90 transition"
-                      />
-                    </div>
-                  </Link>
-                  <div
-                    className={`absolute bottom-0.5 right-0.5 z-10 rounded-full w-3 h-3  
-                    ${getStatusColor(session.user.status as string)}`}
-                  ></div>
-                </li>
+                <ProfileLink />
               </ul>
             </nav>
           </div>

@@ -36,7 +36,8 @@ function EditUserForm(props: EditUserFormProps) {
   return (
     <div>
       <div>
-        {session?.user.first_name} {session?.user.last_name}
+        {session?.user.first_name} {session?.user.last_name}{" "}
+        {session?.user.status}
       </div>
       <Formik
         initialValues={editValues}
@@ -68,6 +69,10 @@ function EditUserForm(props: EditUserFormProps) {
                 }
                 if (data.sessionUpdates.last_name) {
                   update({ last_name: data.sessionUpdates.last_name });
+                }
+                if (data.sessionUpdates.status) {
+                  console.log(data.sessionUpdates.status);
+                  update({ status: data.sessionUpdates.status });
                 }
               }
               console.log("Updated user");

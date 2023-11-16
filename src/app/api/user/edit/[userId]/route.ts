@@ -192,6 +192,10 @@ export async function PUT(
       sessionUpdates.last_name = updatedUser.last_name;
     }
 
+    if (updatedUser.status) {
+      sessionUpdates.status = updatedUser.status.title;
+    }
+
     return NextResponse.json(
       {
         updatedUser: { updatedUser },

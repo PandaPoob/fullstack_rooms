@@ -73,6 +73,10 @@ export const authOptions: NextAuthOptions = {
         if (session.last_name) {
           token.last_name = session.last_name;
         }
+
+        if (session.status) {
+          token.status = session.status;
+        }
       }
 
       if (user) {

@@ -6,11 +6,10 @@ export default function getStatusColor(status: string) {
       break;
     case "Busy":
       color = "bg-warning";
-
       break;
     case "Away":
       color = "bg-info";
-
+      break;
     default:
       color = "bg-success";
   }
