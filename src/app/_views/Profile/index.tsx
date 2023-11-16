@@ -1,3 +1,4 @@
+import LogoutButton from "@/app/_components/LogoutButton";
 import EditUserForm from "@/app/_components/forms/EditUserForm";
 import { UserEdit } from "@/app/_models/user";
 import { Status } from "@prisma/client";
@@ -14,6 +15,7 @@ function ProfileView(props: Profileprops) {
         profile={props.profile}
         statusOptions={props.statusOptions}
       />
+      <LogoutButton />
     </div>
   );
 }
