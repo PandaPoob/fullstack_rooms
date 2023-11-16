@@ -1,5 +1,5 @@
 "use client";
-import { Form, Formik } from "formik";
+import { Field, FieldInputProps, Form, Formik } from "formik";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
@@ -7,10 +7,11 @@ import FirstNameInput from "./formInputs/FirstNameInput";
 import LastNameInput from "./formInputs/LastNameInput";
 import BirthdayInput from "./formInputs/BirthdayInput";
 import edituserschema from "@/app/_utils/validation/schemas/user-edit-schema";
-import { UserEdit } from "@/app/_models/user";
+import { UserEdit, UserEditForm } from "@/app/_models/user";
 import { useSession } from "next-auth/react";
 import StatusSelect from "./formInputs/StatusSelect";
 import { Status } from "@prisma/client";
+import AvatarFileInput from "./formInputs/AvatarFileInput";
 
 interface EditUserFormProps {
   profile: UserEdit;
@@ -20,11 +21,12 @@ interface EditUserFormProps {
 function EditUserForm(props: EditUserFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
   const { data: session, update } = useSession();
-  const [editValues, setEditValues] = useState<UserEdit>({
+  const [editValues, setEditValues] = useState<UserEditForm>({
     first_name: props.profile.first_name || "",
     last_name: props.profile.last_name || "",
     birthday: props.profile.birthday || "",
     status: props.profile.status || "",
+    avatar_img: "",
   });
 
   const clearError = () => {
@@ -39,18 +41,24 @@ function EditUserForm(props: EditUserFormProps) {
       <Formik
         initialValues={editValues}
         validationSchema={toFormikValidationSchema(edituserschema)}
-        onSubmit={async (values: UserEdit, actions) => {
+        onSubmit={async (values: UserEditForm, actions) => {
           actions.setSubmitting(true);
+
           if (session) {
-            console.log(values);
+            const formData = new FormData();
+            formData.append("first_name", values.first_name);
+            formData.append("last_name", values.last_name);
+            formData.append("birthday", values.birthday);
+            formData.append("status", values.status);
+            formData.append("avatar_img", values.avatar_img);
+
             setEditValues(values);
             const resp = await fetch(`/api/user/edit/${session.user.id}`, {
               method: "PUT",
               headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${session.token.sub}`,
               },
-              body: JSON.stringify(values),
+              body: formData,
             });
             if (resp.ok) {
               const data = await resp.json();
@@ -69,58 +77,66 @@ function EditUserForm(props: EditUserFormProps) {
           }
         }}
       >
-        {({ isSubmitting, errors, touched }) => (
-          <Form className="grid gap-3">
-            <FirstNameInput
-              error={errors.first_name}
-              touched={touched.first_name}
-            />
+        {({ isSubmitting, errors, touched, setFieldValue, isValid }) => {
+          return (
+            <Form className="grid gap-3">
+              <AvatarFileInput
+                setFieldValue={setFieldValue}
+                error={errors.avatar_img}
+                touched={touched.avatar_img}
+              />
 
-            <LastNameInput
-              error={errors.last_name}
-              touched={touched.last_name}
-            />
+              <FirstNameInput
+                error={errors.first_name}
+                touched={touched.first_name}
+              />
 
-            <BirthdayInput errors={errors} touched={touched} />
+              <LastNameInput
+                error={errors.last_name}
+                touched={touched.last_name}
+              />
 
-            <StatusSelect
-              options={props.statusOptions}
-              error={errors.status}
-              touched={touched.status}
-            />
+              <BirthdayInput errors={errors} touched={touched} />
 
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
-            >
-              {isSubmitting ? (
-                <svg
-                  className="animate-spin h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                <span>Save</span>
-              )}
-            </button>
-          </Form>
-        )}
+              <StatusSelect
+                options={props.statusOptions}
+                error={errors.status}
+                touched={touched.status}
+              />
+
+              <button
+                type="submit"
+                disabled={isSubmitting || !isValid}
+                className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
+              >
+                {isSubmitting ? (
+                  <svg
+                    className="animate-spin h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                ) : (
+                  <span>Save</span>
+                )}
+              </button>
+            </Form>
+          );
+        }}
       </Formik>
       <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </div>

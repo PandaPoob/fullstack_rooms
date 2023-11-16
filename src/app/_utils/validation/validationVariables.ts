@@ -15,3 +15,7 @@ export const dateFormat = /^\d{4}-\d{2}-\d{2}$/; //YYYY-MM-DD
 
 //AGE//
 export const minAge = 13;
+
+//FILE//
+export const maxFileSize = 500000;
+export const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];

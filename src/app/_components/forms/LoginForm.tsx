@@ -35,6 +35,7 @@ function LoginForm() {
             redirect: false,
           });
 
+          console.log(loginData);
           if (loginData?.error) {
             //next-auth bug, returns ok 200 even if error occurs
             setErrorMsg(loginData.error);

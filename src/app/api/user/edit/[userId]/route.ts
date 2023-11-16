@@ -5,6 +5,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { getToken } from "next-auth/jwt";
+import backendedituserschema from "@/app/_utils/validation/schemas/backend-user-edit-schema";
+import { UserEdit } from "@/app/_models/user";
 
 export async function PUT(
   req: NextRequest,
@@ -46,6 +48,7 @@ export async function PUT(
       );
     }
 
+    //with user id
     const user = await db.user.findUnique({
       where: {
         id: session.user.id as string,
@@ -61,9 +64,59 @@ export async function PUT(
       );
     }
 
-    const body = await req.json();
-    const { first_name, last_name, birthday, status } =
-      edituserschema.parse(body);
+    console.log(user);
+
+    const formDataToObject = (body: FormData): Record<string, unknown> => {
+      const object: Record<string, unknown> = {};
+      body.forEach((value: FormDataEntryValue, key: string) => {
+        object[key] = value;
+      });
+      return object;
+    };
+
+    const body = await req.formData();
+    const bodyObject = formDataToObject(body);
+
+    const { first_name, last_name, birthday, status, avatar_img } =
+      await backendedituserschema.parseAsync(bodyObject);
+
+    if (avatar_img) {
+      const formData = new FormData();
+      formData.append("file", avatar_img);
+      formData.append("upload_preset", "fullstack-rooms");
+      //validate magic type
+
+      const resp = await fetch(
+        "https://api.cloudinary.com/v1_1/dceom4kf4/image/upload",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (!resp.ok) {
+        return NextResponse.json(
+          {
+            msg: "An error occurred regarding image upload",
+          },
+          { status: 500 }
+        );
+      }
+      const data = await resp.json();
+      //if image is small
+
+      let newImageUrl;
+      const url = data.secure_url.split("upload/");
+
+      if (data.width < 400 || data.height < 400) {
+        newImageUrl = `${url[0]}upload/w_400,h_400,c_scale/${url[1]}`;
+      } else if (data.width > 400 || data.height > 400) {
+        newImageUrl = `${url[0]}upload/w_400,h_400,c_crop/${url[1]}`;
+      } else if (data.width === 400 && data.height === 400) {
+        newImageUrl = data.secure_url;
+      }
+    }
+
+    //if there is new image update image
 
     const updates: { [key: string]: any } = {};
 
@@ -93,6 +146,8 @@ export async function PUT(
       );
     }
 
+    //updated at
+
     const updatedUser = await db.user.update({
       where: { id: user.id },
       data: updates,
@@ -103,7 +158,29 @@ export async function PUT(
         status: updates.status ? true : false,
       },
     });
+    //if old image is no default delete old image
 
+    /*     const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy`;
+
+    const publicId = "your_image_public_id";
+
+    fetch(`${cloudinaryUrl}/${publicId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Basic ${btoa(`${apiKey}:${apiSecret}`)}`, // Replace with your API key and secret
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Image deleted successfully");
+        } else {
+          console.error("Failed to delete image");
+        }
+      })
+      .catch((error) => {
+        console.error("Error deleting image:", error);
+      });
+ */
     const sessionUpdates: { [key: string]: any } = {};
 
     // Conditionally add first_name and last_name if they exist on updatedUser

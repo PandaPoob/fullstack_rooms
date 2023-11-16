@@ -15,8 +15,8 @@ async function getData(id: string) {
         last_name: true,
         birthday: true,
         status: true,
-        avatar_img: true,
         id: true,
+        avatar: true,
       },
     });
     if (!profile) {

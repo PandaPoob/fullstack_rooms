@@ -25,6 +25,10 @@ export const authOptions: NextAuthOptions = {
         //check email
         const existingUser = await db.user.findUnique({
           where: { email: credentials?.email },
+          include: {
+            avatar: true,
+            status: true,
+          },
         });
 
         if (!existingUser) {
@@ -44,11 +48,16 @@ export const authOptions: NextAuthOptions = {
         if (!existingUser.email_verified_at) {
           throw new Error("Email not verified");
         }
+
+        const url = existingUser.avatar?.formattedUrl;
+
         return {
           id: existingUser.id,
           email: existingUser.email,
           first_name: existingUser.first_name,
           last_name: existingUser.last_name,
+          image: url,
+          status: existingUser.status.title,
         };
       },
     }),
@@ -72,6 +81,7 @@ export const authOptions: NextAuthOptions = {
           id: user.id,
           first_name: user.first_name,
           last_name: user.last_name,
+          status: user.status,
         };
       }
       return token;
@@ -87,6 +97,7 @@ export const authOptions: NextAuthOptions = {
           id: token.id,
           first_name: token.first_name,
           last_name: token.last_name,
+          status: token.status,
         },
         token,
       };
