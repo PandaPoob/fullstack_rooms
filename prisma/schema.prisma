@@ -51,7 +51,12 @@ model Status {
   users               User[]      //one to many 
 }
 
- 
+ model Avatar {
+  id                  String      @default(cuid()) @id
+  formattedUrl        String      
+  cloudinaryPublicId  String      
+  user                User?       @relation("UserAvatar")
+}
 
 model User { 
   id                  String      @default(cuid()) @id 
@@ -63,13 +68,17 @@ model User {
   updated_at          DateTime    @default(now())
   password            String 
   birthday            String 
-  avatar_img          String     @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1699872613/default_avatar_kdobv7.png")
+  avatar              Avatar?     @relation("UserAvatar", fields: [avatarId], references: [id])
+  avatarId            String?     @unique
   status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
   participants        Participant[]  //defining opposite relation 
   @@map(name: "users") 
 }
+
+
+
 model NotesWidget {
   id                  String       @default(cuid()) @id
   room_fk             String

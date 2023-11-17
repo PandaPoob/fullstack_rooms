@@ -94,7 +94,7 @@ export async function POST(req: Request) {
 </html>`,
     };
 
-//send email
+    //send email
     const res = await sendEmail(emailData);
 
     if (res.status !== 200) {
@@ -105,11 +105,11 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-    
+
     //SUCCESS
     return NextResponse.json(
       {
-        user: newUser,
+        user: newUser.first_name + " " + newUser.last_name,
         msg: "Succesfully created new user",
       },
       { status: 201 }
