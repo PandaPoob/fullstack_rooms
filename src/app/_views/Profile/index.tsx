@@ -1,10 +1,10 @@
 import { UserEdit } from "@/app/_models/user";
 import { Status } from "@prisma/client";
 import { User } from "next-auth";
-import Image from "next/image";
 import ProfileSettingsMenu from "./ProfileSettingsMenu";
 import LogoutButton from "@/app/_components/LogoutButton";
 import EditUserForm from "@/app/_components/forms/EditUserForm";
+import ProfileInfoBanner from "./ProfileInfoBanner";
 
 interface Profileprops {
   profile: UserEdit;
@@ -18,29 +18,7 @@ function ProfileView(props: Profileprops) {
       <h2 className="text-h2 mb-7 md:mt-7">Profile settings</h2>
       <div className="lg:flex lg:gap-2">
         <div className="bg-dark rounded-xl lg:w-[30%] xl:w-1/4 xxl:w-1/5 lg:min-h-[calc(100vh-7.5rem)] flex flex-col">
-          <div className="p-6 flex gap-4 items-center">
-            <div className="relative min-w-[4rem] h-full min-h-[4rem] overflow-hidden rounded-full">
-              <Image
-                src={
-                  props.session.image
-                    ? props.session.image
-                    : "/default_avatar.png"
-                }
-                alt={"avatar picture"}
-                style={{ objectFit: "cover" }}
-                fill={true}
-                className="filter group-hover:brightness-90 transition"
-              />
-            </div>
-            <div>
-              <h3 className="text-h5">
-                {props.session.first_name} {props.session.last_name}
-              </h3>
-              <span className="text-xs text-secondary">
-                {props.session.email}
-              </span>
-            </div>
-          </div>
+          <ProfileInfoBanner />
 
           <div className="lg:hidden">
             <ProfileSettingsMenu

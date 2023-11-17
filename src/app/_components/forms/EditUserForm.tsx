@@ -12,7 +12,6 @@ import { useSession } from "next-auth/react";
 import StatusSelect from "./formInputs/StatusSelect";
 import { Status } from "@prisma/client";
 import AvatarFileInput from "./formInputs/AvatarFileInput";
-import Image from "next/image";
 
 interface EditUserFormProps {
   profile: UserEdit;
@@ -36,17 +35,7 @@ function EditUserForm(props: EditUserFormProps) {
 
   return (
     <div>
-      <div>
-        {session?.user.first_name} {session?.user.last_name}{" "}
-        {session?.user.status}
-        <Image
-          src={session?.user.image ? session.user.image : "/default_avatar.png"}
-          alt={"avatar picture"}
-          width={100}
-          height={100}
-          className="filter group-hover:brightness-90 transition"
-        />
-      </div>
+      <h2 className="text-h3 font-medium">Edit profile</h2>
       <Formik
         initialValues={editValues}
         validationSchema={toFormikValidationSchema(edituserschema)}
@@ -82,13 +71,24 @@ function EditUserForm(props: EditUserFormProps) {
           }
         }}
       >
-        {({ isSubmitting, errors, touched, setFieldValue, isValid }) => {
+        {({
+          isSubmitting,
+          errors,
+          touched,
+          setFieldValue,
+          isValid,
+          setFieldTouched,
+          isValidating,
+        }) => {
           return (
             <Form className="grid gap-3">
               <AvatarFileInput
                 setFieldValue={setFieldValue}
+                setFieldTouched={setFieldTouched}
                 error={errors.avatar_img}
                 touched={touched.avatar_img}
+                sessionUser={session?.user}
+                isValidating={isValidating}
               />
 
               <FirstNameInput
