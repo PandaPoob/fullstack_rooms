@@ -22,6 +22,7 @@ const config: Config = {
       secondary: "#8B9093", //light grey
       white: "#E9E9E9",
       darkGrey: "#8F8F8F", //dark grey, not oficially in figma yet
+      dark: "#161616", //not in figma
       link: "#4496F6", //blue
       success: "#77B184", //green
       warning: "#E85959", //red

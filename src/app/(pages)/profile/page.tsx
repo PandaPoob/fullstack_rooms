@@ -52,7 +52,11 @@ async function ProfilePage() {
   const data = await getData(session.user.id as string);
   return (
     data && (
-      <ProfileView profile={data?.cleanProfile} statusOptions={data.status} />
+      <ProfileView
+        profile={data?.cleanProfile}
+        statusOptions={data.status}
+        session={session.user}
+      />
     )
   );
 }
