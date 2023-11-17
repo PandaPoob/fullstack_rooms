@@ -51,7 +51,7 @@ function ProfileView(props: Profileprops) {
           </div>
         </div>
 
-        <div className="hidden lg:block lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7">
+        <div className="hidden lg:block lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7 xxl:px-14">
           <EditUserForm
             profile={props.profile}
             statusOptions={props.statusOptions}

@@ -34,3 +34,8 @@ select {
   -webkit-appearance: none;
   appearance: none;
 }
+
+select,
+select option {
+  font-family: var(--body-font);
+}

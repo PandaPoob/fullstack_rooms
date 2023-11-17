@@ -33,6 +33,9 @@ const config: Config = {
         "btn-gradient":
           "linear-gradient(90deg, rgba(85, 85, 97, 0.60) 0%, #2F2F33 90%)",
       },
+      fontFamily: {
+        body: "var(--body-font)",
+      },
       fontSize: {
         "2xl": [
           "1.5rem",

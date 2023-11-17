@@ -17,7 +17,7 @@ const gotham = localFont({
       weight: "500",
     },
   ],
-
+  variable: "--body-font",
   display: "swap",
 });
 
@@ -29,8 +29,8 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   return (
-    <html lang="en">
-      <body className={gotham.className}>
+    <html lang="en" className={`${gotham.variable}`}>
+      <body className={"font-body"}>
         <Provider>
           <BaseLayout session={session ? true : false}>{children}</BaseLayout>
         </Provider>

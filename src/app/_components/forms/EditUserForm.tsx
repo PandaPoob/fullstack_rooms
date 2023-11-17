@@ -35,7 +35,7 @@ function EditUserForm(props: EditUserFormProps) {
 
   return (
     <div>
-      <h2 className="text-h3 font-medium">Edit profile</h2>
+      <h2 className="text-h3 font-medium hidden lg:block">Edit profile</h2>
       <Formik
         initialValues={editValues}
         validationSchema={toFormikValidationSchema(edituserschema)}
@@ -81,7 +81,7 @@ function EditUserForm(props: EditUserFormProps) {
           isValidating,
         }) => {
           return (
-            <Form className="grid gap-3">
+            <Form className="grid gap-3 xxl:px-20">
               <AvatarFileInput
                 setFieldValue={setFieldValue}
                 setFieldTouched={setFieldTouched}
@@ -90,25 +90,27 @@ function EditUserForm(props: EditUserFormProps) {
                 sessionUser={session?.user}
                 isValidating={isValidating}
               />
+              <div className="xxl:grid xxl:grid-cols-2 xxl:gap-4">
+                <FirstNameInput
+                  error={errors.first_name}
+                  touched={touched.first_name}
+                />
 
-              <FirstNameInput
-                error={errors.first_name}
-                touched={touched.first_name}
-              />
+                <LastNameInput
+                  error={errors.last_name}
+                  touched={touched.last_name}
+                />
+              </div>
+              <div className="xxl:grid xxl:grid-cols-2 xxl:gap-4">
+                <BirthdayInput errors={errors} touched={touched} />
 
-              <LastNameInput
-                error={errors.last_name}
-                touched={touched.last_name}
-              />
-
-              <BirthdayInput errors={errors} touched={touched} />
-
-              <StatusSelect
-                options={props.statusOptions}
-                error={errors.status}
-                touched={touched.status}
-              />
-
+                <StatusSelect
+                  setFieldValue={setFieldValue}
+                  options={props.statusOptions}
+                  error={errors.status}
+                  touched={touched.status}
+                />
+              </div>
               <button
                 type="submit"
                 disabled={isSubmitting || !isValid}

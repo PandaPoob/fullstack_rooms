@@ -40,7 +40,11 @@ function ProfileSettingsMenu(props: ProfileSettingsMenuProps) {
       </ul>
       {isOpen && (
         <div className="absolute top-0 left-0 h-0 min-h-screen z-10 bg-bg_black w-full px-6 md:w-[calc(100%-7.5rem)] md:ml-[7.5rem]">
-          <button onClick={() => setIsOpen(false)}>go back</button>
+          <div className="flex gap-2 text-h4 mt-4">
+            <button onClick={() => setIsOpen(false)}>Settings</button>
+            <span>/</span>
+            <button className="font-medium">Edit profile</button>
+          </div>
           <EditUserForm
             profile={props.profile}
             statusOptions={props.statusOptions}
