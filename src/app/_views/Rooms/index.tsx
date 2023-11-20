@@ -1,15 +1,13 @@
-import { Room } from "@prisma/client";
 import RoomsList from "./RoomsList";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { User } from "next-auth";
 
 interface RoomsProps {
-  data: { userRooms: Room[] };
   sessionUser: User;
 }
 
 function Rooms(props: RoomsProps) {
-  const { data, sessionUser } = props;
+  const { sessionUser } = props;
 
   return (
     <div>
@@ -24,7 +22,7 @@ function Rooms(props: RoomsProps) {
           dashboard
         </h1>
 
-        <RoomsList rooms={data.userRooms} />
+        <RoomsList />
       </div>
     </div>
   );
