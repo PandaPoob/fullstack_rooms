@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
 function RoomsList() {
+  //@TODO add favorite rooms
   const [rooms, setRooms] = useState([]);
   const { data: session } = useSession();
 

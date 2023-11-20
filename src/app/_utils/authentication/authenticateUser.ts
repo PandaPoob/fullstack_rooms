@@ -5,9 +5,8 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 
 export async function authenticateUser(userId: string, req: NextRequest) {
-  //to use this:
-  //-userid from params
-  //-token from headers authorization
+  //to use this: userid from params, token from headers authorization
+
   const secret = process.env.SECRET;
   const token = await getToken({ req: req, secret: secret, raw: true });
 
