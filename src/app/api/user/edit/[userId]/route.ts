@@ -1,68 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
-import { getToken } from "next-auth/jwt";
 import backendedituserschema from "@/app/_utils/validation/schemas/backend-user-edit-schema";
 import generateSignature from "@/app/_utils/helpers/cloudinary";
+import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
+import { NextApiResponse } from "next";
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: { userId: string } },
+  res: NextApiResponse
 ) {
   try {
     const { userId } = params;
 
-    const secret = process.env.SECRET;
-    const token = await getToken({ req: req, secret: secret, raw: true });
+    const resp = await authenticateUser(userId, req);
 
-    if (!token) {
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
       return NextResponse.json(
         {
-          msg: "Unauthorized - Invalid token",
+          msg: msg,
         },
-        { status: 401 }
+        { status: resp.status }
       );
     }
-    // Validate user ID from URL
-    if (token !== userId) {
-      return NextResponse.json(
-        {
-          msg: "Forbidden - User ID mismatch",
-        },
-        { status: 403 }
-      );
-    }
-
-    // Validate server-side session
-    const session = await getServerSession(authOptions);
-    if (!session || session.user.id !== userId) {
-      return NextResponse.json(
-        {
-          msg: "Forbidden - Session mismatch",
-        },
-        { status: 403 }
-      );
-    }
-
-    //with user id
-    const user = await db.user.findUnique({
-      where: {
-        id: session.user.id as string,
-      },
-      include: {
-        avatar: true,
-      },
-    });
+    const { user } = resp.data;
 
     if (!user) {
-      return NextResponse.json(
-        {
-          msg: "User not found",
-        },
-        { status: 404 }
-      );
+      return NextResponse.json({ msg: "User not found", status: 404 });
     }
 
     const formDataToObject = (body: FormData): Record<string, unknown> => {

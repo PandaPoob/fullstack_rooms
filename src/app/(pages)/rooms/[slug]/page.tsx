@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
 import { Participant } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 async function updateVisitedAt(participant: Participant) {
   try {
@@ -15,6 +16,8 @@ async function updateVisitedAt(participant: Participant) {
         visited_at: new Date().toISOString(),
       },
     });
+
+    revalidatePath("/rooms");
   } catch (error) {
     console.error("Error updating visited_at:", error);
   }
