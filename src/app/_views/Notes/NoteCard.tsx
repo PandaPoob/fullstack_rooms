@@ -2,13 +2,14 @@ import { NoteWidget } from "@prisma/client";
 import { NoteItem } from "@prisma/client";
 import Link from "next/link";
 
-function NoteCard({ id, created_at, title, text }: NoteItem) {
+function NoteCard(props: NoteItem) {
+  console.log("props", props);
   // Wrap article in link
 
   return (
-    <article className="h-42 w-60 bg-primary rounded-lg p-2">
+    <article className="w-68 bg-primary rounded-lg p-2">
       <div className="flex justify-between">
-        <p className="text-xs mt-[1rem] text-white ">{created_at}</p>
+        {/* <p className="text-xs mt-[1rem] text-white ">{props.created_at}</p> */}
         <button className="text-xs text-secondary">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -24,10 +25,9 @@ function NoteCard({ id, created_at, title, text }: NoteItem) {
         </button>
       </div>
       <div>
-        <h2 className="mt-4 text-xl font-bold text-white">{title}</h2>
-        <p className="text-secondary text-sm mt-2">{text}</p>
+        <h2 className="mt-4 text-xl font-bold text-white">{props.title}</h2>
+        <p className="text-secondary text-sm mt-2">{props.text}</p>
       </div>
-      <div className="h-[0.1rem] w-54 bg-secondary mt-8 mb-2 rounded-lg"></div>
     </article>
   );
 }
