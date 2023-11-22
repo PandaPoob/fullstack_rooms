@@ -1,13 +1,14 @@
 import { NoteWidget } from "@prisma/client";
 import { NoteItem } from "@prisma/client";
+import Link from "next/link";
 
-function NoteCard({ title, text, created_at, id }: NoteItem) {
-// Wrap article in link 
+function NoteCard({ id, created_at, title, text }: NoteItem) {
+  // Wrap article in link
 
   return (
     <article className="h-42 w-60 bg-primary rounded-lg p-2">
       <div className="flex justify-between">
-        <p className="text-xs mt-[1rem] text-white ">March 25, 2023</p>
+        <p className="text-xs mt-[1rem] text-white ">{created_at}</p>
         <button className="text-xs text-secondary">
           <svg
             xmlns="http://www.w3.org/2000/svg"

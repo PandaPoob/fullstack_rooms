@@ -1,9 +1,17 @@
-import { NoteWidget } from "@prisma/client";
 import { NoteItem } from "@prisma/client";
+import { NoteCard } from "../Notes/NoteCard";
 
-function NoteList() {
+interface NoteProps {
+  notes: NoteItem[];
+}
+
+function NoteList({ notes }: NoteProps) {
   return (
-    <div>This is where the content of the Note Card should be displayed</div>
+    <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
+      {notes.map((note) => (
+        <NoteCard key={note.id} {...note} />
+      ))}
+    </div>
   );
 }
 export default NoteList;
