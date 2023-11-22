@@ -94,14 +94,22 @@ export async function POST(req: Request) {
 </html>`,
     };
 
-    sendEmail(emailData);
-
     //send email
+    const res = await sendEmail(emailData);
+
+    if (res.status !== 200) {
+      return NextResponse.json(
+        {
+          msg: "Internal server error, email not sent",
+        },
+        { status: 500 }
+      );
+    }
 
     //SUCCESS
     return NextResponse.json(
       {
-        user: newUser,
+        user: newUser.first_name + " " + newUser.last_name,
         msg: "Succesfully created new user",
       },
       { status: 201 }

@@ -1,5 +1,4 @@
 import { EmailData } from "@/app/_models/email";
-import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
 export async function sendEmail(emailData: EmailData) {
@@ -18,14 +17,23 @@ export async function sendEmail(emailData: EmailData) {
       subject: emailData.subject,
       html: emailData.html,
     };
-
-    await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully");
+    await new Promise((resolve, reject) => {
+      // send mail
+      transporter.sendMail(mailOptions, (err, info) => {
+          if (err) {
+              console.error(err);
+              reject(err);
+          } else {
+              console.log(info);
+              resolve(info);
+          }
+      });
+  });
+    return { status: 200 }
+    
   } catch (error) {
     console.error("Error sending email:", error);
-    return NextResponse.json(
-      { error: "Failed to send email" },
-      { status: 500 }
-    );
+      return { status: 500 }
+
   }
 }
