@@ -4,18 +4,14 @@ import NoteCard from "../Notes/NoteCard";
 import NoteList from "../Notes/NoteList";
 import Link from "next/link";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
+import { Notes } from "@/app/_models/notes";
 
 interface NoteProps {
   notes: Notes;
   sessionUser: User;
 }
 
-interface Notes {
-  id: string;
-  room_fk: string;
-  updated_at: Date;
-  noteItem: NoteItem[];
-}
+
 
 function NoteView(props: NoteProps) {
   return (
