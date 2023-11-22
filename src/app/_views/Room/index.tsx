@@ -1,17 +1,25 @@
 import { User } from "next-auth";
-import { Room } from "@prisma/client";
+import { NoteItem, NoteWidget, Room } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
+import Link from "next/link";
+import NoteCard from "../Notes/NoteCard";
 
 interface Roomprops {
   room: Room;
+  notes: NoteItem;
   sessionUser: User;
 }
 
 function RoomView(props: Roomprops) {
+  // rooms/id/notes/note_widget_fk
   return (
     <div>
       <DigitalClock title={`Welcome, ${props.room.title}`} />
-      <div>content here</div>
+      <div>Dashboard content here</div>
+      <Link href={`/notes/${props.notes.id}`}>
+        {" "}
+        <NoteCard />
+      </Link>
     </div>
   );
 }

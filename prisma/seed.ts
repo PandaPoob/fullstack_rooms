@@ -17,7 +17,7 @@ async function main() {
   });
   const hashedPassword = await hash("Pw12345678", 10);
   const currentDate = new Date();
-  const isoDateString = currentDate.toISOString();
+  // const isoDateString = currentDate.toISOString();
 
   //USERS
   const user1 = await prisma.user.create({
@@ -25,7 +25,7 @@ async function main() {
       first_name: "Freja",
       last_name: "Smith",
       email: "freja@mail.com",
-      email_verified_at: isoDateString,
+      // email_verified_at: isoDateString,
       password: hashedPassword,
       birthday: "1998-11-30",
       status: { connect: { id: defaultStatus?.id } },
@@ -36,7 +36,7 @@ async function main() {
       first_name: "Freddy",
       last_name: "Frog",
       email: "fred@mail.com",
-      email_verified_at: isoDateString,
+      // email_verified_at: isoDateString,
       password: hashedPassword,
       birthday: "1997-11-10",
       status: { connect: { id: defaultStatus?.id } },
@@ -47,7 +47,7 @@ async function main() {
       first_name: "Cleo",
       last_name: "Zalli",
       email: "cleo@mail.com",
-      email_verified_at: isoDateString,
+      // email_verified_at: isoDateString,
       password: hashedPassword,
       birthday: "1998-11-30",
       status: { connect: { id: defaultStatus?.id } },

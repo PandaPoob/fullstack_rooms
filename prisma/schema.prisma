@@ -1,56 +1,44 @@
-// schema.prisma 
+generator client {
+  provider = "prisma-client-js"
+}
 
- 
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
 
-generator client { 
-  provider = "prisma-client-js" 
-} 
+model Room {
+  id           String      @default(cuid()) @id
+  title        String
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+  admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
+  admin_fk     String
+  location     String?
+  participants Participant[]   // Define the many-to-many relationship
+  cover_img    String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
+  noteWidget   NoteWidget?
+}
 
- 
-
-datasource db { 
-  provider = "postgresql" 
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling 
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection 
-} 
-
- 
-
-model Room { 
-  id                  String      @default(cuid()) @id 
-  title               String 
-  created_at          DateTime    @default(now())
-  updated_at          DateTime    @default(now())
-  admin               User   @relation(fields: [admin_fk], references: [id]) //one to one 
-  admin_fk            String 
-  location            String? 
-  participants        Participant[]   // Define the many-to-many relationship
-  cover_img           String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
-} 
-
-
-
-model Participant { 
-  id            String     @default(cuid()) @id 
-  user          User       @relation(fields: [user_id], references: [id]) 
-  user_id       String 
-  room          Room       @relation(fields: [room_id], references: [id]) 
-  room_id       String 
-  is_favourited Boolean 
+model Participant {
+  id            String     @default(cuid()) @id
+  user          User       @relation(fields: [user_id], references: [id])
+  user_id       String
+  room          Room       @relation(fields: [room_id], references: [id])
+  room_id       String
+  is_favourited Boolean
   created_at    DateTime  @default(now())
   visited_at    DateTime  @default(now())
 
-  @@unique([user_id, room_id]) // Ensure each user is in a room only once 
-} 
-
- 
-
-model Status { 
-  id                  String      @default(cuid()) @id 
-  title               String      @unique 
-  users               User[]      //one to many 
+  @@unique([user_id, room_id]) // Ensure each user is in a room only once
 }
 
+model Status {
+  id    String      @default(cuid()) @id
+  title String      @unique
+  users User[]      // one to many
+}
  model Avatar {
   id                  String      @default(cuid()) @id
   formattedUrl        String      
@@ -58,12 +46,12 @@ model Status {
   user                User?       @relation("UserAvatar")
 }
 
-model User { 
-  id                  String      @default(cuid()) @id 
-  first_name          String     
-  last_name           String 
-  email               String      @unique 
-  email_verified_at   DateTime? 
+model User {
+  id                  String      @default(cuid()) @id
+  first_name          String
+  last_name           String
+  email               String      @unique
+  email_verified_at   DateTime?
   created_at          DateTime    @default(now())
   updated_at          DateTime    @default(now())
   password            String 
@@ -85,10 +73,21 @@ model NotesWidget {
   updated_at          String
 }
 
-model NotesItems {
+model NoteWidget {
+  id                  String       @default(cuid()) @id
+  room                Room         @relation(fields: [room_fk], references: [id])
+  room_fk             String       @unique
+  updated_at          DateTime   // Change to DateTime
+  noteItem            NoteItem[]
+}
+
+model NoteItem {
   id                String         @default(cuid()) @id
   title             String
-  text              String          
-  created_at        DateTime?       @default(now())
-  updated_at        DateTime?       @default(now())
+  text              String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @default(now())
+  note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
+  note_widget_fk    String         
 }
+
