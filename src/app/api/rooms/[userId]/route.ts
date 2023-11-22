@@ -94,3 +94,25 @@ export async function GET(
     );
   }
 }
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+){
+  try {
+    //authenticate user
+    //validate data
+
+    //create room
+    //create avatar (if any)
+    //create participants
+    //create widgets
+    ////note widget
+    ////task widget
+
+  } catch (error){
+    console.error(error)
+
+  }
+
+}
