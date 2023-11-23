@@ -24,6 +24,7 @@ async function updateVisitedAt(participant: Participant) {
 }
 
 async function getData(params: { slug: string }) {
+  //@todo validate that user cannot see other rooms
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/");
@@ -42,9 +43,20 @@ async function getData(params: { slug: string }) {
         },
       },
     });
+
     if (!room) {
       redirect("/error");
     }
+
+    // Fetch data for NoteWidget and NoteItem
+    const notes = await db.noteWidget.findUnique({
+      where: {
+        room_fk: room.id,
+      },
+      include: {
+        noteItem: true,
+      },
+    });
 
     const participant = await db.participant.findFirst({
       where: {
@@ -61,14 +73,25 @@ async function getData(params: { slug: string }) {
     const data = {
       room,
       session,
+      note: notes?.noteItem[0],
     };
+
     return data;
   }
 }
 
 async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
-  return data && <RoomView room={data.room} sessionUser={data.session.user} />;
+
+  return (
+    data && (
+      <RoomView
+        room={data.room}
+        note={data.note}
+        sessionUser={data.session.user}
+      />
+    )
+  );
 }
 
 export default RoomPage;

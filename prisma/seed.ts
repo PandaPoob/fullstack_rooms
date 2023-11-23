@@ -69,6 +69,26 @@ async function main() {
     },
   });
 
+  const noteWidget1 = await prisma.noteWidget.create({
+    data: {
+      room: { connect: { id: room1.id } },
+    },
+  });
+
+  const noteWidget2 = await prisma.noteWidget.create({
+    data: {
+      room: { connect: { id: room2.id } },
+    },
+  });
+
+  const noteItem = await prisma.noteItem.create({
+    data: {
+      title: "Walk the dog",
+      text: "When walking the dog remember doggie bags",
+      note_widget: { connect: { id: noteWidget1.id } },
+    },
+  });
+
   //PARTICIPANTS
   // Connect user1 to both rooms
   await prisma.participant.create({
