@@ -8,8 +8,6 @@ interface NoteListProps {
 }
 
 function NoteList({ notes, roomId }: NoteListProps) {
-  //@TODO add correct href
-
   return (
     <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
       {notes.length === 0 ? (
