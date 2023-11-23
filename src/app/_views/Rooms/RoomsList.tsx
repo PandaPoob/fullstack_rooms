@@ -11,7 +11,7 @@ function RoomsList() {
 
   useEffect(() => {
     async function getRooms() {
-      const resp = await fetch(`/api/rooms/${session!.user.id}`, {
+      const resp = await fetch(`/api/rooms?userId=${session!.user.id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${session!.token.sub}`,

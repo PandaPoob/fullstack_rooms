@@ -6,13 +6,15 @@ import generateSignature from "@/app/_utils/helpers/cloudinary";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import { NextApiResponse } from "next";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { userId: string } },
-  res: NextApiResponse
-) {
+export async function PUT(req: NextRequest, res: NextApiResponse) {
   try {
-    const { userId } = params;
+    const userId = req.nextUrl.searchParams.get("userId");
+    if (!userId) {
+      return NextResponse.json({
+        msg: "Required params not valid",
+        status: 400,
+      });
+    }
 
     const resp = await authenticateUser(userId, req);
 

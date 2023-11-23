@@ -3,12 +3,16 @@ import { db } from "@/lib/prisma-client";
 import { Room } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+export async function GET(req: NextRequest) {
   try {
-    const { userId } = params;
+    const userId = req.nextUrl.searchParams.get("userId");
+    if (!userId) {
+      return NextResponse.json({
+        msg: "Required params not valid",
+        status: 400,
+      });
+    }
+
     const resp = await authenticateUser(userId, req);
 
     if (resp.status !== 200) {
@@ -98,21 +102,17 @@ export async function GET(
 export async function POST(
   req: NextRequest,
   { params }: { params: { userId: string } }
-){
+) {
   try {
     //authenticate user
     //validate data
-
     //create room
     //create avatar (if any)
     //create participants
     //create widgets
     ////note widget
     ////task widget
-
-  } catch (error){
-    console.error(error)
-
+  } catch (error) {
+    console.error(error);
   }
-
 }
