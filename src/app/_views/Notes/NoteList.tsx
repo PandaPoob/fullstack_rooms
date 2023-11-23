@@ -1,24 +1,26 @@
-import { NoteItem, NoteWidget } from "@prisma/client";
+import { NoteItem } from "@prisma/client";
 import NoteCard from "./NoteCard";
+import Link from "next/link";
 
-interface NoteProps {
-  notes: Notes;
+interface NoteListProps {
+  notes: NoteItem[];
+  roomId: string;
 }
 
-interface Notes {
-  id: string;
-  room_fk: string;
-  updated_at: Date;
-  noteItem: NoteItem[];
-}
+function NoteList({ notes, roomId }: NoteListProps) {
+  //@TODO add correct href
 
-function NoteList({ notes }: NoteProps) {
   return (
     <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
-      {notes.noteItem.map((note) => (
-        // <p>{note.title}</p>
-        <NoteCard key={note.id} {...note} />
-      ))}
+      {notes.length === 0 ? (
+        <div>no notes</div>
+      ) : (
+        notes.map((note) => (
+          <Link key={note.id} href={`/rooms/${roomId}/notes/${note.id}`}>
+            <NoteCard {...note} />
+          </Link>
+        ))
+      )}
     </div>
   );
 }

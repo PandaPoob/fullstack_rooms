@@ -66,18 +66,10 @@ model User {
 }
 
 
-
-model NotesWidget {
-  id                  String       @default(cuid()) @id
-  room_fk             String
-  updated_at          String
-}
-
 model NoteWidget {
   id                  String       @default(cuid()) @id
   room                Room         @relation(fields: [room_fk], references: [id])
   room_fk             String       @unique
-  updated_at          DateTime   // Change to DateTime
   noteItem            NoteItem[]
 }
 

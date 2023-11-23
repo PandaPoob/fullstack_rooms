@@ -1,11 +1,6 @@
-import { NoteWidget } from "@prisma/client";
 import { NoteItem } from "@prisma/client";
-import Link from "next/link";
 
 function NoteCard(props: NoteItem) {
-  console.log("props", props);
-  // Wrap article in link
-
   return (
     <article className="w-68 bg-primary rounded-lg p-2">
       <div className="flex justify-between">

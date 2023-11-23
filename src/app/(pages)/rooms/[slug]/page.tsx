@@ -3,9 +3,6 @@ import { db } from "@/lib/prisma-client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
-import { NoteItem } from "@prisma/client";
-import { NoteWidget } from "@prisma/client";
-import NoteCard from "@/app/_views/Notes/NoteCard";
 import { Participant } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -27,6 +24,7 @@ async function updateVisitedAt(participant: Participant) {
 }
 
 async function getData(params: { slug: string }) {
+  //@todo validate that user cannot see other rooms
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/");
@@ -75,7 +73,7 @@ async function getData(params: { slug: string }) {
     const data = {
       room,
       session,
-      notes,
+      note: notes?.noteItem[0],
     };
 
     return data;
@@ -85,16 +83,13 @@ async function getData(params: { slug: string }) {
 async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
 
-  // Render RoomView, NoteWidget, and NoteItems
   return (
     data && (
-      <>
-        <RoomView
-          room={data.room}
-          notes={data.notes}
-          sessionUser={data.session.user}
-        />
-      </>
+      <RoomView
+        room={data.room}
+        note={data.note}
+        sessionUser={data.session.user}
+      />
     )
   );
 }
