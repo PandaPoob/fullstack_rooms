@@ -15,11 +15,32 @@ model Room {
   updated_at   DateTime    @default(now())
   admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
   admin_fk     String
-  location     String?
+  location     Location?   @relation(fields: [locationId], references: [id])
+  locationId   String?
   participants Participant[]   // Define the many-to-many relationship
-  cover_img    String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
-  noteWidget   NoteWidget?
+  cover        Cover?       @relation("RoomCover", fields: [coverId], references: [id])
+  coverId      String?      @unique
+  noteWidget   NoteWidget?  
 }
+ model Cover {
+  id                  String      @default(cuid()) @id
+  formattedUrl        String      
+  cloudinaryPublicId  String      
+  room                Room?       @relation("RoomCover")
+}
+
+model Location {
+  id            String            @default(cuid()) @unique 
+  latitude      Float
+  longitude     Float
+  country       String?
+  city          String?
+  state         String?
+  rooms         Room[]
+
+  @@id([latitude, longitude])
+}
+
 
 model Participant {
   id            String     @default(cuid()) @id
@@ -34,17 +55,6 @@ model Participant {
   @@unique([user_id, room_id]) // Ensure each user is in a room only once
 }
 
-model Status {
-  id    String      @default(cuid()) @id
-  title String      @unique
-  users User[]      // one to many
-}
- model Avatar {
-  id                  String      @default(cuid()) @id
-  formattedUrl        String      
-  cloudinaryPublicId  String      
-  user                User?       @relation("UserAvatar")
-}
 
 model User {
   id                  String      @default(cuid()) @id
@@ -63,6 +73,17 @@ model User {
   rooms               Room[]     //many-to-many 
   participants        Participant[]  //defining opposite relation 
   @@map(name: "users") 
+}
+model Status {
+  id    String      @default(cuid()) @id
+  title String      @unique
+  users User[]      // one to many
+}
+ model Avatar {
+  id                  String      @default(cuid()) @id
+  formattedUrl        String      
+  cloudinaryPublicId  String      
+  user                User?       @relation("UserAvatar")
 }
 
 

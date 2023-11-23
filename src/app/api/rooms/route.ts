@@ -40,14 +40,9 @@ export async function GET(req: NextRequest) {
           },
         },
       },
-      select: {
-        id: true,
-        title: true,
-        created_at: true,
-        updated_at: true,
-        admin_fk: true,
+      include: {
         location: true,
-        cover_img: true,
+        cover: true,
         participants: {
           select: {
             visited_at: true,
@@ -99,13 +94,11 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { userId: string } }
-) {
+export async function POST(req: NextRequest) {
   try {
     //authenticate user
     //validate data
+    //data: title, cover img
     //create room
     //create avatar (if any)
     //create participants

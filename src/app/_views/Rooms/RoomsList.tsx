@@ -28,7 +28,6 @@ function RoomsList() {
       getRooms();
     }
   }, [session]);
-
   return (
     <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
       {rooms.length !== 0 &&
