@@ -6,15 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     //Validate user
-    const userId = req.nextUrl.searchParams.get("userId");
-    if (!userId) {
-      return NextResponse.json({
-        msg: "Required params not valid",
-        status: 400,
-      });
-    }
-
-    const resp = await authenticateUser(userId, req);
+    const resp = await authenticateUser(req);
 
     if (resp.status !== 200) {
       const msg = resp.data.msg;

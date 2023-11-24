@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import TitleInput from "./formInputs/TitleInput";
 import { RoomCreateForm } from "@/app/_models/room";
-import createroomschema from "@/app/_utils/validation/schemas/backend/create-room-schema";
+import createroomschema from "@/app/_utils/validation/schemas/create-room-schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import EmailFieldArray from "./formInputs/EmailFieldArray";
 
@@ -10,31 +10,26 @@ function CreateRoomForm() {
     <div>
       <h3 className="text-h2 font-normal mb-6">Create new room</h3>
       <Formik
-        initialValues={{ title: "", cover_img: "", emails: [] }}
+        initialValues={{ title: "", emails: [] }}
         validationSchema={toFormikValidationSchema(createroomschema)}
-        onSubmit={(values: RoomCreateForm, { setSubmitting }) => {
+        onSubmit={(values: RoomCreateForm, actions) => {
+          //actions.setSubmitting(true);
           console.log(values);
         }}
       >
-        {({
-          errors,
-          touched,
-          isSubmitting,
-          isValid,
-          values,
-          setFieldValue,
-        }) => (
+        {({ errors, touched, isSubmitting, values, setFieldValue }) => (
           <Form>
             <TitleInput error={errors.title} touched={touched.title} />
 
             <EmailFieldArray
               setFieldValue={setFieldValue}
               emails={values.emails}
+              emailsError={errors.emails}
             />
 
             <button
               type="submit"
-              disabled={isSubmitting || !isValid}
+              disabled={isSubmitting}
               className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem] mt-6"
             >
               {isSubmitting ? (

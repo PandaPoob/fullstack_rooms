@@ -4,19 +4,10 @@ import { db } from "@/lib/prisma-client";
 import edituserschema from "@/app/_utils/validation/schemas/backend/user-edit-schema";
 import generateSignature from "@/app/_utils/helpers/cloudinary";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
-import { NextApiResponse } from "next";
 
-export async function PUT(req: NextRequest, res: NextApiResponse) {
+export async function PUT(req: NextRequest) {
   try {
-    const userId = req.nextUrl.searchParams.get("userId");
-    if (!userId) {
-      return NextResponse.json({
-        msg: "Required params not valid",
-        status: 400,
-      });
-    }
-
-    const resp = await authenticateUser(userId, req);
+    const resp = await authenticateUser(req);
 
     if (resp.status !== 200) {
       const msg = resp.data.msg;
