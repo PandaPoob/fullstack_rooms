@@ -27,3 +27,7 @@ export const maxTextNoteLen = 50;
 //FILE//
 export const maxFileSize = 500000;
 export const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+//ROOM
+export const minRoomTitleLen = 2;
+export const maxRoomTitleLen = 50;

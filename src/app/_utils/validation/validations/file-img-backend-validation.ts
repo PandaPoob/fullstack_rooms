@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { acceptedImageTypes, maxFileSize } from "../validationVariables";
 
-export const avatar_img_backend = z
+export const file_img_backend = z
   .any()
   .optional()
   .nullable()

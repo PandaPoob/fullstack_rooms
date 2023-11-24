@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/prisma-client";
-import backendedituserschema from "@/app/_utils/validation/schemas/backend-user-edit-schema";
+import edituserschema from "@/app/_utils/validation/schemas/backend/user-edit-schema";
 import generateSignature from "@/app/_utils/helpers/cloudinary";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import { NextApiResponse } from "next";
@@ -46,7 +46,7 @@ export async function PUT(req: NextRequest, res: NextApiResponse) {
     const bodyObject = formDataToObject(body);
 
     const { first_name, last_name, birthday, status, avatar_img } =
-      await backendedituserschema.parseAsync(bodyObject);
+      await edituserschema.parseAsync(bodyObject);
 
     const updates: { [key: string]: any } = {};
 
