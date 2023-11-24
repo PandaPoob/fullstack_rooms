@@ -2,7 +2,7 @@ import { z } from "zod";
 import { acceptedImageTypes, maxFileSize } from "../validationVariables";
 import filetypeinfo from "magic-bytes.js";
 
-export const avatar_img = z
+export const file_img = z
   .any()
   .optional()
   .nullable()

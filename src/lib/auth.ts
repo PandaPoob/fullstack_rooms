@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
 
         //check email
         const existingUser = await db.user.findUnique({
-          where: { email: credentials?.email },
+          where: { email: credentials?.email.toLowerCase() },
           include: {
             avatar: true,
             status: true,
@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email not verified");
         }
 
-        const url = existingUser.avatar?.formattedUrl;
+        const url = existingUser.avatar?.formatted_url;
 
         return {
           id: existingUser.id,
@@ -81,7 +81,7 @@ export const authOptions: NextAuthOptions = {
           token.status = session.status.title;
         }
         if (session.avatar) {
-          token.picture = session.avatar.formattedUrl;
+          token.picture = session.avatar.formatted_url;
         }
       }
 
@@ -114,7 +114,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/rooms",
     signOut: "/login",
   },
 };

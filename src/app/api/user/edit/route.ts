@@ -1,20 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/prisma-client";
-import backendedituserschema from "@/app/_utils/validation/schemas/backend-user-edit-schema";
+import edituserschema from "@/app/_utils/validation/schemas/backend/user-edit-schema";
 import generateSignature from "@/app/_utils/helpers/cloudinary";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
-import { NextApiResponse } from "next";
 
-export async function PUT(
-  req: NextRequest,
-  { params }: { params: { userId: string } },
-  res: NextApiResponse
-) {
+export async function PUT(req: NextRequest) {
   try {
-    const { userId } = params;
-
-    const resp = await authenticateUser(userId, req);
+    const resp = await authenticateUser(req);
 
     if (resp.status !== 200) {
       const msg = resp.data.msg;
@@ -44,7 +37,7 @@ export async function PUT(
     const bodyObject = formDataToObject(body);
 
     const { first_name, last_name, birthday, status, avatar_img } =
-      await backendedituserschema.parseAsync(bodyObject);
+      await edituserschema.parseAsync(bodyObject);
 
     const updates: { [key: string]: any } = {};
 
@@ -138,8 +131,8 @@ export async function PUT(
         //Create avatar
         const newAvatar = await prisma.avatar.create({
           data: {
-            formattedUrl: newImageData.newurl,
-            cloudinaryPublicId: newImageData.cloudinarypublicid,
+            formatted_url: newImageData.newurl,
+            cloudinary_public_id: newImageData.cloudinarypublicid,
             user: {
               connect: {
                 id: user.id,
@@ -189,8 +182,8 @@ export async function PUT(
         const updatedAvatarPromise = db.avatar.update({
           where: { id: user.avatar.id },
           data: {
-            formattedUrl: newImageData.newurl,
-            cloudinaryPublicId: newImageData.cloudinarypublicid,
+            formatted_url: newImageData.newurl,
+            cloudinary_public_id: newImageData.cloudinarypublicid,
           },
         });
         //update user
@@ -214,10 +207,10 @@ export async function PUT(
 
         //cloudinary delete old img
         const params = {
-          public_id: user.avatar.cloudinaryPublicId,
+          public_id: user.avatar.cloudinary_public_id,
         };
         const { timestamp, signature } = generateSignature(params);
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy?public_id=${user.avatar.cloudinaryPublicId}&api_key=${process.env.CLOUDINARY_API_KEY}&signature=${signature}&timestamp=${timestamp}`;
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy?public_id=${user.avatar.cloudinary_public_id}&api_key=${process.env.CLOUDINARY_API_KEY}&signature=${signature}&timestamp=${timestamp}`;
         const deleteResp = await fetch(`${cloudinaryUrl}`, {
           method: "DELETE",
         });

@@ -15,11 +15,33 @@ model Room {
   updated_at   DateTime    @default(now())
   admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
   admin_fk     String
-  location     String?
+  location     Location?   @relation(fields: [location_id], references: [id])
+  location_id  String?
   participants Participant[]   // Define the many-to-many relationship
-  cover_img    String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
-  noteWidget   NoteWidget?
+  cover        Cover?       @relation("RoomCover", fields: [cover_id], references: [id])
+  cover_id     String?      @unique
+  note_widget  NoteWidget?
+  task_widget  TaskWidget?
 }
+ model Cover {
+  id                  String      @default(cuid()) @id
+  formatted_url        String      
+  cloudinary_public_id  String      
+  room                Room?       @relation("RoomCover")
+}
+
+model Location {
+  id            String            @default(cuid()) @unique 
+  latitude      Float
+  longitude     Float
+  country       String?
+  city          String?
+  state         String?
+  rooms         Room[]
+
+  @@id([latitude, longitude])
+}
+
 
 model Participant {
   id            String     @default(cuid()) @id
@@ -34,17 +56,6 @@ model Participant {
   @@unique([user_id, room_id]) // Ensure each user is in a room only once
 }
 
-model Status {
-  id    String      @default(cuid()) @id
-  title String      @unique
-  users User[]      // one to many
-}
- model Avatar {
-  id                  String      @default(cuid()) @id
-  formattedUrl        String      
-  cloudinaryPublicId  String      
-  user                User?       @relation("UserAvatar")
-}
 
 model User {
   id                  String      @default(cuid()) @id
@@ -56,13 +67,24 @@ model User {
   updated_at          DateTime    @default(now())
   password            String 
   birthday            String 
-  avatar              Avatar?     @relation("UserAvatar", fields: [avatarId], references: [id])
-  avatarId            String?     @unique
+  avatar              Avatar?     @relation("UserAvatar", fields: [avatar_id], references: [id])
+  avatar_id            String?     @unique
   status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
   participants        Participant[]  //defining opposite relation 
   @@map(name: "users") 
+}
+model Status {
+  id    String      @default(cuid()) @id
+  title String      @unique
+  users User[]      // one to many
+}
+ model Avatar {
+  id                    String      @default(cuid()) @id
+  formatted_url         String      
+  cloudinary_public_id  String      
+  user                  User?       @relation("UserAvatar")
 }
 
 
@@ -70,7 +92,9 @@ model NoteWidget {
   id                  String       @default(cuid()) @id
   room                Room         @relation(fields: [room_fk], references: [id])
   room_fk             String       @unique
-  noteItem            NoteItem[]
+  note_item           NoteItem[]
+  @@unique([id, room_fk])
+
 }
 
 model NoteItem {
@@ -83,3 +107,20 @@ model NoteItem {
   note_widget_fk    String         
 }
 
+model TaskWidget {
+id                  String          @default(cuid()) @id
+room                Room            @relation(fields: [room_fk], references: [id])
+room_fk             String          @unique
+tasks               TaskItems[]
+}
+
+model TaskItems {
+id                  String      @default(cuid()) @id 
+text                String
+task_widget_fk      String
+task_widget         TaskWidget  @relation(fields: [task_widget_fk], references: [id])
+created_at          DateTime    @default(now())
+updated_at          DateTime    @default(now())
+order               Int
+checked             Boolean
+}

@@ -23,6 +23,7 @@ const config: Config = {
       white: "#E9E9E9",
       darkGrey: "#8F8F8F", //dark grey, not oficially in figma yet
       dark: "#161616", //not in figma
+      grey: "#4E4F53", //another grey
       link: "#4496F6", //blue
       success: "#77B184", //green
       warning: "#E85959", //red
