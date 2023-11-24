@@ -1,4 +1,4 @@
-import { Field, FieldArray, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import TitleInput from "./formInputs/TitleInput";
 import { RoomCreateForm } from "@/app/_models/room";
 import createroomschema from "@/app/_utils/validation/schemas/backend/create-room-schema";
@@ -35,7 +35,7 @@ function CreateRoomForm() {
             <button
               type="submit"
               disabled={isSubmitting || !isValid}
-              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
+              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem] mt-6"
             >
               {isSubmitting ? (
                 <svg

@@ -31,3 +31,4 @@ export const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 //ROOM
 export const minRoomTitleLen = 2;
 export const maxRoomTitleLen = 50;
+export const maxParticipants = 12;
