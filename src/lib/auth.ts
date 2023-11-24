@@ -24,7 +24,7 @@ export const authOptions: NextAuthOptions = {
 
         //check email
         const existingUser = await db.user.findUnique({
-          where: { email: credentials?.email },
+          where: { email: credentials?.email.toLowerCase() },
           include: {
             avatar: true,
             status: true,
@@ -114,7 +114,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/rooms",
     signOut: "/login",
   },
 };

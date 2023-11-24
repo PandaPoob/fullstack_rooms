@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     //email unique                   //prisma
     const emailAlreadyExists = await db.user.findUnique({
-      where: { email: email },
+      where: { email: email.toLowerCase() },
     });
 
     if (emailAlreadyExists) {
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       data: {
         first_name,
         last_name,
-        email,
+        email: email.toLowerCase(),
         password: hashedPassword,
         birthday,
         status: { connect: { id: statusId.id } },
