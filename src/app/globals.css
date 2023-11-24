@@ -29,3 +29,13 @@ body {
 ::-webkit-calendar-picker-indicator {
   filter: invert(50%);
 }
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+select,
+select option {
+  font-family: var(--body-font);
+}
