@@ -108,8 +108,6 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { title, emails } = createroomschema.parse(body);
 
-    console.log("body", body);
-
     const participants = [
       {
         is_favourited: false,
