@@ -8,7 +8,7 @@ export async function POST(req: Request) {
   try {
     // Validation schema
     const body = await req.json();
-    console.log(body);
+    console.log("body", body);
     const { title, text, note_widget_fk } = createnoteschema.parse(body);
     // console.log("Parsed request body:", { title, text, note_widget_fk });
 
@@ -32,6 +32,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       // Zod validation errors
       const validationErrors = error.issues.map((issue) => {

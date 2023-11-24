@@ -43,7 +43,7 @@ async function getData(params: { slug: string }) {
 
 async function NotePage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
-  console.log(data.notes);
+  // console.log(data.notes);
   return (
     data && (
       <>

@@ -3,7 +3,7 @@ import { NoteItem } from "@prisma/client";
 import Link from "next/link";
 
 function NoteCard(props: NoteItem) {
-  console.log("props", props);
+  // console.log("props", props);
   // Wrap article in link
 
   return (
