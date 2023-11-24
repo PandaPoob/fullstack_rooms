@@ -1,7 +1,9 @@
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
+import createroomschema from "@/app/_utils/validation/schemas/create-room-schema";
 import { db } from "@/lib/prisma-client";
 import { Room } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 export async function GET(req: NextRequest) {
   try {
@@ -88,16 +90,105 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    //authenticate user
-    //validate data
-    //data: title, cover img
-    //create room
-    //create avatar (if any)
-    //create participants
-    //create widgets
-    ////note widget
-    ////task widget
+    //Validate user
+    const resp = await authenticateUser(req);
+
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+
+    const { user } = resp.data;
+    const body = await req.json();
+    const { title, emails } = createroomschema.parse(body);
+
+    console.log("body", body);
+
+    const participants = [
+      {
+        is_favourited: false,
+        user_id: user!.id,
+      },
+    ];
+
+    const errors = [];
+    //Validate emails
+    for (const email of emails) {
+      const existingUser = await db.user.findUnique({
+        where: {
+          email: email,
+        },
+      });
+
+      if (!existingUser) {
+        errors.push({ error: "Users not found", status: 404 });
+      }
+
+      if (email === user!.email) {
+        errors.push({
+          error: "Creator will already be added to room",
+          status: 400,
+        });
+      }
+
+      if (errors.length > 0) {
+        return NextResponse.json(errors[0], { status: errors[0].status });
+      } else {
+        participants.push({
+          is_favourited: false,
+          user_id: existingUser!.id,
+        });
+      }
+    }
+    //Create room
+    const newRoom = await db.room.create({
+      data: {
+        title: title,
+        admin: { connect: { id: user!.id } },
+        participants: {
+          create: participants,
+        },
+        //Nested writes
+        note_widget: {
+          create: {},
+        },
+        task_widget: {
+          create: {},
+        },
+      },
+      select: { id: true, title: true },
+    });
+
+    return NextResponse.json(
+      {
+        msg: "Room succesfully created",
+        newRoom: newRoom,
+      },
+      { status: 200 }
+    );
   } catch (error) {
-    console.error(error);
+    if (error instanceof z.ZodError) {
+      //Zod errors
+      const validationErrors = error.errors.map((err) => {
+        return {
+          message: err.message,
+        };
+      });
+      // Return a validation error response
+      return NextResponse.json({ error: validationErrors }, { status: 400 });
+    } else {
+      //Other errors
+      console.error(error);
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 }
+      );
+    }
   }
 }

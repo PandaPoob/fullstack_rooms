@@ -24,7 +24,6 @@ async function updateVisitedAt(participant: Participant) {
 }
 
 async function getData(params: { slug: string }) {
-  //@todo validate that user cannot see other rooms
   const session = await getServerSession(authOptions);
   if (!session) {
     redirect("/");
@@ -54,7 +53,7 @@ async function getData(params: { slug: string }) {
         room_fk: room.id,
       },
       include: {
-        noteItem: true,
+        note_item: true,
       },
     });
 
@@ -73,7 +72,7 @@ async function getData(params: { slug: string }) {
     const data = {
       room,
       session,
-      note: notes?.noteItem[0],
+      note: notes?.note_item[0],
     };
 
     return data;

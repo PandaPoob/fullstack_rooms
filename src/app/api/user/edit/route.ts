@@ -131,8 +131,8 @@ export async function PUT(req: NextRequest) {
         //Create avatar
         const newAvatar = await prisma.avatar.create({
           data: {
-            formattedUrl: newImageData.newurl,
-            cloudinaryPublicId: newImageData.cloudinarypublicid,
+            formatted_url: newImageData.newurl,
+            cloudinary_public_id: newImageData.cloudinarypublicid,
             user: {
               connect: {
                 id: user.id,
@@ -182,8 +182,8 @@ export async function PUT(req: NextRequest) {
         const updatedAvatarPromise = db.avatar.update({
           where: { id: user.avatar.id },
           data: {
-            formattedUrl: newImageData.newurl,
-            cloudinaryPublicId: newImageData.cloudinarypublicid,
+            formatted_url: newImageData.newurl,
+            cloudinary_public_id: newImageData.cloudinarypublicid,
           },
         });
         //update user
@@ -207,10 +207,10 @@ export async function PUT(req: NextRequest) {
 
         //cloudinary delete old img
         const params = {
-          public_id: user.avatar.cloudinaryPublicId,
+          public_id: user.avatar.cloudinary_public_id,
         };
         const { timestamp, signature } = generateSignature(params);
-        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy?public_id=${user.avatar.cloudinaryPublicId}&api_key=${process.env.CLOUDINARY_API_KEY}&signature=${signature}&timestamp=${timestamp}`;
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/dceom4kf4/image/destroy?public_id=${user.avatar.cloudinary_public_id}&api_key=${process.env.CLOUDINARY_API_KEY}&signature=${signature}&timestamp=${timestamp}`;
         const deleteResp = await fetch(`${cloudinaryUrl}`, {
           method: "DELETE",
         });

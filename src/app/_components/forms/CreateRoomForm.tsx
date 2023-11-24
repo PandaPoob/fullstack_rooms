@@ -4,17 +4,46 @@ import { RoomCreateForm } from "@/app/_models/room";
 import createroomschema from "@/app/_utils/validation/schemas/create-room-schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import EmailFieldArray from "./formInputs/EmailFieldArray";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import ErrorToast from "../toasts/ErrorToast";
 
 function CreateRoomForm() {
+  const [errorMsg, setErrorMsg] = useState("");
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const clearError = () => {
+    setErrorMsg("");
+  };
+
   return (
     <div>
       <h3 className="text-h2 font-normal mb-6">Create new room</h3>
       <Formik
         initialValues={{ title: "", emails: [] }}
         validationSchema={toFormikValidationSchema(createroomschema)}
-        onSubmit={(values: RoomCreateForm, actions) => {
-          //actions.setSubmitting(true);
-          console.log(values);
+        onSubmit={async (values: RoomCreateForm, actions) => {
+          actions.setSubmitting(true);
+
+          if (session) {
+            const resp = await fetch(`/api/rooms`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${session.token.sub}`,
+              },
+              body: JSON.stringify({ ...values }),
+            });
+
+            if (resp.ok) {
+              const data = await resp.json();
+              router.push(`/rooms/${data.newRoom.id}`);
+            } else {
+              actions.setSubmitting(false);
+              setErrorMsg("An error occurred");
+            }
+          }
         }}
       >
         {({ errors, touched, isSubmitting, values, setFieldValue }) => (
@@ -60,6 +89,7 @@ function CreateRoomForm() {
           </Form>
         )}
       </Formik>
+      <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </div>
   );
 }

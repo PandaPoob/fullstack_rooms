@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email not verified");
         }
 
-        const url = existingUser.avatar?.formattedUrl;
+        const url = existingUser.avatar?.formatted_url;
 
         return {
           id: existingUser.id,
@@ -81,7 +81,7 @@ export const authOptions: NextAuthOptions = {
           token.status = session.status.title;
         }
         if (session.avatar) {
-          token.picture = session.avatar.formattedUrl;
+          token.picture = session.avatar.formatted_url;
         }
       }
 
