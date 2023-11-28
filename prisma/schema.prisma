@@ -138,4 +138,5 @@ meta_user_id        String
 meta_action         String      
 meta_target         String
 meta_target_name    String
+meta_link           String?
 }
