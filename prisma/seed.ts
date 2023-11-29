@@ -143,6 +143,54 @@ async function main() {
       // Other participant data
     },
   });
+
+  //NOTIFICATIONS
+  await prisma.notification.create({
+    data: {
+      read: false,
+      user: { connect: { id: user3.id } },
+      meta_user: { connect: { id: user1.id } },
+      meta_action: "created",
+      meta_target: "room",
+      meta_target_name: "Morbærhaven",
+      meta_link: `/rooms/${room1.id}`,
+    },
+  });
+  await prisma.notification.create({
+    data: {
+      read: false,
+      user: { connect: { id: user2.id } },
+      meta_user: { connect: { id: user1.id } },
+      meta_action: "created",
+      meta_target: "room",
+      meta_target_name: "Morbærhaven",
+      meta_link: `/rooms/${room1.id}`,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      read: false,
+      user: { connect: { id: user1.id } },
+      meta_user: { connect: { id: user3.id } },
+      meta_action: "created",
+      meta_target: "room",
+      meta_target_name: "Cleo's Crib",
+      meta_link: `/rooms/${room2.id}`,
+    },
+  });
+
+  await prisma.notification.create({
+    data: {
+      read: false,
+      user: { connect: { id: user2.id } },
+      meta_user: { connect: { id: user3.id } },
+      meta_action: "created",
+      meta_target: "room",
+      meta_target_name: "Cleo's Crib",
+      meta_link: `/rooms/${room2.id}`,
+    },
+  });
 }
 main()
   .then(async () => {

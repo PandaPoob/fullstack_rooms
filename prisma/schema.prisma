@@ -72,7 +72,9 @@ model User {
   status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
-  participants        Participant[]  //defining opposite relation 
+  participants        Participant[]  //defining opposite relation
+  receivedNotifications  Notification[]   @relation("Receiver")
+  triggeredNotifications Notification[]   @relation("Triggerer")
   @@map(name: "users") 
 }
 model Status {
@@ -111,10 +113,10 @@ model TaskWidget {
 id                  String          @default(cuid()) @id
 room                Room            @relation(fields: [room_fk], references: [id])
 room_fk             String          @unique
-tasks               TaskItems[]
+tasks               TaskItem[]
 }
 
-model TaskItems {
+model TaskItem {
 id                  String      @default(cuid()) @id 
 text                String
 task_widget_fk      String
@@ -123,4 +125,18 @@ created_at          DateTime    @default(now())
 updated_at          DateTime    @default(now())
 order               Int
 checked             Boolean
+}
+
+model Notification {
+id                  String      @default(cuid()) @id
+created_at          DateTime    @default(now())
+read                Boolean
+user                User        @relation("Receiver", fields: [user_id], references: [id])
+user_id             String      
+meta_user           User        @relation("Triggerer", fields: [meta_user_id], references: [id])
+meta_user_id        String      
+meta_action         String      
+meta_target         String
+meta_target_name    String
+meta_link           String?
 }

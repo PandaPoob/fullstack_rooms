@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import ProfileLink from "./ProfileLink";
+import NotificationLink from "./NotificationLink";
 
 async function MainNavigation() {
   const session = await getServerSession(authOptions);
@@ -59,25 +60,7 @@ async function MainNavigation() {
                     </svg>
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    href="/"
-                    className="flex p-3 rounded-full border border-primary"
-                  >
-                    <svg
-                      width="24"
-                      height="28"
-                      viewBox="0 0 24 28"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M22.8571 22.1455H22V11.3273C22 6.83773 18.275 3.12773 13.4286 2.51045V1.27273C13.4286 0.569545 12.7893 0 12 0C11.2107 0 10.5714 0.569545 10.5714 1.27273V2.51045C5.725 3.12773 2 6.83773 2 11.3273V22.1455H1.14286C0.510714 22.1455 0 22.6005 0 23.1636V24.1818C0 24.3218 0.128571 24.4364 0.285714 24.4364H8C8 26.4027 9.79286 28 12 28C14.2071 28 16 26.4027 16 24.4364H23.7143C23.8714 24.4364 24 24.3218 24 24.1818V23.1636C24 22.6005 23.4893 22.1455 22.8571 22.1455ZM12 25.9636C11.0536 25.9636 10.2857 25.2795 10.2857 24.4364H13.7143C13.7143 25.2795 12.9464 25.9636 12 25.9636ZM4.57143 22.1455V11.3273C4.57143 9.55818 5.34286 7.89727 6.74643 6.64682C8.15 5.39636 10.0143 4.70909 12 4.70909C13.9857 4.70909 15.85 5.39636 17.2536 6.64682C18.6571 7.89727 19.4286 9.55818 19.4286 11.3273V22.1455H4.57143Z"
-                        fill="#9A9A9A"
-                      />
-                    </svg>
-                  </Link>
-                </li>
+                <NotificationLink />
                 <ProfileLink />
               </ul>
             </nav>
