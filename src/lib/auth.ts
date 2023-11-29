@@ -91,8 +91,7 @@ export const authOptions: NextAuthOptions = {
         if (session.avatar) {
           token.picture = session.avatar.formatted_url;
         }
-        if (session.unreadNotifications) {
-          console.log("should be here");
+        if (session.unreadNotifications || session.unreadNotifications === 0) {
           token.unreadNotifications = session.unreadNotifications;
         }
       }

@@ -7,7 +7,7 @@ function NotificationLink() {
   const { data: session, update } = useSession();
 
   const fetchUnreadNotifications = async () => {
-    const resp = await fetch(`/api/notifications?unread=true`, {
+    const resp = await fetch(`/api/notifications/unread`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${session!.token.sub}`,

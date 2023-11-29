@@ -21,6 +21,7 @@ declare module "next-auth" {
       last_name: String;
       status: String;
       sub: String;
+      unreadNotifications: number;
     };
   }
 }

@@ -10,7 +10,7 @@ function NotificationList() {
   const [pageNo, setPageNo] = useState(1);
   const [isLatePage, setIsLastPage] = useState(true);
 
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
 
   const fetchNotifications = async (no: number) => {
     const resp = await fetch(`/api/notifications?pageNumber=${no}`, {
@@ -22,26 +22,63 @@ function NotificationList() {
     if (resp.ok) {
       const data = await resp.json();
       setNotifications(data.notifications);
+
       if (!data.hasNextPage) {
         setIsLastPage(true);
       } else {
         setIsLastPage(false);
+      }
+      const unRead = data.notifications.filter(
+        (n: FetchNotification) => !n.read
+      );
+      if (unRead.length !== 0) {
+        updateNotifications(unRead, no);
       }
     } else {
       console.log("Error fetching notifications");
     }
   };
 
+  const updateNotifications = async (
+    unRead: FetchNotification[],
+    no: number
+  ) => {
+    const resp = await fetch(`/api/notifications`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${session!.token.sub}`,
+      },
+      body: JSON.stringify({ unreadNotifications: unRead }),
+    });
+
+    if (resp.ok) {
+      const data = await resp.json();
+      update({ unreadNotifications: data.unreadNotifications });
+      fetchNotifications(no);
+    } else {
+      console.log("Error occurred while updating notifications");
+    }
+  };
+
   useEffect(() => {
-    if (session) {
+    if (session && notifications.length === 0) {
       fetchNotifications(pageNo);
     }
-  }, [session, pageNo]);
+    //if a new notifications happens while on the page then refetch data
+    const unRead = notifications.filter((n: FetchNotification) => !n.read);
+    if (session?.user.unreadNotifications !== unRead.length) {
+      fetchNotifications(pageNo);
+    }
+  }, [session]);
 
   const handlePagnation = (controller: string) => {
     if (controller == "next") {
+      fetchNotifications(pageNo + 1);
+
       setPageNo(pageNo + 1);
     } else if (controller === "back") {
+      fetchNotifications(pageNo - 1);
+
       setPageNo(pageNo - 1);
     }
   };
@@ -113,7 +150,9 @@ function NotificationList() {
               return (
                 <li
                   key={n.id}
-                  className="grid py-3 px-5 bg-primary rounded-2xl gap-3"
+                  className={`grid py-3 px-5 bg-primary rounded-2xl gap-3 ${
+                    n.read && "bg-opacity-50"
+                  }`}
                 >
                   <span className="lowercase text-xs md:text-sm text-darkGrey">
                     {formattedDate}
