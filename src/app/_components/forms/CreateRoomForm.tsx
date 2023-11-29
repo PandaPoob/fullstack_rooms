@@ -83,7 +83,7 @@ function CreateRoomForm() {
                   ></path>
                 </svg>
               ) : (
-                <span>Save</span>
+                <span>Create room</span>
               )}
             </button>
           </Form>
