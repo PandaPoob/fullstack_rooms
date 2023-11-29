@@ -23,6 +23,22 @@ export async function GET(req: NextRequest) {
     //if unread
     const unread = req.nextUrl.searchParams.get("unread");
     if (unread) {
+      const notifications = await db.notification.findMany({
+        where: {
+          user: {
+            id: user!.id,
+          },
+          read: false,
+        },
+      });
+
+      return NextResponse.json(
+        {
+          msg: "ok",
+          unreadNotifications: notifications.length,
+        },
+        { status: 200 }
+      );
       //get notifications that are unread for session
     } else {
       const pageNumber = req.nextUrl.searchParams.get("pageNumber");

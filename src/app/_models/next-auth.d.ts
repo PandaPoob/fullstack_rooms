@@ -6,6 +6,7 @@ declare module "next-auth" {
     first_name: String;
     last_name: String;
     status: String;
+    unreadNotifications: number;
   }
   interface Session {
     user: User & {

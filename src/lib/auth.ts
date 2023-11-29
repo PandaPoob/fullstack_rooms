@@ -28,6 +28,11 @@ export const authOptions: NextAuthOptions = {
           include: {
             avatar: true,
             status: true,
+            receivedNotifications: {
+              where: {
+                read: false,
+              },
+            },
           },
         });
 
@@ -50,7 +55,9 @@ export const authOptions: NextAuthOptions = {
         }
 
         const url = existingUser.avatar?.formatted_url;
+        let unreadNotifNo: number = 0;
 
+        unreadNotifNo = existingUser.receivedNotifications.length;
         return {
           id: existingUser.id,
           email: existingUser.email,
@@ -58,6 +65,7 @@ export const authOptions: NextAuthOptions = {
           last_name: existingUser.last_name,
           image: url,
           status: existingUser.status.title,
+          unreadNotifications: unreadNotifNo,
         };
       },
     }),
@@ -83,6 +91,10 @@ export const authOptions: NextAuthOptions = {
         if (session.avatar) {
           token.picture = session.avatar.formatted_url;
         }
+        if (session.unreadNotifications) {
+          console.log("should be here");
+          token.unreadNotifications = session.unreadNotifications;
+        }
       }
 
       if (user) {
@@ -92,6 +104,7 @@ export const authOptions: NextAuthOptions = {
           first_name: user.first_name,
           last_name: user.last_name,
           status: user.status,
+          unreadNotifications: user.unreadNotifications,
         };
       }
       return token;
@@ -108,6 +121,7 @@ export const authOptions: NextAuthOptions = {
           first_name: token.first_name,
           last_name: token.last_name,
           status: token.status,
+          unreadNotifications: token.unreadNotifications,
         },
         token,
       };
