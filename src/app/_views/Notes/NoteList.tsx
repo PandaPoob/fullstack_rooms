@@ -14,7 +14,7 @@ interface Notes {
 
 function NoteList({ notes }: NoteProps) {
   return (
-    <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
+    <div className="py-7 grid grid-cols-4 gap-5 justify-center items-center">
       {notes.noteItem.map((note) => (
         // <p>{note.title}</p>
         <NoteCard key={note.id} {...note} />

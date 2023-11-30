@@ -27,8 +27,18 @@ async function getData(params: { slug: string }) {
       id: params.slug as string,
     },
     include: {
-      noteItem: true,
+      noteItem: {
+        select: {
+          id: true,
+          title: true,
+          text: true,
+          created_at: true,
+        },
+      },
     },
+    // include: {
+    //   noteItem: true,
+    // },
   });
   if (!notes) {
     redirect("/error");

@@ -37,6 +37,43 @@ function NoteView(props: NoteProps) {
     <main>
       {/* <DigitalClock title={`Welcome, ${props.room.title}`} /> */}
 
+      {/* Breadcrumb, skal udvikles ordentligt */}
+      <div className="mt-8">
+        <li className="flex gap-2 text-sm text-white opacity-80">
+          <Link href={"/rooms"}>
+            <ul>Room Name</ul> {/* skal mappes, så room name er displayed */}
+          </Link>
+          <ul className="font-medium">/ All Notes</ul>
+        </li>
+        <h1 className="text-h1 mt-4">All notes</h1>
+      </div>
+
+      {/* Filter */}
+      {/* Button - Create new note */}
+      <Link className="flex justify-end" href={"/"}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 512 512"
+        >
+          <path
+            fill="none"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="32"
+            d="M384 224v184a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40h167.48"
+          />
+          <path
+            fill="currentColor"
+            d="M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38ZM399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0Z"
+          />
+        </svg>
+      </Link>
+
+      <NoteList notes={props.notes} />
+
       <Formik
         initialValues={{
           title: "",
@@ -85,7 +122,7 @@ function NoteView(props: NoteProps) {
                 type="text"
                 id="title"
                 name="title"
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 rounded-md bg-primary"
                 placeholder="Enter note title"
               />
             </div>
@@ -98,7 +135,7 @@ function NoteView(props: NoteProps) {
                 as="textarea"
                 id="text"
                 name="text"
-                className="w-full px-3 py-2 border rounded-md"
+                className="w-full px-3 py-2 rounded-md bg-primary"
                 rows={4}
                 placeholder="Enter note text"
               />
@@ -143,8 +180,6 @@ function NoteView(props: NoteProps) {
           </Form>
         )}
       </Formik>
-
-      <NoteList notes={props.notes} />
     </main>
   );
 }
