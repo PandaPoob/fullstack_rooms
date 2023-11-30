@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import BaseLayout from "../_components/layout/BaseLayout";
-import Provider from "../_components/providers/Provider";
+import AuthProvider from "../_components/providers/AuthProvider";
 import "../globals.css";
 import localFont from "next/font/local";
 import { authOptions } from "@/lib/auth";
+import QueryProvider from "../_components/providers/QueryProvider";
 
 const gotham = localFont({
   // src: "../_fonts/GothamBook.ttf",
@@ -31,9 +32,11 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${gotham.variable}`}>
       <body className={"font-body"}>
-        <Provider>
-          <BaseLayout session={session ? true : false}>{children}</BaseLayout>
-        </Provider>
+        <QueryProvider>
+          <AuthProvider>
+            <BaseLayout session={session ? true : false}>{children}</BaseLayout>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
