@@ -170,35 +170,44 @@ export async function POST(req: NextRequest) {
         },
       },
     });
+    let userNotifications;
     if (newRoom.participants.length !== 0) {
-      const notifications = newRoom.participants.map(async (p) => {
-        try {
-          const notification = await db.notification.create({
-            data: {
-              read: false,
-              user: { connect: { id: p.user_id } },
-              meta_user: { connect: { id: user!.id } },
-              meta_action: "created",
-              meta_target: "room",
-              meta_target_name: newRoom.title,
-              meta_link: `/rooms/${newRoom.id}`,
-            },
-          });
-          return notification;
-        } catch (error) {
-          console.error(
-            `Error occurred while reating notification for ${p}:`,
-            error
-          );
-          return null;
-        }
-      });
+      const notifications = await Promise.all(
+        newRoom.participants.map(async (p) => {
+          try {
+            const notification = await db.notification.create({
+              data: {
+                read: false,
+                user: { connect: { id: p.user_id } },
+                meta_user: { connect: { id: user!.id } },
+                meta_action: "created",
+                meta_target: "room",
+                meta_target_name: newRoom.title,
+                meta_link: `/rooms/${newRoom.id}`,
+              },
+              select: {
+                user_id: true,
+              },
+            });
+            return notification;
+          } catch (error) {
+            console.error(
+              `Error occurred while reating notification for ${p}:`,
+              error
+            );
+            return null;
+          }
+        })
+      );
+
+      userNotifications = notifications;
     }
 
     return NextResponse.json(
       {
         msg: "Room succesfully created",
         newRoom: newRoom,
+        userNotifications: userNotifications,
       },
       { status: 200 }
     );

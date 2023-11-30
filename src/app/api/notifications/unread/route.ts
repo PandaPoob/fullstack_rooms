@@ -18,6 +18,16 @@ export async function GET(req: NextRequest) {
     }
 
     const { user } = resp.data;
+    const paramsUserId = req.nextUrl.searchParams.get("userId");
+
+    if (user!.id !== paramsUserId) {
+      return NextResponse.json(
+        {
+          error: "Forbidden - Session mismatch",
+        },
+        { status: 403 }
+      );
+    }
 
     const notifications = await db.notification.findMany({
       where: {

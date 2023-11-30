@@ -1,12 +1,39 @@
 "use client";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useQuery } from "react-query";
+
+function useNotifications() {
+  const { data: session, update } = useSession();
+  const userId = session?.user.id as string;
+
+  return useQuery(["notifications", userId], async () => {
+    if (!session) {
+      return null;
+    }
+
+    const resp = await fetch(`/api/notifications/unread?userId=${userId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session!.token.sub}`,
+      },
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+
+      return data.unreadNotifications;
+    } else {
+      return null;
+    }
+  });
+}
 
 function NotificationLink() {
-  const { data: session, update } = useSession();
+  const { data, isLoading } = useNotifications();
 
-  const fetchUnreadNotifications = async () => {
+  /*   const fetchUnreadNotifications = async () => {
+    
     const resp = await fetch(`/api/notifications/unread`, {
       method: "GET",
       headers: {
@@ -34,7 +61,7 @@ function NotificationLink() {
 
       return () => clearInterval(intervalId); //cleanup
     }
-  });
+  }); */
 
   return (
     <li className="relative">
@@ -55,9 +82,9 @@ function NotificationLink() {
           />
         </svg>
       </Link>
-      {session?.user.unreadNotifications !== 0 && (
+      {!isLoading && data !== null && (
         <span className="text-white absolute -top-1 -right-1 bg-warning h-[1.25rem] w-[1.25rem] text-[0.5rem] font-medium rounded-full flex items-center justify-center">
-          {session?.user.unreadNotifications}
+          {JSON.stringify(data)}
         </span>
       )}
     </li>
