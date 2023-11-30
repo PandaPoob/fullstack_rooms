@@ -4,45 +4,50 @@ import { useSession } from "next-auth/react";
 import { FetchNotification } from "@/app/_models/notifications";
 import Link from "next/link";
 import { formatDate } from "@/app/_utils/helpers/date";
+import { useQuery, useQueryClient } from "react-query";
 
 function NotificationList() {
-  const [notifications, setNotifications] = useState<FetchNotification[]>([]);
+  const queryClient = useQueryClient();
+
+  //const [notifications, setNotifications] = useState<FetchNotification[]>([]);
   const [pageNo, setPageNo] = useState(1);
   const [isLatePage, setIsLastPage] = useState(true);
+  const { data: session } = useSession();
 
-  const { data: session, update } = useSession();
+  const usePaginatedNotifications = (no: number) => {
+    return useQuery(
+      ["notificationsPagnation", no, session?.user.id as string],
+      async () => {
+        if (!session) {
+          return null;
+        }
 
-  const fetchNotifications = async (no: number) => {
-    const resp = await fetch(`/api/notifications?pageNumber=${no}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session!.token.sub}`,
-      },
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      setNotifications(data.notifications);
+        const resp = await fetch(`/api/notifications?pageNumber=${no}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session!.token.sub}`,
+          },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
 
-      if (!data.hasNextPage) {
-        setIsLastPage(true);
-      } else {
-        setIsLastPage(false);
+          if (!data.hasNextPage) {
+            setIsLastPage(true);
+          } else {
+            setIsLastPage(false);
+          }
+          return data.notifications;
+        } else {
+          console.log("Error fetching notifications");
+          return null;
+        }
       }
-      const unRead = data.notifications.filter(
-        (n: FetchNotification) => !n.read
-      );
-      if (unRead.length !== 0) {
-        updateNotifications(unRead, no);
-      }
-    } else {
-      console.log("Error fetching notifications");
-    }
+    );
   };
 
-  const updateNotifications = async (
-    unRead: FetchNotification[],
-    no: number
-  ) => {
+  const { data: notifications, isLoading } = usePaginatedNotifications(pageNo);
+
+  const updateNotifications = async (unRead: FetchNotification[]) => {
     const resp = await fetch(`/api/notifications`, {
       method: "PUT",
       headers: {
@@ -52,33 +57,42 @@ function NotificationList() {
     });
 
     if (resp.ok) {
-      const data = await resp.json();
-      update({ unreadNotifications: data.unreadNotifications });
-      fetchNotifications(no);
+      //Invalidate query that fetches unread notif
+      queryClient.invalidateQueries([
+        "notifications",
+        session!.user.id as string,
+      ]);
+      //Invalid query that displays current notif
+      queryClient.invalidateQueries([
+        "notificationsPagnation",
+        pageNo,
+        session!.user.id as string,
+      ]);
     } else {
       console.log("Error occurred while updating notifications");
     }
   };
 
   useEffect(() => {
-    if (session && notifications.length === 0) {
-      fetchNotifications(pageNo);
+    if (notifications) {
+      const unRead = notifications.filter((n: FetchNotification) => !n.read);
+
+      if (session && unRead.length !== 0) {
+        updateNotifications(unRead);
+      }
     }
-    //if a new notifications happens while on the page then refetch data
-    const unRead = notifications.filter((n: FetchNotification) => !n.read);
-    if (session?.user.unreadNotifications !== unRead.length) {
-      fetchNotifications(pageNo);
-    }
-  }, [session]);
+  }, [notifications]);
+
+  /*     useEffect(() => {
+      if (session?.user.unreadNotif) {
+
+      }
+    }, [session?.user.unreadNotif]); */
 
   const handlePagnation = (controller: string) => {
     if (controller == "next") {
-      fetchNotifications(pageNo + 1);
-
       setPageNo(pageNo + 1);
     } else if (controller === "back") {
-      fetchNotifications(pageNo - 1);
-
       setPageNo(pageNo - 1);
     }
   };
@@ -131,8 +145,8 @@ function NotificationList() {
         </div>
 
         <ul className="grid gap-3">
-          {notifications.length > 0 &&
-            notifications.map((n) => {
+          {notifications &&
+            notifications?.map((n: FetchNotification) => {
               let article;
               switch (n.meta_action) {
                 case "created":

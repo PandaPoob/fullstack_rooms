@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useQuery } from "react-query";
 
@@ -21,7 +20,7 @@ function useNotifications() {
     });
     if (resp.ok) {
       const data = await resp.json();
-
+      update({ unreadNotif: data.unreadNotifications });
       return data.unreadNotifications;
     } else {
       return null;
@@ -31,38 +30,6 @@ function useNotifications() {
 
 function NotificationLink() {
   const { data, isLoading } = useNotifications();
-
-  /*   const fetchUnreadNotifications = async () => {
-    
-    const resp = await fetch(`/api/notifications/unread`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session!.token.sub}`,
-      },
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      if (data.unreadNotifications === session?.user.unreadNotifications) {
-      } else {
-        update({ unreadNotifications: data.unreadNotifications });
-      }
-    } else {
-      console.log("Error fetching notifications");
-    }
-  };
-
-  useEffect(() => {
-    if (session) {
-      fetchUnreadNotifications();
-      //timer to fetch notifications
-      const intervalId = setInterval(() => {
-        fetchUnreadNotifications();
-      }, 30000); //30 seconds
-
-      return () => clearInterval(intervalId); //cleanup
-    }
-  }); */
-
   return (
     <li className="relative">
       <Link
@@ -82,9 +49,9 @@ function NotificationLink() {
           />
         </svg>
       </Link>
-      {!isLoading && data !== null && (
+      {!isLoading && data !== null && data !== 0 && (
         <span className="text-white absolute -top-1 -right-1 bg-warning h-[1.25rem] w-[1.25rem] text-[0.5rem] font-medium rounded-full flex items-center justify-center">
-          {JSON.stringify(data)}
+          {data}
         </span>
       )}
     </li>

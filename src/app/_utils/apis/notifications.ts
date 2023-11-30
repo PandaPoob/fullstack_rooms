@@ -9,6 +9,7 @@ export async function InvalidateNotificationsForUsers(
   userIds: UserId[],
   queryClient: QueryClient
 ) {
+  console.log(userIds);
   await Promise.all(
     userIds.map(async (user) => {
       await queryClient.invalidateQueries(["notifications", user.user_id]);

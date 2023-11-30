@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
           last_name: existingUser.last_name,
           image: url,
           status: existingUser.status.title,
-          unreadNotifications: unreadNotifNo,
+          unreadNotif: unreadNotifNo,
         };
       },
     }),
@@ -91,8 +91,8 @@ export const authOptions: NextAuthOptions = {
         if (session.avatar) {
           token.picture = session.avatar.formatted_url;
         }
-        if (session.unreadNotifications || session.unreadNotifications === 0) {
-          token.unreadNotifications = session.unreadNotifications;
+        if (session.unreadNotif || session.unreadNotif === 0) {
+          token.unreadNotif = session.unreadNotif;
         }
       }
 
@@ -103,7 +103,7 @@ export const authOptions: NextAuthOptions = {
           first_name: user.first_name,
           last_name: user.last_name,
           status: user.status,
-          unreadNotifications: user.unreadNotifications,
+          unreadNotif: user.unreadNotif,
         };
       }
       return token;
@@ -120,7 +120,7 @@ export const authOptions: NextAuthOptions = {
           first_name: token.first_name,
           last_name: token.last_name,
           status: token.status,
-          unreadNotifications: token.unreadNotifications,
+          unreadNotif: token.unreadNotif,
         },
         token,
       };
