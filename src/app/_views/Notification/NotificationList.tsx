@@ -174,8 +174,9 @@ function NotificationList() {
               return (
                 <li
                   key={n.id}
-                  {...(!n.read &&
-                    (onmouseover = () => updateNotifications(unread)))}
+                  onMouseOver={
+                    !n.read ? () => updateNotifications(unread) : undefined
+                  }
                   className={`grid py-3 px-5 bg-primary rounded-2xl gap-3 ${
                     n.read && "bg-opacity-50"
                   }`}
