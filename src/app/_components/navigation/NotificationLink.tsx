@@ -1,13 +1,18 @@
 "use client";
 import Link from "next/link";
-import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { useQuery } from "react-query";
 
-function NotificationLink() {
+function useNotifications() {
   const { data: session, update } = useSession();
+  const userId = session?.user.id as string;
 
-  const fetchUnreadNotifications = async () => {
-    const resp = await fetch(`/api/notifications/unread`, {
+  return useQuery(["notifications", userId], async () => {
+    if (!session) {
+      return null;
+    }
+
+    const resp = await fetch(`/api/notifications/unread?userId=${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${session!.token.sub}`,
@@ -15,27 +20,16 @@ function NotificationLink() {
     });
     if (resp.ok) {
       const data = await resp.json();
-      if (data.unreadNotifications === session?.user.unreadNotifications) {
-      } else {
-        update({ unreadNotifications: data.unreadNotifications });
-      }
+      update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
+      return data.unreadNotifications;
     } else {
-      console.log("Error fetching notifications");
-    }
-  };
-
-  useEffect(() => {
-    if (session) {
-      fetchUnreadNotifications();
-      //timer to fetch notifications
-      const intervalId = setInterval(() => {
-        fetchUnreadNotifications();
-      }, 30000); //30 seconds
-
-      return () => clearInterval(intervalId); //cleanup
+      return null;
     }
   });
+}
 
+function NotificationLink() {
+  const { data, isLoading } = useNotifications();
   return (
     <li className="relative">
       <Link
@@ -55,9 +49,9 @@ function NotificationLink() {
           />
         </svg>
       </Link>
-      {session?.user.unreadNotifications !== 0 && (
+      {!isLoading && data !== null && data !== 0 && (
         <span className="text-white absolute -top-1 -right-1 bg-warning h-[1.25rem] w-[1.25rem] text-[0.5rem] font-medium rounded-full flex items-center justify-center">
-          {session?.user.unreadNotifications}
+          {data}
         </span>
       )}
     </li>

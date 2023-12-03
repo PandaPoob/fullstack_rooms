@@ -32,6 +32,10 @@ export const authOptions: NextAuthOptions = {
               where: {
                 read: false,
               },
+              take: 5,
+              orderBy: {
+                created_at: "desc",
+              },
             },
           },
         });
@@ -55,9 +59,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         const url = existingUser.avatar?.formatted_url;
-        let unreadNotifNo: number = 0;
 
-        unreadNotifNo = existingUser.receivedNotifications.length;
         return {
           id: existingUser.id,
           email: existingUser.email,
@@ -65,7 +67,8 @@ export const authOptions: NextAuthOptions = {
           last_name: existingUser.last_name,
           image: url,
           status: existingUser.status.title,
-          unreadNotifications: unreadNotifNo,
+          hasUnreadFirstPage:
+            existingUser.receivedNotifications.length == 0 ? false : true,
         };
       },
     }),
@@ -91,8 +94,8 @@ export const authOptions: NextAuthOptions = {
         if (session.avatar) {
           token.picture = session.avatar.formatted_url;
         }
-        if (session.unreadNotifications || session.unreadNotifications === 0) {
-          token.unreadNotifications = session.unreadNotifications;
+        if (session.hasUnreadFirstPage || session.hasUnreadFirstPage === 0) {
+          token.hasUnreadFirstPage = session.hasUnreadFirstPage;
         }
       }
 
@@ -103,7 +106,7 @@ export const authOptions: NextAuthOptions = {
           first_name: user.first_name,
           last_name: user.last_name,
           status: user.status,
-          unreadNotifications: user.unreadNotifications,
+          hasUnreadFirstPage: user.hasUnreadFirstPage,
         };
       }
       return token;
@@ -120,7 +123,7 @@ export const authOptions: NextAuthOptions = {
           first_name: token.first_name,
           last_name: token.last_name,
           status: token.status,
-          unreadNotifications: token.unreadNotifications,
+          hasUnreadFirstPage: token.hasUnreadFirstPage,
         },
         token,
       };

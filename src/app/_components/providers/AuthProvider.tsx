@@ -6,8 +6,8 @@ type ProviderProps = {
   children: ReactNode;
 };
 
-function Provider({ children }: ProviderProps) {
+function AuthProvider({ children }: ProviderProps) {
   return <SessionProvider>{children}</SessionProvider>;
 }
 
-export default Provider;
+export default AuthProvider;

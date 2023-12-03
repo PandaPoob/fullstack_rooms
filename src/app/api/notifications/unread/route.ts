@@ -18,6 +18,16 @@ export async function GET(req: NextRequest) {
     }
 
     const { user } = resp.data;
+    const paramsUserId = req.nextUrl.searchParams.get("userId");
+
+    if (user!.id !== paramsUserId) {
+      return NextResponse.json(
+        {
+          error: "Forbidden - Session mismatch",
+        },
+        { status: 403 }
+      );
+    }
 
     const notifications = await db.notification.findMany({
       where: {
@@ -28,10 +38,24 @@ export async function GET(req: NextRequest) {
       },
     });
 
+    const notificationsFirstPage = await db.notification.findMany({
+      where: {
+        user: {
+          id: user!.id,
+        },
+        read: false,
+      },
+      take: 5,
+      orderBy: {
+        created_at: "desc",
+      },
+    });
+
     return NextResponse.json(
       {
         msg: "ok",
         unreadNotifications: notifications.length,
+        hasUnreadFirstPage: notificationsFirstPage.length == 0 ? false : true,
       },
       { status: 200 }
     );

@@ -128,18 +128,9 @@ export async function PUT(req: NextRequest) {
       },
     });
 
-    const unread = await db.notification.findMany({
-      where: {
-        user: {
-          id: user!.id,
-        },
-        read: false,
-      },
-    });
     return NextResponse.json(
       {
         msg: "ok",
-        unreadNotifications: unread.length,
       },
       { status: 200 }
     );
