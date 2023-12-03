@@ -57,13 +57,14 @@ function NotificationList() {
     });
 
     if (resp.ok) {
-      setIntialUpdate(true);
+      setIntialUpdate(false);
 
       //Invalidate query that fetches unread notif
       queryClient.invalidateQueries([
         "notifications",
         session!.user.id as string,
       ]);
+
       //Invalid query that displays current notif
       queryClient.invalidateQueries([
         "notificationsPagnation",
