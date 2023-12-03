@@ -20,7 +20,7 @@ function useNotifications() {
     });
     if (resp.ok) {
       const data = await resp.json();
-      update({ unreadNotif: data.unreadNotifications });
+      update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
       return data.unreadNotifications;
     } else {
       return null;

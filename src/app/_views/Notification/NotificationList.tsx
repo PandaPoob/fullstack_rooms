@@ -8,10 +8,10 @@ import { useQuery, useQueryClient } from "react-query";
 
 function NotificationList() {
   const queryClient = useQueryClient();
-
-  //const [notifications, setNotifications] = useState<FetchNotification[]>([]);
   const [pageNo, setPageNo] = useState(1);
   const [isLatePage, setIsLastPage] = useState(true);
+  const [unread, setUnread] = useState([]);
+
   const { data: session } = useSession();
 
   const usePaginatedNotifications = (no: number) => {
@@ -44,16 +44,15 @@ function NotificationList() {
       }
     );
   };
+  const { data: notifications } = usePaginatedNotifications(pageNo);
 
-  const { data: notifications, isLoading } = usePaginatedNotifications(pageNo);
-
-  const updateNotifications = async (unRead: FetchNotification[]) => {
+  const updateNotifications = async (unReadNot: FetchNotification[]) => {
     const resp = await fetch(`/api/notifications`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${session!.token.sub}`,
       },
-      body: JSON.stringify({ unreadNotifications: unRead }),
+      body: JSON.stringify({ unreadNotifications: unReadNot }),
     });
 
     if (resp.ok) {
@@ -75,19 +74,32 @@ function NotificationList() {
 
   useEffect(() => {
     if (notifications) {
-      const unRead = notifications.filter((n: FetchNotification) => !n.read);
-
-      if (session && unRead.length !== 0) {
-        updateNotifications(unRead);
+      const unReadNot = notifications.filter((n: FetchNotification) => !n.read);
+      setUnread(unread);
+      if (
+        session &&
+        unReadNot.length !== 0 &&
+        !session?.user.hasUnreadFirstPage &&
+        pageNo !== 1
+      ) {
+        updateNotifications(unReadNot);
       }
     }
   }, [notifications]);
 
-  /*     useEffect(() => {
-      if (session?.user.unreadNotif) {
-
-      }
-    }, [session?.user.unreadNotif]); */
+  useEffect(() => {
+    if (
+      session?.user.hasUnreadFirstPage &&
+      pageNo === 1 &&
+      unread.length === 0
+    ) {
+      queryClient.invalidateQueries([
+        "notificationsPagnation",
+        pageNo,
+        session!.user.id as string,
+      ]);
+    }
+  }, [session?.user.hasUnreadFirstPage]);
 
   const handlePagnation = (controller: string) => {
     if (controller == "next") {
@@ -164,6 +176,8 @@ function NotificationList() {
               return (
                 <li
                   key={n.id}
+                  {...(!n.read &&
+                    (onmouseover = () => updateNotifications(unread)))}
                   className={`grid py-3 px-5 bg-primary rounded-2xl gap-3 ${
                     n.read && "bg-opacity-50"
                   }`}
