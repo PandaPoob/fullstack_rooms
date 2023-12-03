@@ -11,6 +11,7 @@ function NotificationList() {
   const [pageNo, setPageNo] = useState(1);
   const [isLatePage, setIsLastPage] = useState(true);
   const [unread, setUnread] = useState([]);
+  const [intitialUpdate, setIntialUpdate] = useState(false);
 
   const { data: session } = useSession();
 
@@ -76,12 +77,8 @@ function NotificationList() {
     if (notifications) {
       const unReadNot = notifications.filter((n: FetchNotification) => !n.read);
       setUnread(unread);
-      if (
-        session &&
-        unReadNot.length !== 0 &&
-        !session?.user.hasUnreadFirstPage &&
-        pageNo !== 1
-      ) {
+      if (session && unReadNot.length !== 0 && !intitialUpdate) {
+        setIntialUpdate(true);
         updateNotifications(unReadNot);
       }
     }
@@ -102,6 +99,7 @@ function NotificationList() {
   }, [session?.user.hasUnreadFirstPage]);
 
   const handlePagnation = (controller: string) => {
+    setIntialUpdate(false);
     if (controller == "next") {
       setPageNo(pageNo + 1);
     } else if (controller === "back") {
