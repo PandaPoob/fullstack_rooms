@@ -162,11 +162,11 @@ export async function POST(req: NextRequest) {
       },
       include: {
         participants: {
-          where: {
+          /*       where: {
             user_id: {
               not: user!.id,
             },
-          },
+          }, */
         },
       },
     });
