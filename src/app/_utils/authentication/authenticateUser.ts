@@ -5,8 +5,6 @@ import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 
 export async function authenticateUser(req: NextRequest) {
-  //to use this: token from headers authorization
-
   const secret = process.env.NEXTAUTH_SECRET;
   let token;
   token = await getToken({ req: req, secret: secret, raw: true });
@@ -32,7 +30,6 @@ export async function authenticateUser(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session || (session.user.id as string) !== token) {
-    console.log("session:", session?.user.id, "token:", token);
     return {
       data: {
         msg: "Forbidden - Session mismatch",
