@@ -2,8 +2,6 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useQuery } from "react-query";
-import Pusher from "pusher-js";
-import { useEffect, useState } from "react";
 
 function useNotifications() {
   const { data: session, update } = useSession();
@@ -31,55 +29,7 @@ function useNotifications() {
 }
 
 function NotificationLink() {
-  const { data: session, update } = useSession();
-  const [notificationPing, setNotificationPing] = useState("");
-  const [unreadNotif, setUnreadNotif] = useState(0);
-
-  useEffect(() => {
-    if (session) {
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
-        cluster: "eu",
-      });
-
-      const channel = pusher.subscribe(`user_${session.user.id}`);
-      channel.bind("notification", (data: any) => {
-        console.log("Received notification:", data);
-        setNotificationPing(data);
-      });
-
-      return () => {
-        // Unsubscribe from Pusher channel when component unmounts
-        channel.unbind_all();
-        channel.unsubscribe();
-      };
-    }
-  }, [session]);
-
-  useEffect(() => {
-    async function getUnreadNotifications() {
-      const resp = await fetch(
-        `/api/notifications/unread?userId=${session?.user.id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${session!.token.sub}`,
-          },
-        }
-      );
-      if (resp.ok) {
-        const data = await resp.json();
-        setUnreadNotif(data.unreadNotifications);
-        update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
-        return data.unreadNotifications;
-      } else {
-        return null;
-      }
-    }
-    if (session) {
-      getUnreadNotifications();
-    }
-  }, [notificationPing]);
-
+  const { data, isLoading } = useNotifications();
   return (
     <li className="relative">
       <Link
@@ -99,9 +49,9 @@ function NotificationLink() {
           />
         </svg>
       </Link>
-      {unreadNotif !== 0 && (
+      {!isLoading && data !== null && data !== 0 && (
         <span className="text-white absolute -top-1 -right-1 bg-warning h-[1.25rem] w-[1.25rem] text-[0.5rem] font-medium rounded-full flex items-center justify-center">
-          {unreadNotif}
+          {data}
         </span>
       )}
     </li>

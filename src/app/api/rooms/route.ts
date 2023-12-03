@@ -1,3 +1,5 @@
+import { UserId } from "@/app/_models/user";
+import { notifyUsers } from "@/app/_utils/apis/notification";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import createroomschema from "@/app/_utils/validation/schemas/create-room-schema";
 import { db } from "@/lib/prisma-client";
@@ -7,6 +9,8 @@ import { z } from "zod";
 
 export async function GET(req: NextRequest) {
   try {
+    const Pusher = require("pusher");
+
     const resp = await authenticateUser(req);
 
     if (resp.status !== 200) {
@@ -162,11 +166,11 @@ export async function POST(req: NextRequest) {
       },
       include: {
         participants: {
-          /*       where: {
+          where: {
             user_id: {
               not: user!.id,
             },
-          }, */
+          },
         },
       },
     });
@@ -201,6 +205,14 @@ export async function POST(req: NextRequest) {
       );
 
       userNotifications = notifications;
+
+      const notificationResult = await notifyUsers(notifications as UserId[], {
+        msg: "New room created!",
+      });
+
+      if (!notificationResult.success) {
+        console.error("Error: Pusher notification trigger in create room");
+      }
     }
 
     return NextResponse.json(
