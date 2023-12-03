@@ -25,3 +25,6 @@ export interface UserEditForm extends UserEditBase {
 export interface UserEdit extends UserEditBase {
   avatar: Avatar | null;
 }
+export interface UserId {
+  user_id: string;
+}
