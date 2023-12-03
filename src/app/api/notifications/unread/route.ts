@@ -38,24 +38,10 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    const notificationsFirstPage = await db.notification.findMany({
-      where: {
-        user: {
-          id: user!.id,
-        },
-        read: false,
-      },
-      take: 5,
-      orderBy: {
-        created_at: "desc",
-      },
-    });
-
     return NextResponse.json(
       {
         msg: "ok",
         unreadNotifications: notifications.length,
-        hasUnreadFirstPage: notificationsFirstPage.length == 0 ? false : true,
       },
       { status: 200 }
     );

@@ -6,7 +6,6 @@ declare module "next-auth" {
     first_name: String;
     last_name: String;
     status: String;
-    hasUnreadFirstPage: boolean;
   }
   interface Session {
     user: User & {
@@ -21,7 +20,6 @@ declare module "next-auth" {
       last_name: String;
       status: String;
       sub: String;
-      hasUnreadFirstPage: boolean;
     };
   }
 }

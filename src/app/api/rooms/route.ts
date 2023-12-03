@@ -174,7 +174,6 @@ export async function POST(req: NextRequest) {
         },
       },
     });
-    let userNotifications;
     if (newRoom.participants.length !== 0) {
       const notifications = await Promise.all(
         newRoom.participants.map(async (p) => {
@@ -196,15 +195,13 @@ export async function POST(req: NextRequest) {
             return notification;
           } catch (error) {
             console.error(
-              `Error occurred while reating notification for ${p}:`,
+              `Error occurred while creating notification for ${p}:`,
               error
             );
             return null;
           }
         })
       );
-
-      userNotifications = notifications;
 
       const notificationResult = await notifyUsers(notifications as UserId[], {
         msg: "New room created!",
@@ -219,7 +216,6 @@ export async function POST(req: NextRequest) {
       {
         msg: "Room succesfully created",
         newRoom: newRoom,
-        userNotifications: userNotifications,
       },
       { status: 200 }
     );

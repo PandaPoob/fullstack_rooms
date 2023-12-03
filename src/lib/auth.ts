@@ -28,15 +28,6 @@ export const authOptions: NextAuthOptions = {
           include: {
             avatar: true,
             status: true,
-            receivedNotifications: {
-              where: {
-                read: false,
-              },
-              take: 5,
-              orderBy: {
-                created_at: "desc",
-              },
-            },
           },
         });
 
@@ -67,8 +58,6 @@ export const authOptions: NextAuthOptions = {
           last_name: existingUser.last_name,
           image: url,
           status: existingUser.status.title,
-          hasUnreadFirstPage:
-            existingUser.receivedNotifications.length == 0 ? false : true,
         };
       },
     }),
@@ -94,9 +83,6 @@ export const authOptions: NextAuthOptions = {
         if (session.avatar) {
           token.picture = session.avatar.formatted_url;
         }
-        if (session.hasUnreadFirstPage || session.hasUnreadFirstPage === 0) {
-          token.hasUnreadFirstPage = session.hasUnreadFirstPage;
-        }
       }
 
       if (user) {
@@ -106,7 +92,6 @@ export const authOptions: NextAuthOptions = {
           first_name: user.first_name,
           last_name: user.last_name,
           status: user.status,
-          hasUnreadFirstPage: user.hasUnreadFirstPage,
         };
       }
       return token;
@@ -123,7 +108,6 @@ export const authOptions: NextAuthOptions = {
           first_name: token.first_name,
           last_name: token.last_name,
           status: token.status,
-          hasUnreadFirstPage: token.hasUnreadFirstPage,
         },
         token,
       };

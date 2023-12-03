@@ -8,14 +8,11 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
-import { useQueryClient } from "react-query";
-import { InvalidateNotificationsForUsers } from "@/app/_utils/apis/notifications";
 
 function CreateRoomForm() {
   const [errorMsg, setErrorMsg] = useState("");
   const { data: session } = useSession();
   const router = useRouter();
-  const queryClient = useQueryClient();
 
   const clearError = () => {
     setErrorMsg("");
@@ -41,15 +38,7 @@ function CreateRoomForm() {
 
             if (resp.ok) {
               const data = await resp.json();
-              if (data.userNotifications.length !== 0) {
-                await InvalidateNotificationsForUsers(
-                  data.userNotifications,
-                  queryClient
-                );
-                router.push(`/rooms/${data.newRoom.id}`);
-              } else {
-                router.push(`/rooms/${data.newRoom.id}`);
-              }
+              router.push(`/rooms/${data.newRoom.id}`);
             } else {
               actions.setSubmitting(false);
               setErrorMsg("An error occurred");
