@@ -1,9 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useQuery, useQueryClient } from "react-query";
-import Pusher from "pusher-js";
-import { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 
 function useNotifications() {
   const { data: session, update } = useSession();
@@ -22,6 +20,7 @@ function useNotifications() {
     });
     if (resp.ok) {
       const data = await resp.json();
+      update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
       return data.unreadNotifications;
     } else {
       return null;
@@ -30,60 +29,7 @@ function useNotifications() {
 }
 
 function NotificationLink() {
-  const { data: session } = useSession();
   const { data, isLoading } = useNotifications();
-  const queryClient = useQueryClient();
-
-  useEffect(() => {
-    if (session) {
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
-        cluster: "eu",
-      });
-
-      const channel = pusher.subscribe(`user_${session.user.id}`);
-      channel.bind("notification", (data: any) => {
-        console.log("Received notification:", data);
-        if (data) {
-          queryClient.invalidateQueries([
-            "notifications",
-            session!.user.id as string,
-          ]);
-        }
-      });
-
-      return () => {
-        // Unsubscribe from Pusher channel when component unmounts
-        channel.unbind_all();
-        channel.unsubscribe();
-      };
-    }
-  }, [session]);
-
-  /*   useEffect(() => {
-    async function getUnreadNotifications() {
-      const resp = await fetch(
-        `/api/notifications/unread?userId=${session?.user.id}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${session!.token.sub}`,
-          },
-        }
-      );
-      if (resp.ok) {
-        const data = await resp.json();
-        setUnreadNotif(data.unreadNotifications);
-        //  update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
-        return data.unreadNotifications;
-      } else {
-        return null;
-      }
-    }
-    if (session) {
-      getUnreadNotifications();
-    }
-  }, [notificationPing, session]); */
-
   return (
     <li className="relative">
       <Link

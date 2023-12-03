@@ -4,99 +4,104 @@ import { useSession } from "next-auth/react";
 import { FetchNotification } from "@/app/_models/notifications";
 import Link from "next/link";
 import { formatDate } from "@/app/_utils/helpers/date";
-import Pusher from "pusher-js";
-import { useQueryClient } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 function NotificationList() {
+  const queryClient = useQueryClient();
   const [pageNo, setPageNo] = useState(1);
   const [isLatePage, setIsLastPage] = useState(true);
-  const [hasUpdated, setHasUpdated] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [notificationPing, setNotificationPing] = useState("");
+  const [unread, setUnread] = useState([]);
+  const [intitialUpdate, setIntialUpdate] = useState(false);
+
   const { data: session } = useSession();
-  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    if (session) {
-      const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY as string, {
-        cluster: "eu",
-      });
+  const usePaginatedNotifications = (no: number) => {
+    return useQuery(
+      ["notificationsPagnation", no, session?.user.id as string],
+      async () => {
+        if (!session) {
+          return null;
+        }
 
-      const channel = pusher.subscribe(`user_${session.user.id}`);
-      channel.bind("notification", (data: any) => {
-        setNotificationPing(data);
-      });
+        const resp = await fetch(`/api/notifications?pageNumber=${no}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session!.token.sub}`,
+          },
+        });
+        if (resp.ok) {
+          const data = await resp.json();
 
-      return () => {
-        //Unsubscribe from Pusher channel when component unmounts
-        channel.unbind_all();
-        channel.unsubscribe();
-      };
-    }
-  }, [session]);
-
-  useEffect(() => {
-    if (session) {
-      getNotifications();
-    }
-  }, [notificationPing, pageNo, session]);
-
-  async function getNotifications() {
-    const resp = await fetch(`/api/notifications?pageNumber=${pageNo}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session!.token.sub}`,
-      },
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      setNotifications(data.notifications);
-
-      if (!data.hasNextPage) {
-        setIsLastPage(true);
-      } else {
-        setIsLastPage(false);
+          if (!data.hasNextPage) {
+            setIsLastPage(true);
+          } else {
+            setIsLastPage(false);
+          }
+          return data.notifications;
+        } else {
+          console.log("Error fetching notifications");
+          return null;
+        }
       }
-      const unReadNot = data.notifications.filter(
-        (n: FetchNotification) => !n.read
-      );
+    );
+  };
+  const { data: notifications } = usePaginatedNotifications(pageNo);
 
-      if (!hasUpdated && unReadNot.length !== 0) {
-        updateNotifications(unReadNot);
-      }
-    }
-  }
-
-  const updateNotifications = async (unReadNot?: FetchNotification[]) => {
-    let unreadNotifications = unReadNot;
-    if (!unReadNot) {
-      unreadNotifications = notifications.filter(
-        (n: FetchNotification) => !n.read
-      );
-    }
+  const updateNotifications = async (unReadNot: FetchNotification[]) => {
     const resp = await fetch(`/api/notifications`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${session!.token.sub}`,
       },
-      body: JSON.stringify({ unreadNotifications: unreadNotifications }),
+      body: JSON.stringify({ unreadNotifications: unReadNot }),
     });
 
     if (resp.ok) {
-      setHasUpdated(true);
+      setIntialUpdate(false);
+
+      //Invalidate query that fetches unread notif
       queryClient.invalidateQueries([
         "notifications",
         session!.user.id as string,
       ]);
 
-      getNotifications();
+      //Invalid query that displays current notif
+      queryClient.invalidateQueries([
+        "notificationsPagnation",
+        pageNo,
+        session!.user.id as string,
+      ]);
     } else {
       console.log("Error occurred while updating notifications");
     }
   };
 
+  useEffect(() => {
+    if (notifications) {
+      const unReadNot = notifications.filter((n: FetchNotification) => !n.read);
+      setUnread(unReadNot);
+      if (session && unReadNot.length !== 0 && !intitialUpdate) {
+        updateNotifications(unReadNot);
+      }
+    }
+  }, [notifications]);
+
+  useEffect(() => {
+    if (
+      session?.user.hasUnreadFirstPage &&
+      pageNo === 1 &&
+      unread.length === 0
+    ) {
+      queryClient.invalidateQueries([
+        "notificationsPagnation",
+        pageNo,
+        session!.user.id as string,
+      ]);
+    }
+  }, [session?.user.hasUnreadFirstPage]);
+
   const handlePagnation = (controller: string) => {
-    setHasUpdated(false);
+    setIntialUpdate(false);
     if (controller == "next") {
       setPageNo(pageNo + 1);
     } else if (controller === "back") {
@@ -172,7 +177,7 @@ function NotificationList() {
                 <li
                   key={n.id}
                   onMouseOver={
-                    !n.read ? () => updateNotifications() : undefined
+                    !n.read ? () => updateNotifications(unread) : undefined
                   }
                   className={`grid py-3 px-5 bg-primary rounded-2xl gap-3 ${
                     n.read && "bg-opacity-50"
