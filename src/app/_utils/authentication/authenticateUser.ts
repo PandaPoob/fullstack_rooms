@@ -24,6 +24,7 @@ export async function authenticateUser(req: NextRequest) {
   const session = await getServerSession(authOptions);
 
   if (!session || (session.user.id as string) !== token) {
+    console.log("session:", session.user.id, "token:", token);
     return {
       data: {
         msg: "Forbidden - Session mismatch",
