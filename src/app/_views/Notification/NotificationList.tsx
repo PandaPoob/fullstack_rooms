@@ -5,6 +5,7 @@ import { FetchNotification } from "@/app/_models/notifications";
 import Link from "next/link";
 import { formatDate } from "@/app/_utils/helpers/date";
 import Pusher from "pusher-js";
+import { useQueryClient } from "react-query";
 
 function NotificationList() {
   const [pageNo, setPageNo] = useState(1);
@@ -13,6 +14,7 @@ function NotificationList() {
   const [notifications, setNotifications] = useState([]);
   const [notificationPing, setNotificationPing] = useState("");
   const { data: session } = useSession();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (session) {
@@ -22,7 +24,6 @@ function NotificationList() {
 
       const channel = pusher.subscribe(`user_${session.user.id}`);
       channel.bind("notification", (data: any) => {
-        console.log("Received notification:", data);
         setNotificationPing(data);
       });
 
@@ -35,35 +36,36 @@ function NotificationList() {
   }, [session]);
 
   useEffect(() => {
-    async function getNotifications() {
-      const resp = await fetch(`/api/notifications?pageNumber=${pageNo}`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session!.token.sub}`,
-        },
-      });
-      if (resp.ok) {
-        const data = await resp.json();
-        setNotifications(data.unreadNotifications);
-
-        if (!data.hasNextPage) {
-          setIsLastPage(true);
-        } else {
-          setIsLastPage(false);
-        }
-        const unReadNot = data.notifications.filter(
-          (n: FetchNotification) => !n.read
-        );
-
-        if (!hasUpdated && unReadNot.length !== 0) {
-          updateNotifications(unReadNot);
-        }
-      }
-    }
     if (session) {
       getNotifications();
     }
-  }, [notificationPing, pageNo]);
+  }, [notificationPing, pageNo, session]);
+
+  async function getNotifications() {
+    const resp = await fetch(`/api/notifications?pageNumber=${pageNo}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session!.token.sub}`,
+      },
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      setNotifications(data.notifications);
+
+      if (!data.hasNextPage) {
+        setIsLastPage(true);
+      } else {
+        setIsLastPage(false);
+      }
+      const unReadNot = data.notifications.filter(
+        (n: FetchNotification) => !n.read
+      );
+
+      if (!hasUpdated && unReadNot.length !== 0) {
+        updateNotifications(unReadNot);
+      }
+    }
+  }
 
   const updateNotifications = async (unReadNot?: FetchNotification[]) => {
     let unreadNotifications = unReadNot;
@@ -82,6 +84,12 @@ function NotificationList() {
 
     if (resp.ok) {
       setHasUpdated(true);
+      queryClient.invalidateQueries([
+        "notifications",
+        session!.user.id as string,
+      ]);
+
+      getNotifications();
     } else {
       console.log("Error occurred while updating notifications");
     }

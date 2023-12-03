@@ -6,7 +6,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(req: NextRequest) {
   try {
     const resp = await authenticateUser(req);
-
     if (resp.status !== 200) {
       const msg = resp.data.msg;
 

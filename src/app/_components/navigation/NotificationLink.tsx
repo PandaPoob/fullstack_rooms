@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import Pusher from "pusher-js";
 import { useEffect, useState } from "react";
 
@@ -22,7 +22,6 @@ function useNotifications() {
     });
     if (resp.ok) {
       const data = await resp.json();
-      update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
       return data.unreadNotifications;
     } else {
       return null;
@@ -31,9 +30,9 @@ function useNotifications() {
 }
 
 function NotificationLink() {
-  const { data: session, update } = useSession();
-  const [notificationPing, setNotificationPing] = useState("");
-  const [unreadNotif, setUnreadNotif] = useState(0);
+  const { data: session } = useSession();
+  const { data, isLoading } = useNotifications();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (session) {
@@ -44,7 +43,12 @@ function NotificationLink() {
       const channel = pusher.subscribe(`user_${session.user.id}`);
       channel.bind("notification", (data: any) => {
         console.log("Received notification:", data);
-        setNotificationPing(data);
+        if (data) {
+          queryClient.invalidateQueries([
+            "notifications",
+            session!.user.id as string,
+          ]);
+        }
       });
 
       return () => {
@@ -55,7 +59,7 @@ function NotificationLink() {
     }
   }, [session]);
 
-  useEffect(() => {
+  /*   useEffect(() => {
     async function getUnreadNotifications() {
       const resp = await fetch(
         `/api/notifications/unread?userId=${session?.user.id}`,
@@ -69,7 +73,7 @@ function NotificationLink() {
       if (resp.ok) {
         const data = await resp.json();
         setUnreadNotif(data.unreadNotifications);
-        update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
+        //  update({ hasUnreadFirstPage: data.hasUnreadFirstPage });
         return data.unreadNotifications;
       } else {
         return null;
@@ -78,7 +82,7 @@ function NotificationLink() {
     if (session) {
       getUnreadNotifications();
     }
-  }, [notificationPing]);
+  }, [notificationPing, session]); */
 
   return (
     <li className="relative">
@@ -99,9 +103,9 @@ function NotificationLink() {
           />
         </svg>
       </Link>
-      {unreadNotif !== 0 && (
+      {!isLoading && data !== null && data !== 0 && (
         <span className="text-white absolute -top-1 -right-1 bg-warning h-[1.25rem] w-[1.25rem] text-[0.5rem] font-medium rounded-full flex items-center justify-center">
-          {unreadNotif}
+          {data}
         </span>
       )}
     </li>
