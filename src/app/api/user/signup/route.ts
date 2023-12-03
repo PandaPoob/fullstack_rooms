@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
     //email unique                   //prisma
     const emailAlreadyExists = await db.user.findUnique({
-      where: { email: email },
+      where: { email: email.toLowerCase() },
     });
 
     if (emailAlreadyExists) {
@@ -54,7 +54,7 @@ export async function POST(req: Request) {
       data: {
         first_name,
         last_name,
-        email,
+        email: email.toLowerCase(),
         password: hashedPassword,
         birthday,
         status: { connect: { id: statusId.id } },
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
 </html>`,
     };
 
-//send email
+    //send email
     const res = await sendEmail(emailData);
 
     if (res.status !== 200) {
@@ -105,11 +105,11 @@ export async function POST(req: Request) {
         { status: 500 }
       );
     }
-    
+
     //SUCCESS
     return NextResponse.json(
       {
-        user: newUser,
+        user: newUser.first_name + " " + newUser.last_name,
         msg: "Succesfully created new user",
       },
       { status: 201 }

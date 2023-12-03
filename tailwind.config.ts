@@ -22,6 +22,8 @@ const config: Config = {
       secondary: "#8B9093", //light grey
       white: "#E9E9E9",
       darkGrey: "#8F8F8F", //dark grey, not oficially in figma yet
+      dark: "#161616", //not in figma
+      grey: "#4E4F53", //another grey
       link: "#4496F6", //blue
       success: "#77B184", //green
       warning: "#E85959", //red
@@ -31,6 +33,9 @@ const config: Config = {
       backgroundImage: {
         "btn-gradient":
           "linear-gradient(90deg, rgba(85, 85, 97, 0.60) 0%, #2F2F33 90%)",
+      },
+      fontFamily: {
+        body: "var(--body-font)",
       },
       fontSize: {
         "2xl": [

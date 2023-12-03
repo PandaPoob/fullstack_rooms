@@ -1,85 +1,142 @@
-// schema.prisma 
+generator client {
+  provider = "prisma-client-js"
+}
 
- 
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
 
-generator client { 
-  provider = "prisma-client-js" 
-} 
+model Room {
+  id           String      @default(cuid()) @id
+  title        String
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+  admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
+  admin_fk     String
+  location     Location?   @relation(fields: [location_id], references: [id])
+  location_id  String?
+  participants Participant[]   // Define the many-to-many relationship
+  cover        Cover?       @relation("RoomCover", fields: [cover_id], references: [id])
+  cover_id     String?      @unique
+  note_widget  NoteWidget?
+  task_widget  TaskWidget?
+}
+ model Cover {
+  id                  String      @default(cuid()) @id
+  formatted_url        String      
+  cloudinary_public_id  String      
+  room                Room?       @relation("RoomCover")
+}
 
- 
+model Location {
+  id            String            @default(cuid()) @unique 
+  latitude      Float
+  longitude     Float
+  country       String?
+  city          String?
+  state         String?
+  rooms         Room[]
 
-datasource db { 
-  provider = "postgresql" 
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling 
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection 
-} 
-
- 
-
-model Room { 
-  id                  String      @default(cuid()) @id 
-  title               String 
-  created_at          DateTime    @default(now())
-  updated_at          DateTime    @default(now())
-  admin               User   @relation(fields: [admin_fk], references: [id]) //one to one 
-  admin_fk            String 
-  location            String? 
-  participants        Participant[]   // Define the many-to-many relationship
-  cover_img           String       @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1697656225/default_room_cover_nbbfmg.png")
-} 
+  @@id([latitude, longitude])
+}
 
 
-
-model Participant { 
-  id            String     @default(cuid()) @id 
-  user          User       @relation(fields: [user_id], references: [id]) 
-  user_id       String 
-  room          Room       @relation(fields: [room_id], references: [id]) 
-  room_id       String 
-  is_favourited Boolean 
+model Participant {
+  id            String     @default(cuid()) @id
+  user          User       @relation(fields: [user_id], references: [id])
+  user_id       String
+  room          Room       @relation(fields: [room_id], references: [id])
+  room_id       String
+  is_favourited Boolean
   created_at    DateTime  @default(now())
   visited_at    DateTime  @default(now())
 
-  @@unique([user_id, room_id]) // Ensure each user is in a room only once 
-} 
-
- 
-
-model Status { 
-  id                  String      @default(cuid()) @id 
-  title               String      @unique 
-  users               User[]      //one to many 
+  @@unique([user_id, room_id]) // Ensure each user is in a room only once
 }
 
- 
 
-model User { 
-  id                  String      @default(cuid()) @id 
-  first_name          String     
-  last_name           String 
-  email               String      @unique 
-  email_verified_at   DateTime? 
+model User {
+  id                  String      @default(cuid()) @id
+  first_name          String
+  last_name           String
+  email               String      @unique
+  email_verified_at   DateTime?
   created_at          DateTime    @default(now())
   updated_at          DateTime    @default(now())
   password            String 
   birthday            String 
-  avatar_img          String     @default("https://res.cloudinary.com/dceom4kf4/image/upload/v1699872613/default_avatar_kdobv7.png")
+  avatar              Avatar?     @relation("UserAvatar", fields: [avatar_id], references: [id])
+  avatar_id            String?     @unique
   status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
-  participants        Participant[]  //defining opposite relation 
+  participants        Participant[]  //defining opposite relation
+  receivedNotifications  Notification[]   @relation("Receiver")
+  triggeredNotifications Notification[]   @relation("Triggerer")
   @@map(name: "users") 
 }
-model NotesWidget {
-  id                  String       @default(cuid()) @id
-  room_fk             String
-  updated_at          String
+model Status {
+  id    String      @default(cuid()) @id
+  title String      @unique
+  users User[]      // one to many
+}
+ model Avatar {
+  id                    String      @default(cuid()) @id
+  formatted_url         String      
+  cloudinary_public_id  String      
+  user                  User?       @relation("UserAvatar")
 }
 
-model NotesItems {
+
+model NoteWidget {
+  id                  String       @default(cuid()) @id
+  room                Room         @relation(fields: [room_fk], references: [id])
+  room_fk             String       @unique
+  note_item           NoteItem[]
+  @@unique([id, room_fk])
+
+}
+
+model NoteItem {
   id                String         @default(cuid()) @id
   title             String
-  text              String          
-  created_at        DateTime?       @default(now())
-  updated_at        DateTime?       @default(now())
+  text              String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @default(now())
+  note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
+  note_widget_fk    String         
+}
+
+model TaskWidget {
+id                  String          @default(cuid()) @id
+room                Room            @relation(fields: [room_fk], references: [id])
+room_fk             String          @unique
+tasks               TaskItem[]
+}
+
+model TaskItem {
+id                  String      @default(cuid()) @id 
+text                String
+task_widget_fk      String
+task_widget         TaskWidget  @relation(fields: [task_widget_fk], references: [id])
+created_at          DateTime    @default(now())
+updated_at          DateTime    @default(now())
+order               Int
+checked             Boolean
+}
+
+model Notification {
+id                  String      @default(cuid()) @id
+created_at          DateTime    @default(now())
+read                Boolean
+user                User        @relation("Receiver", fields: [user_id], references: [id])
+user_id             String      
+meta_user           User        @relation("Triggerer", fields: [meta_user_id], references: [id])
+meta_user_id        String      
+meta_action         String      
+meta_target         String
+meta_target_name    String
+meta_link           String?
 }

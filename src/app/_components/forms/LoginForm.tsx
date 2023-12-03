@@ -41,7 +41,6 @@ function LoginForm() {
             actions.setSubmitting(false);
           } else {
             router.refresh();
-            router.push("/");
           }
         }}
       >
