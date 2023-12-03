@@ -14,7 +14,8 @@ export async function authenticateUser(req: NextRequest) {
   if (process.env.NODE_ENV == "development") {
     token = await getToken({ req: req, secret: secret, raw: true });
   } else {
-    token = await getToken({ req: req, secret: secret });
+    const decoded = await getToken({ req: req, secret: secret });
+    token = decoded?.sub;
   }
 
   //Validate token
