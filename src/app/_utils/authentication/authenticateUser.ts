@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 export async function authenticateUser(req: NextRequest) {
   //to use this: token from headers authorization
 
-  const secret = process.env.SECRET;
+  const secret = process.env.NEXTAUTH_SECRET;
   const token = await getToken({ req: req, secret: secret, raw: true });
 
   //Validate token
@@ -19,6 +19,8 @@ export async function authenticateUser(req: NextRequest) {
       status: 401,
     };
   }
+
+  const tokenId = token.sub;
 
   //Validate server-side session
   const session = await getServerSession(authOptions);
