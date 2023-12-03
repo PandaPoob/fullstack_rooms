@@ -3,12 +3,21 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
+import jwt from "jsonwebtoken";
+import { TokenInterface } from "@/app/_models/token";
 
 export async function authenticateUser(req: NextRequest) {
   //to use this: token from headers authorization
 
   const secret = process.env.NEXTAUTH_SECRET;
-  const token = await getToken({ req: req, secret: secret, raw: true });
+  let token;
+  token = await getToken({ req: req, secret: secret, raw: true });
+
+  if (process.env.NODE_ENV !== "development") {
+    const decoded = jwt.verify(token, secret!) as TokenInterface;
+    console.log(decoded);
+    token = decoded;
+  }
 
   //Validate token
   if (!token) {
