@@ -20,8 +20,6 @@ export async function authenticateUser(req: NextRequest) {
     };
   }
 
-  const tokenId = token.sub;
-
   //Validate server-side session
   const session = await getServerSession(authOptions);
 
