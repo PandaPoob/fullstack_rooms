@@ -57,6 +57,8 @@ function NotificationList() {
     });
 
     if (resp.ok) {
+      setIntialUpdate(true);
+
       //Invalidate query that fetches unread notif
       queryClient.invalidateQueries([
         "notifications",
@@ -76,9 +78,8 @@ function NotificationList() {
   useEffect(() => {
     if (notifications) {
       const unReadNot = notifications.filter((n: FetchNotification) => !n.read);
-      setUnread(unread);
+      setUnread(unReadNot);
       if (session && unReadNot.length !== 0 && !intitialUpdate) {
-        setIntialUpdate(true);
         updateNotifications(unReadNot);
       }
     }
