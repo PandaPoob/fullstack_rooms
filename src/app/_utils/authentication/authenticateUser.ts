@@ -3,8 +3,6 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
-import * as jsonwebtoken from "jsonwebtoken";
-import { TokenInterface } from "@/app/_models/token";
 
 export async function authenticateUser(req: NextRequest) {
   //to use this: token from headers authorization
@@ -13,12 +11,10 @@ export async function authenticateUser(req: NextRequest) {
   let token;
   token = await getToken({ req: req, secret: secret, raw: true });
 
-  if (process.env.NODE_ENV !== "development") {
-    console.log("vercel here");
-    console.log(secret);
-    const decoded = jsonwebtoken.verify(token, secret!) as TokenInterface;
-    console.log(decoded);
-    token = decoded;
+  if (process.env.NODE_ENV == "development") {
+    token = await getToken({ req: req, secret: secret, raw: true });
+  } else {
+    token = await getToken({ req: req, secret: secret });
   }
 
   //Validate token
