@@ -23,7 +23,7 @@ export async function authenticateUser(req: NextRequest) {
   //Validate server-side session
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.id !== token) {
+  if (!session || (session.user.id as string) !== token) {
     return {
       data: {
         msg: "Forbidden - Session mismatch",
