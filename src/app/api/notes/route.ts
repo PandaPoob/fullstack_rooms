@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     // Post a new note to the database
     const newNote = await db.noteItem.create({
       data: {
-        title,
+        title,ch
         text,
         note_widget: {
           connect: { id: note_widget_fk },

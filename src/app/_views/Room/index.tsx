@@ -19,6 +19,8 @@ interface Notes {
 }
 
 function RoomView(props: Roomprops) {
+  const { notes } = props;
+  const latestNote = notes[0];
   // rooms/id/notes/note_widget_fk
   return (
     <div>
@@ -26,6 +28,11 @@ function RoomView(props: Roomprops) {
       <div>Dashboard content here</div>
 
       {/* Show only the latest note here, instead of the entire list */}
+      {/* {latestNote && (
+        <Link href={`/notes/${latestNote.id}`}>
+          <NoteCard title={latestNote.title} text={latestNote.text} />
+        </Link>
+      )} */}
 
       <Link href={`/notes/${props.notes.id}`}>
         {" "}

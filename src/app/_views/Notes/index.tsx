@@ -7,7 +7,7 @@ import NoteList from "../Notes/NoteList";
 import Link from "next/link";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { CreateNoteForm } from "@/app/_models/notes";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 
 interface NoteProps {
   notes: Notes;
@@ -31,14 +31,16 @@ function NoteView(props: NoteProps) {
     throw new Error("Function not implemented.");
   }
 
-  function handleFormat(arg0: string): void {
-    throw new Error("Function not implemented.");
-  }
-
-  function handleAlignment(arg0: string): void {
-    throw new Error("Function not implemented.");
-  }
   const [format, setFormat] = useState("");
+  const handleFormatClick = (formatType: SetStateAction<string>) => {
+    if (format === formatType) {
+      setFormat(""); // Reset if clicked twice on the same format
+    } else {
+      setFormat(formatType); // Set the format if not set already
+    }
+  };
+
+  const [algignment, setAlignment] = useState("");
   const [dispayForm, setDisplayForm] = useState(false);
 
   // Liste af notes ind i et react state
@@ -121,7 +123,7 @@ function NoteView(props: NoteProps) {
                     {/* Bold */}
                     <button
                       type="button"
-                      onClick={() => setFormat("bold")}
+                      onClick={() => handleFormatClick("bold")}
                       className="bold"
                     >
                       B
@@ -129,7 +131,7 @@ function NoteView(props: NoteProps) {
                     {/* Italic */}
                     <button
                       type="button"
-                      onClick={() => setFormat("italic")}
+                      onClick={() => handleFormatClick("italic")}
                       className="italic"
                     >
                       I
@@ -137,7 +139,7 @@ function NoteView(props: NoteProps) {
                     {/* Underline */}
                     <button
                       type="button"
-                      onClick={() => setFormat("underline")}
+                      onClick={() => handleFormatClick("underline")}
                       className="underline"
                     >
                       U
@@ -145,10 +147,7 @@ function NoteView(props: NoteProps) {
                   </div>
                   <div className="flex gap-6 mx-4">
                     {/* Align left */}
-                    <button
-                      type="button"
-                      onClick={() => handleAlignment("left")}
-                    >
+                    <button type="button" onClick={() => setAlignment("left")}>
                       {" "}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +167,7 @@ function NoteView(props: NoteProps) {
                     {/* Align center */}
                     <button
                       type="button"
-                      onClick={() => handleAlignment("center")}
+                      onClick={() => setAlignment("center")}
                     >
                       {" "}
                       <svg
@@ -186,10 +185,7 @@ function NoteView(props: NoteProps) {
                     </button>
 
                     {/* Align right */}
-                    <button
-                      type="button"
-                      onClick={() => handleAlignment("right")}
-                    >
+                    <button type="button" onClick={() => setAlignment("right")}>
                       {" "}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -225,10 +221,14 @@ function NoteView(props: NoteProps) {
                       name="text"
                       placeholder="Text ..."
                       rows={4}
-                      className={`${
-                        format === ""
+                      className={` ${
+                        format.includes("bold")
                           ? "font-bold"
-                          : format === "italic" && "font-italic"
+                          : format.includes("italic")
+                          ? "italic"
+                          : format.includes("underline")
+                          ? "underline"
+                          : "normal"
                       } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
                     />
                   </div>
