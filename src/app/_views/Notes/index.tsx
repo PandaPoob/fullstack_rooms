@@ -41,6 +41,13 @@ function NoteView(props: NoteProps) {
   };
 
   const [algignment, setAlignment] = useState("");
+  const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
+    if (algignment === alignmentType) {
+      setAlignment(""); // Reset if clicked twice on the same alignment
+    } else {
+      setAlignment(alignmentType); // Set the alignment if not set already
+    }
+  };
   const [dispayForm, setDisplayForm] = useState(false);
 
   // Liste af notes ind i et react state
@@ -147,7 +154,10 @@ function NoteView(props: NoteProps) {
                   </div>
                   <div className="flex gap-6 mx-4">
                     {/* Align left */}
-                    <button type="button" onClick={() => setAlignment("left")}>
+                    <button
+                      type="button"
+                      onClick={() => handleAlignmentClick("left")}
+                    >
                       {" "}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +177,7 @@ function NoteView(props: NoteProps) {
                     {/* Align center */}
                     <button
                       type="button"
-                      onClick={() => setAlignment("center")}
+                      onClick={() => handleAlignmentClick("center")}
                     >
                       {" "}
                       <svg
@@ -185,7 +195,10 @@ function NoteView(props: NoteProps) {
                     </button>
 
                     {/* Align right */}
-                    <button type="button" onClick={() => setAlignment("right")}>
+                    <button
+                      type="button"
+                      onClick={() => handleAlignmentClick("right")}
+                    >
                       {" "}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -229,6 +242,14 @@ function NoteView(props: NoteProps) {
                           : format.includes("underline")
                           ? "underline"
                           : "normal"
+                      } ${
+                        algignment === "left"
+                          ? "text-left"
+                          : algignment === "center"
+                          ? "text-center"
+                          : algignment === "right"
+                          ? "text-right"
+                          : ""
                       } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
                     />
                   </div>
