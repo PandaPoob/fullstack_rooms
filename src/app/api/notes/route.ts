@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     // Post a new note to the database
     const newNote = await db.noteItem.create({
       data: {
-        title,ch
+        title,
         text,
         note_widget: {
           connect: { id: note_widget_fk },
@@ -65,7 +65,7 @@ export async function DELETE(req: Request) {
     // Prisma delete the note ID
     await db.noteWidget.delete({
       where: {
-        id: noteId, // skal skrives anderledes, men hvilket? 
+        id: noteId, // skal skrives anderledes, men hvilket?
       },
     });
 
