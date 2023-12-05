@@ -7,7 +7,7 @@ import NoteList from "../Notes/NoteList";
 import Link from "next/link";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { CreateNoteForm } from "@/app/_models/notes";
-import { SetStateAction, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 
 interface NoteProps {
   notes: Notes;
@@ -23,6 +23,7 @@ interface Notes {
 }
 
 function NoteView(props: NoteProps) {
+  const [notes, setNotes] = useState<NoteItem[]>(props.notes.noteItem);
   function setSuccess(arg0: boolean) {
     throw new Error("Function not implemented.");
   }
@@ -50,9 +51,11 @@ function NoteView(props: NoteProps) {
   };
   const [dispayForm, setDisplayForm] = useState(false);
 
-  // Liste af notes ind i et react state
-  // Hvis resp = ok -> opdater state med old state + newnote
-  // Find inspiration: edit user form. Hvis ikke den dukker op, så find i repo: https://github.com/PandaPoob/fullstack_rooms/blob/develop/src/app/_components/forms/EditUserForm.tsx
+  // Handles delete
+
+  const handleDeleteNote = async (id: string) => {
+    console.log(`Note deleted with id: ${id}`);
+  };
 
   return (
     <main>
@@ -78,9 +81,6 @@ function NoteView(props: NoteProps) {
           {dispayForm ? "New Note" : "All Notes"}
         </h1>
       </div>
-
-      {/* Filter */}
-      {/* Button - Create new note */}
 
       {dispayForm && (
         <Formik
@@ -123,6 +123,20 @@ function NoteView(props: NoteProps) {
         >
           {({ isSubmitting }) => (
             <Form className="grid gap-3 mt-2" autoComplete="off">
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="text-h5 rounded-3xl justify-center "
+                >
+                  {isSubmitting ? (
+                    <span>Submitting...</span>
+                  ) : (
+                    <span>Save Note</span>
+                  )}
+                </button>
+              </div>
               <div className="bg-primary rounded-md w-full">
                 {/* Værktøjslinje */}
                 <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
@@ -261,20 +275,6 @@ function NoteView(props: NoteProps) {
                 </p>
               </div>
 
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="text-h5 rounded-3xl justify-center "
-                >
-                  {isSubmitting ? (
-                    <span>Submitting...</span>
-                  ) : (
-                    <span>Create Note</span>
-                  )}
-                </button>
-              </div>
               {/* This button works when you press submit and goes back to all notes, but it dosent save the note */}
               {/* <div className="flex justify-end">
                 <button
@@ -294,32 +294,36 @@ function NoteView(props: NoteProps) {
           )}
         </Formik>
       )}
-      <div className="flex justify-end">
-        <button onClick={() => setDisplayForm(true)}>
-          {" "}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 512 512"
-          >
-            <path
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="32"
-              d="M384 224v184a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40h167.48"
-            />
-            <path
-              fill="currentColor"
-              d="M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38ZM399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0Z"
-            />
-          </svg>
-        </button>
-      </div>
+      {!dispayForm && (
+        <div className="flex justify-end">
+          <button onClick={() => setDisplayForm(true)}>
+            {" "}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M384 224v184a40 40 0 0 1-40 40H104a40 40 0 0 1-40-40V168a40 40 0 0 1 40-40h167.48"
+              />
+              <path
+                fill="currentColor"
+                d="M459.94 53.25a16.06 16.06 0 0 0-23.22-.56L424.35 65a8 8 0 0 0 0 11.31l11.34 11.32a8 8 0 0 0 11.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38ZM399.34 90L218.82 270.2a9 9 0 0 0-2.31 3.93L208.16 299a3.91 3.91 0 0 0 4.86 4.86l24.85-8.35a9 9 0 0 0 3.93-2.31L422 112.66a9 9 0 0 0 0-12.66l-9.95-10a9 9 0 0 0-12.71 0Z"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
 
-      {!dispayForm && <NoteList notes={props.notes} />}
+      {!dispayForm && (
+        <NoteList notes={props.notes} onDeleteNote={handleDeleteNote} />
+      )}
     </main>
   );
 }

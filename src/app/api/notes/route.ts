@@ -55,23 +55,50 @@ export async function POST(req: Request) {
 }
 
 // Handle PUT (edit note) request
+export async function PUT(req: Request) {
+  try {
+    const { id, title, text } = await req.json();
+
+    // Opdater note item ID
+    const updatedNote = await db.noteItem.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        text,
+        updated_at: new Date(), // Opdaterer updated_at timestamp
+      },
+    });
+
+    // Success response for note update
+    return NextResponse.json(
+      {
+        note: updatedNote,
+        msg: "Note updated",
+      },
+      { status: 200 }
+    );
+  } catch (error) {}
+}
+
 
 // Handle DELETE requests
-
 export async function DELETE(req: Request) {
   try {
-    const noteId = await req.json(); // noteId skal erstattes
+    const { id } = await req.json();
 
-    // Prisma delete the note ID
-    await db.noteWidget.delete({
+    // Prisma delete note item ID
+    const deletedNote = await db.noteItem.delete({
       where: {
-        id: noteId, // skal skrives anderledes, men hvilket?
+        id,
       },
     });
 
     // Success response for note deletion
     return NextResponse.json(
       {
+        note: deletedNote,
         msg: "Note deleted",
       },
       { status: 200 }
@@ -79,11 +106,9 @@ export async function DELETE(req: Request) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       // Zod validation errors
-      const validationErrors = error.issues.map((issue) => {
-        return {
-          message: issue.message,
-        };
-      });
+      const validationErrors = error.issues.map((issue) => ({
+        message: issue.message,
+      }));
 
       // Return a validation error response
       return NextResponse.json({ error: validationErrors }, { status: 400 });
