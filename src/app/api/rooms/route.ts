@@ -239,3 +239,29 @@ export async function POST(req: NextRequest) {
     }
   }
 }
+
+export async function PUT(req: NextRequest) { 
+try {
+  //validate user only admin can edit room
+  //validate image
+  //validate title
+  //edit participants
+
+
+  return NextResponse.json(
+    {
+      msg: "Ok",
+    },
+    { status: 200 }
+  );
+
+} catch (error){
+  console.error(error)
+  return NextResponse.json(
+    { error: "Internal Server Error" },
+    { status: 500 }
+  );
+}
+
+ 
+}
