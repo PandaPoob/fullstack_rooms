@@ -48,5 +48,14 @@ export async function authenticateUser(req: NextRequest) {
     },
   });
 
+  if (!user) {
+    return {
+      data: {
+        msg: "User not found",
+      },
+      status: 404,
+    };
+  }
+
   return { data: { msg: "ok", user }, status: 200 };
 }

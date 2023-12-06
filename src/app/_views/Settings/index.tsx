@@ -4,6 +4,7 @@ import { ExtendedRoom } from "@/app/_models/room";
 import { Room } from "@prisma/client";
 import RoomSettingsMenu from "./RoomSettingsMenu";
 import { useState } from "react";
+import EditRoomForm from "@/app/_components/forms/EditRoomForm";
 
 interface SettingsProps {
   roomData: ExtendedRoom;
@@ -11,6 +12,7 @@ interface SettingsProps {
 
 function Settings({ roomData }: SettingsProps) {
   const [tab, setTab] = useState(1);
+  const [room, setRoom] = useState(roomData);
 
   return (
     <main>
@@ -19,11 +21,9 @@ function Settings({ roomData }: SettingsProps) {
         <div className="bg-dark rounded-xl lg:w-[30%] xl:w-1/4 xxl:w-1/5 lg:min-h-[calc(100vh-7.5rem)] flex flex-col">
           <SettingsBanner
             img={
-              roomData.cover?.id
-                ? roomData.cover.formatted_url
-                : "/default_cover.png"
+              room.cover?.id ? room.cover.formatted_url : "/default_cover.png"
             }
-            nameTitle={roomData.title}
+            nameTitle={room.title}
           />
 
           <div className="lg:hidden">
@@ -63,7 +63,13 @@ function Settings({ roomData }: SettingsProps) {
         </div>
 
         <div className="hidden lg:block lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7 xxl:px-14">
-          {tab === 1 ? <div>Edit room here</div> : <div>Edit members here</div>}
+          {tab === 1 ? (
+            <div>
+              <EditRoomForm room={room} setRoom={setRoom} />
+            </div>
+          ) : (
+            <div>Edit members here</div>
+          )}
 
           {/*          <EditUserForm
             profile={props.profile}

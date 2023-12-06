@@ -8,3 +8,9 @@ export interface RoomCreateForm {
 export interface ExtendedRoom extends Room {
   cover?: Cover;
 }
+
+export interface RoomEditForm {
+  title: string;
+  roomId: string;
+  cover_img: string | Blob;
+}
