@@ -11,7 +11,7 @@ function RoomsList() {
 
   useEffect(() => {
     async function getRooms() {
-      const resp = await fetch(`/api/rooms/${session!.user.id}`, {
+      const resp = await fetch(`/api/rooms`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${session!.token.sub}`,
@@ -28,7 +28,6 @@ function RoomsList() {
       getRooms();
     }
   }, [session]);
-
   return (
     <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
       {rooms.length !== 0 &&

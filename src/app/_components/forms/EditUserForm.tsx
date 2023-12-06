@@ -51,7 +51,7 @@ function EditUserForm(props: EditUserFormProps) {
             formData.append("avatar_img", values.avatar_img);
 
             setEditValues(values);
-            const resp = await fetch(`/api/user/edit/${session.user.id}`, {
+            const resp = await fetch(`/api/user/edit`, {
               method: "PUT",
               headers: {
                 Authorization: `Bearer ${session.token.sub}`,
@@ -60,7 +60,6 @@ function EditUserForm(props: EditUserFormProps) {
             });
             if (resp.ok) {
               const data = await resp.json();
-              console.log(data);
               if (data.updatedUser) {
                 update(data.updatedUser);
               }

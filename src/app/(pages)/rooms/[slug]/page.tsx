@@ -3,9 +3,6 @@ import { db } from "@/lib/prisma-client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
-import { NoteItem } from "@prisma/client";
-import { NoteWidget } from "@prisma/client";
-import NoteCard from "@/app/_views/Notes/NoteCard";
 import { Participant } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -56,7 +53,7 @@ async function getData(params: { slug: string }) {
         room_fk: room.id,
       },
       include: {
-        noteItem: true,
+        note_item: true,
       },
     });
 
@@ -75,7 +72,7 @@ async function getData(params: { slug: string }) {
     const data = {
       room,
       session,
-      notes,
+      note: notes?.note_item[0],
     };
 
     return data;
@@ -86,7 +83,6 @@ async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
   console.log(data.notes);
 
-  // Render RoomView, NoteWidget, and NoteItems
   return (
     data && (
       <>

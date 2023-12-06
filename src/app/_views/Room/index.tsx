@@ -1,5 +1,5 @@
 import { User } from "next-auth";
-import { NoteItem, NoteWidget, Room } from "@prisma/client";
+import { NoteItem, Room } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
@@ -7,7 +7,7 @@ import NoteList from "../Notes/NoteList";
 
 interface Roomprops {
   room: Room;
-  notes: NoteItem;
+  note?: NoteItem;
   sessionUser: User;
 }
 

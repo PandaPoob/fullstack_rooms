@@ -14,7 +14,7 @@ interface Profileprops {
 
 function ProfileView(props: Profileprops) {
   return (
-    <div>
+    <main>
       <h2 className="text-h2 mb-7 md:mt-7">Profile settings</h2>
       <div className="lg:flex lg:gap-2">
         <div className="bg-dark rounded-xl lg:w-[30%] xl:w-1/4 xxl:w-1/5 lg:min-h-[calc(100vh-7.5rem)] flex flex-col">
@@ -58,7 +58,7 @@ function ProfileView(props: Profileprops) {
           />
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 export default ProfileView;

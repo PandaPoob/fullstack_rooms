@@ -4,7 +4,6 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { redirect } from "next/navigation";
 
-
 // This slug is the singleview of the note
 
 async function getData(noteId: string) {
