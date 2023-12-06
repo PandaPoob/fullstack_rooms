@@ -51,12 +51,11 @@ function EmailFieldArray({
       const maxAdditionalParticipants = calculateMaxAdditionalParticipants(
         participants!
       );
-
+      //Validate that no more than 12 users can be added
       if (maxAdditionalParticipants === 0) {
         setError(`Max number of users in a room is ${maxParticipants}`);
         hasError = true;
       }
-      //Validate that no more than 12 users can be added
     } else {
       //Validate that email is not logged user
       if (session?.user.email === cleanEmail) {
@@ -85,7 +84,6 @@ function EmailFieldArray({
         return;
       }
     }
-    console.log(error);
 
     if (!hasError) {
       //check if email exists

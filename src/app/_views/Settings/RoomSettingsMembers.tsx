@@ -7,6 +7,7 @@ interface RoomSettingsMembersProps {
   room: ExtendedRoom;
   setRoom: (room: ExtendedRoom) => void;
   participants?: ExtendedParticipant[];
+  setParticipants: (participants: ExtendedParticipant[]) => void;
 }
 
 function RoomSettingsMembers(props: RoomSettingsMembersProps) {
@@ -25,6 +26,7 @@ function RoomSettingsMembers(props: RoomSettingsMembersProps) {
         room={props.room}
         setRoom={props.setRoom}
         participants={props.participants}
+        setParticipants={props.setParticipants}
       />
     </div>
   );

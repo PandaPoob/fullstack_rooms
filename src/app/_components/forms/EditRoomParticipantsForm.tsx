@@ -16,6 +16,7 @@ interface EditRoomParticipantsFormProps {
   room: ExtendedRoom;
   setRoom: (room: ExtendedRoom) => void;
   participants?: ExtendedParticipant[];
+  setParticipants: (participants: ExtendedParticipant[]) => void;
 }
 
 function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
@@ -30,14 +31,14 @@ function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
     <div>
       <h2 className="text-h3 font-medium mb-5">Invite</h2>
       <Formik
-        initialValues={{ emails: [], roomId: "" }}
+        initialValues={{ emails: [], roomId: props.room.id }}
         validationSchema={toFormikValidationSchema(participantcreateschema)}
         onSubmit={async (values: ParticipantCreateForm, actions) => {
           actions.setSubmitting(true);
 
           if (session) {
             const resp = await fetch(`/api/participants`, {
-              method: "PUT",
+              method: "POST",
               headers: {
                 Authorization: `Bearer ${session.token.sub}`,
               },
@@ -45,24 +46,19 @@ function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
             });
             if (resp.ok) {
               const data = await resp.json();
-              if (data.updatedRoom) {
-                props.setRoom(data.updatedRoom);
-              }
+              const updatedParticipants = [
+                ...props.participants!,
+                ...data.newParticipants,
+              ];
+              props.setParticipants(updatedParticipants);
+              actions.resetForm();
             } else {
               setErrorMsg("An error occurred");
             }
           }
         }}
       >
-        {({
-          isSubmitting,
-          errors,
-          values,
-          setFieldValue,
-          isValid,
-          setFieldTouched,
-          isValidating,
-        }) => {
+        {({ isSubmitting, errors, values, setFieldValue }) => {
           return (
             <Form className="grid gap-3 xxl:px-20">
               <EmailFieldArray
