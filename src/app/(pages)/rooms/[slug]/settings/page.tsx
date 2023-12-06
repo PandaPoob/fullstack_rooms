@@ -21,6 +21,14 @@ async function getData(params: { slug: string }, user: User) {
       },
       include: {
         cover: true,
+        participants: {
+          include: {
+            user: true,
+          },
+          orderBy: {
+            created_at: "desc",
+          },
+        },
       },
     });
 
@@ -30,6 +38,19 @@ async function getData(params: { slug: string }, user: User) {
     if (room.admin_fk !== user.id) {
       redirect("/error");
     }
+
+    //If there is more than 1 participant
+    if (room.participants.length > 1) {
+      //find admin
+      const adminIndex = room.participants.findIndex(
+        (p) => room.admin_fk == p.user_id
+      );
+      //take admin out
+      const adminParticipant = room.participants.splice(adminIndex, 1)[0];
+      //set admin to the beginning
+      room.participants.unshift(adminParticipant);
+    }
+    //
 
     return { room: room };
   }

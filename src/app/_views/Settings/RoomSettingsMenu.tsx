@@ -33,7 +33,7 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
               props.setTab(2);
               setIsOpen(true);
             }}
-            className="px-6 py-3 w-full border-y border-darkGrey border-opacity-30 font-medium transition hover:bg-opacity-30 hover:bg-bg_black"
+            className="px-6 py-3 w-full border-b border-darkGrey border-opacity-30 font-medium transition hover:bg-opacity-30 hover:bg-bg_black"
           >
             Edit Members
           </button>

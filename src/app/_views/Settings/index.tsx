@@ -5,6 +5,8 @@ import { Room } from "@prisma/client";
 import RoomSettingsMenu from "./RoomSettingsMenu";
 import { useState } from "react";
 import EditRoomForm from "@/app/_components/forms/EditRoomForm";
+import EditRoomParticipants from "@/app/_components/forms/EditRoomParticipantsForm";
+import RoomSettingsMembers from "./RoomSettingsMembers";
 
 interface SettingsProps {
   roomData: ExtendedRoom;
@@ -13,6 +15,7 @@ interface SettingsProps {
 function Settings({ roomData }: SettingsProps) {
   const [tab, setTab] = useState(1);
   const [room, setRoom] = useState(roomData);
+  const [participants, setParticipants] = useState(roomData.participants);
 
   return (
     <main>
@@ -67,19 +70,20 @@ function Settings({ roomData }: SettingsProps) {
           </div>
         </div>
 
-        <div className="hidden lg:block lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7 xxl:px-14">
+        <div className="hidden max-h lg:block lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7 xxl:px-14">
           {tab === 1 ? (
             <div>
               <EditRoomForm room={room} setRoom={setRoom} />
             </div>
           ) : (
-            <div>Edit members here</div>
+            <div>
+              <RoomSettingsMembers
+                room={room}
+                setRoom={setRoom}
+                participants={participants}
+              />
+            </div>
           )}
-
-          {/*          <EditUserForm
-            profile={props.profile}
-            statusOptions={props.statusOptions}
-          /> */}
         </div>
       </div>
     </main>

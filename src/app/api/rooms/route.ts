@@ -339,11 +339,12 @@ export async function PUT(req: NextRequest) {
       newImageData.cloudinarypublicid = data.public_id;
       //Format image
       const url = data.secure_url.split("upload/");
+      //hvis height er under 400 og width er under 600
 
-      if (data.width < 600 && data.height < 400) {
+      if (data.width <= 600 && data.height <= 400) {
         //Scale up to the minimum required dimensions
         newImageData.newurl = `${url[0]}upload/c_fill,h_400,w_600/${url[1]}`;
-      } else if (data.width > 600 || data.height > 400) {
+      } else if (data.width >= 600 || data.height >= 400) {
         //Scale down while maintaining aspect ratio
         newImageData.newurl = `${url[0]}upload/c_fill,h_400,w_600/${url[1]}`;
       } else if (data.width === 600 && data.height === 400) {

@@ -4,24 +4,23 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
 import { useSession } from "next-auth/react";
-import { ExtendedRoom, RoomEditForm } from "@/app/_models/room";
-import CoverFileInput from "./formInputs/CoverFileInput";
-import TitleInput from "./formInputs/TitleInput";
-import editroomschema from "@/app/_utils/validation/schemas/room-edit-schema";
+import { ExtendedRoom } from "@/app/_models/room";
+import EmailFieldArray from "./formInputs/EmailFieldArray";
+import {
+  ExtendedParticipant,
+  ParticipantCreateForm,
+} from "@/app/_models/participant";
+import { participantcreateschema } from "@/app/_utils/validation/schemas/participant-create-schema";
 
-interface EditRoomFormProps {
+interface EditRoomParticipantsFormProps {
   room: ExtendedRoom;
   setRoom: (room: ExtendedRoom) => void;
+  participants?: ExtendedParticipant[];
 }
 
-function EditRoomForm(props: EditRoomFormProps) {
+function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
-  const { data: session, update } = useSession();
-  const [editValues, setEditValues] = useState<RoomEditForm>({
-    title: props.room.title,
-    roomId: props.room.id,
-    cover_img: "",
-  });
+  const { data: session } = useSession();
 
   const clearError = () => {
     setErrorMsg("");
@@ -29,32 +28,24 @@ function EditRoomForm(props: EditRoomFormProps) {
 
   return (
     <div>
-      <h2 className="text-h3 font-medium hidden lg:block">Edit Room</h2>
+      <h2 className="text-h3 font-medium mb-5">Invite</h2>
       <Formik
-        initialValues={editValues}
-        validationSchema={toFormikValidationSchema(editroomschema)}
-        onSubmit={async (values: RoomEditForm, actions) => {
+        initialValues={{ emails: [], roomId: "" }}
+        validationSchema={toFormikValidationSchema(participantcreateschema)}
+        onSubmit={async (values: ParticipantCreateForm, actions) => {
           actions.setSubmitting(true);
 
           if (session) {
-            const formData = new FormData();
-            formData.append("title", values.title);
-            formData.append("roomId", values.roomId);
-
-            formData.append("cover_img", values.cover_img);
-
-            setEditValues(values);
-            const resp = await fetch(`/api/rooms`, {
+            const resp = await fetch(`/api/participants`, {
               method: "PUT",
               headers: {
                 Authorization: `Bearer ${session.token.sub}`,
               },
-              body: formData,
+              body: JSON.stringify({ ...values }),
             });
             if (resp.ok) {
               const data = await resp.json();
               if (data.updatedRoom) {
-                console.log(data);
                 props.setRoom(data.updatedRoom);
               }
             } else {
@@ -66,7 +57,7 @@ function EditRoomForm(props: EditRoomFormProps) {
         {({
           isSubmitting,
           errors,
-          touched,
+          values,
           setFieldValue,
           isValid,
           setFieldTouched,
@@ -74,21 +65,19 @@ function EditRoomForm(props: EditRoomFormProps) {
         }) => {
           return (
             <Form className="grid gap-3 xxl:px-20">
-              <CoverFileInput
+              <EmailFieldArray
                 setFieldValue={setFieldValue}
-                setFieldTouched={setFieldTouched}
-                error={errors.cover_img}
-                touched={touched.cover_img}
-                roomData={props.room}
-                isValidating={isValidating}
+                emails={values.emails}
+                emailsError={errors.emails}
+                isEditRoom
+                participants={props.participants}
               />
 
-              <TitleInput error={errors.title} touched={touched.title} />
               <Field type="hidden" name="roomId" id="roomId" />
 
               <button
                 type="submit"
-                disabled={isSubmitting || !isValid}
+                disabled={isSubmitting}
                 className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
               >
                 {isSubmitting ? (
@@ -113,7 +102,7 @@ function EditRoomForm(props: EditRoomFormProps) {
                     ></path>
                   </svg>
                 ) : (
-                  <span>Save</span>
+                  <span>Invite</span>
                 )}
               </button>
             </Form>
@@ -125,4 +114,4 @@ function EditRoomForm(props: EditRoomFormProps) {
   );
 }
 
-export default EditRoomForm;
+export default EditRoomParticipantsForm;
