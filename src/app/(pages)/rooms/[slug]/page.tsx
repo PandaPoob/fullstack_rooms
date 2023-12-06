@@ -84,6 +84,7 @@ async function getData(params: { slug: string }) {
 
 async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
+  console.log(data.notes);
 
   // Render RoomView, NoteWidget, and NoteItems
   return (
@@ -91,7 +92,7 @@ async function RoomPage({ params }: { params: { slug: string } }) {
       <>
         <RoomView
           room={data.room}
-          notes={data.notes}
+          notes={data.notes?.noteItem}
           sessionUser={data.session.user}
         />
       </>

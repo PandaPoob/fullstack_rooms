@@ -20,7 +20,6 @@ interface Notes {
 
 function RoomView(props: Roomprops) {
   const { notes } = props;
-  const latestNote = notes[0];
   // rooms/id/notes/note_widget_fk
   return (
     <div>
@@ -34,9 +33,8 @@ function RoomView(props: Roomprops) {
         </Link>
       )} */}
 
-      <Link href={`/notes/${props.notes.id}`}>
-        {" "}
-        <NoteList notes={props.notes} />
+      <Link href={`/rooms/${props.room.id}/notes`}>
+        <div className="">{props.notes[0].title}</div>
       </Link>
     </div>
   );

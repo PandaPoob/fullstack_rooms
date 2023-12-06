@@ -79,9 +79,10 @@ export async function PUT(req: Request) {
       },
       { status: 200 }
     );
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
-
 
 // Handle DELETE requests
 export async function DELETE(req: Request) {

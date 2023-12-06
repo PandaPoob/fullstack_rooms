@@ -9,25 +9,32 @@ import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { CreateNoteForm } from "@/app/_models/notes";
 import { SetStateAction, useEffect, useState } from "react";
 
-interface Notes {
-  notes: NoteItem[];
-  room_id: string;
+interface NoteProps {
+  notes: Notes;
+  sessionUser: User;
 }
 
-function Notes(props: any) {
-  // Success msg
+interface Notes {
+  title: any;
+  id: string;
+  room_fk: string;
+  updated_at: Date;
+  noteItem: NoteItem[];
+}
+// Breadcrumb
+// Create Note
+// Note list
+
+function NotesView(props: NoteProps) {
+  const [notes, setNotes] = useState<NoteItem[]>(props.notes.noteItem);
   function setSuccess(arg0: boolean) {
     throw new Error("Function not implemented.");
   }
-  // Error msg
+
   function setErrorMsg(msg: any) {
     throw new Error("Function not implemented.");
   }
 
-  // Display form
-  const [dispayForm, setDisplayForm] = useState(false);
-
-  // Formatting
   const [format, setFormat] = useState("");
   const handleFormatClick = (formatType: SetStateAction<string>) => {
     if (format === formatType) {
@@ -36,8 +43,6 @@ function Notes(props: any) {
       setFormat(formatType); // Set the format if not set already
     }
   };
-
-  // Alignment
 
   const [algignment, setAlignment] = useState("");
   const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
@@ -48,9 +53,18 @@ function Notes(props: any) {
     }
   };
 
-  console.log("Props notes:", props.notes);
+  const [dispayForm, setDisplayForm] = useState(false);
+
+  // Handles delete
+
+  const handleDeleteNote = async (id: string) => {
+    console.log(`Note deleted with id: ${id}`);
+  };
+
   return (
-    <div>
+    <main>
+      {/* <DigitalClock title={`Welcome, ${props.room.title}`} /> */}
+
       {/* Breadcrumb, skal udvikles ordentligt */}
       <div className="mt-8">
         <li className="flex gap-2 text-sm text-white opacity-80">
@@ -96,6 +110,9 @@ function Notes(props: any) {
             console.log(formval);
             if (resp.ok) {
               const data = await resp.json();
+              // const newNote: NoteItem = data;
+              // setNotes([...notes, newNote]);
+              // actions.resetForm();
             } else {
               const data = await resp.json();
               actions.setSubmitting(false);
@@ -261,6 +278,22 @@ function Notes(props: any) {
                   March 25, 2023
                 </p>
               </div>
+
+              {/* This button works when you press submit and goes back to all notes, but it dosent save the note */}
+              {/* <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="text-h5 rounded-3xl justify-center "
+                  onClick={() => setDisplayForm(false)} // Close the form on submit
+                >
+                  {isSubmitting ? (
+                    <span>Submitting...</span>
+                  ) : (
+                    <span>Create Note</span>
+                  )}
+                </button>
+              </div> */}
             </Form>
           )}
         </Formik>
@@ -293,9 +326,10 @@ function Notes(props: any) {
         </div>
       )}
 
-      {!dispayForm && <NoteList notes={props.notes} />}
-    </div>
+      {!dispayForm && (
+        <NoteList notes={props.notes} onDeleteNote={handleDeleteNote} />
+      )}
+    </main>
   );
 }
-
-export default Notes;
+export default NotesView;

@@ -7,6 +7,8 @@ import { db } from "@/lib/prisma-client";
 import NoteCard from "@/app/_views/Notes/NoteCard";
 import Notes from "@/app/_views/Notes/test2";
 import NoteView from "@/app/_views/Notes/test2";
+import NoteList from "@/app/_views/Notes/NoteList";
+import Notestest from "@/app/_views/Notes";
 
 // Fat i params
 // Params = NoteWidget id
@@ -22,23 +24,10 @@ async function getData(params: { slug: string }) {
     redirect("/error");
   }
 
-  const notes = await db.noteWidget.findUnique({
+  const notes = await db.noteItem.findMany({
     where: {
-      id: params.slug as string,
+      note_widget: { room_fk: params!.slug as string },
     },
-    include: {
-      noteItem: {
-        select: {
-          id: true,
-          title: true,
-          text: true,
-          created_at: true,
-        },
-      },
-    },
-    // include: {
-    //   noteItem: true,
-    // },
   });
   if (!notes) {
     redirect("/error");
@@ -57,7 +46,8 @@ async function NotePage({ params }: { params: { slug: string } }) {
   return (
     data && (
       <>
-        <NoteView notes={data.notes} sessionUser={data.session.user} />
+        <Notes room_id={params.slug} notes={data.notes}></Notes>
+        {/* <NotesView notes={data.notes} sessionUser={data.session.user} /> */}
       </>
     )
   );
