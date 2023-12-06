@@ -32,6 +32,6 @@ async function getData(params: { slug: string }) {
 
 async function NotePage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
-  return data && <Notes room_id={params.slug} notes={data.notes}></Notes>;
+  return data && <Notes room_id={params.slug} notes={data.notes} />;
 }
 export default NotePage;

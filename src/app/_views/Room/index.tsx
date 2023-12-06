@@ -2,6 +2,7 @@ import { User } from "next-auth";
 import { NoteItem, Room } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
+import NoteCard from "../Notes/NoteCard";
 interface Roomprops {
   room: Room;
   noteItem?: NoteItem;
@@ -17,7 +18,11 @@ function RoomView(props: Roomprops) {
 
       <Link href={`/rooms/${props.room.id}/notes`}>
         {props.noteItem ? (
-          <div className="">{props.noteItem.title}</div>
+          <NoteCard
+            title={props.noteItem.title}
+            text={props.noteItem.text}
+            date={props.noteItem.created_at}
+          />
         ) : (
           <p className="">No notes yet</p>
         )}

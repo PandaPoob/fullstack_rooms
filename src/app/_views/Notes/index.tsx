@@ -164,9 +164,9 @@ function Notes(props: NotesProps) {
                       >
                         <path
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </button>
@@ -205,9 +205,9 @@ function Notes(props: NotesProps) {
                       >
                         <path
                           fill="currentColor"
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M0 3h15v1H0V3Zm9 4h6v1H9V7Zm-3 4h9v1H6v-1Z"
-                          clip-rule="evenodd"
+                          clipRule="evenodd"
                         />
                       </svg>
                     </button>

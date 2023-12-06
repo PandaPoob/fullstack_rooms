@@ -186,7 +186,7 @@ function Note(props: NoteProps) {
                         fill="currentColor"
                         fill-rule="evenodd"
                         d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </button>
@@ -196,7 +196,6 @@ function Note(props: NoteProps) {
                     type="button"
                     onClick={() => handleAlignmentClick("center")}
                   >
-                    {" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="18"
@@ -216,7 +215,6 @@ function Note(props: NoteProps) {
                     type="button"
                     onClick={() => handleAlignmentClick("right")}
                   >
-                    {" "}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="18"
@@ -225,9 +223,9 @@ function Note(props: NoteProps) {
                     >
                       <path
                         fill="currentColor"
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M0 3h15v1H0V3Zm9 4h6v1H9V7Zm-3 4h9v1H6v-1Z"
-                        clip-rule="evenodd"
+                        clipRule="evenodd"
                       />
                     </svg>
                   </button>

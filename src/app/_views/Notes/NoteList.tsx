@@ -1,5 +1,5 @@
 "use client";
-import { NoteItem, NoteWidget } from "@prisma/client";
+import { NoteItem } from "@prisma/client";
 import NoteCard from "./NoteCard";
 import Link from "next/link";
 
@@ -13,8 +13,11 @@ function NoteList(props: NoteListProps) {
     <div className="py-7 grid grid-cols-4 gap-5 justify-center items-center">
       {props.notes.map((note: NoteItem) => (
         <Link key={note.id} href={`/rooms/${props.room_id}/notes/${note.id}`}>
-          <NoteCard title={note.title} text={note.text} />
-          {/* <NoteCard notes={props.notes} /> */}
+          <NoteCard
+            title={note.title}
+            text={note.text}
+            date={note.created_at}
+          />
         </Link>
       ))}
     </div>
