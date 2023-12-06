@@ -16,9 +16,10 @@ function SettingsBanner({ img, nameTitle, subTitle }: SettingsBannerProps) {
           alt={subTitle ? "Profile image" : "Room cover image"}
           style={{ objectFit: "cover" }}
           fill={true}
+          sizes="(max-width: 768px) 100vw, (min-width: 769px) 33vw"
           className="filter group-hover:brightness-90 transition"
         />
-        {!subTitle && (
+        {!subTitle && img.includes("default") && (
           <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 uppercase text-h4 text-grey">
             {nameTitle
               .split(" ")

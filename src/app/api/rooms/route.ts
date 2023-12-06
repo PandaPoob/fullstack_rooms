@@ -340,13 +340,13 @@ export async function PUT(req: NextRequest) {
       //Format image
       const url = data.secure_url.split("upload/");
 
-      if (data.width < 300 && data.height < 200) {
+      if (data.width < 600 && data.height < 400) {
         //Scale up to the minimum required dimensions
-        newImageData.newurl = `${url[0]}upload/w_300,h_200,c_scale/${url[1]}`;
-      } else if (data.width > 300 || data.height > 200) {
+        newImageData.newurl = `${url[0]}upload/c_fill,h_400,w_600/${url[1]}`;
+      } else if (data.width > 600 || data.height > 400) {
         //Scale down while maintaining aspect ratio
-        newImageData.newurl = `${url[0]}upload/c_limit,w_300,h_200/${url[1]}`;
-      } else if (data.width === 300 && data.height === 200) {
+        newImageData.newurl = `${url[0]}upload/c_fill,h_400,w_600/${url[1]}`;
+      } else if (data.width === 600 && data.height === 400) {
         //No changes needed
         newImageData.newurl = data.secure_url;
       }

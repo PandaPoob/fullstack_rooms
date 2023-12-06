@@ -1,11 +1,13 @@
 "use client";
-import LogoutButton from "@/app/_components/LogoutButton";
-import EditUserForm from "@/app/_components/forms/EditUserForm";
+import EditRoomForm from "@/app/_components/forms/EditRoomForm";
+import { ExtendedRoom } from "@/app/_models/room";
 import { useState } from "react";
 
 interface RoomSettingsMenuProps {
   tab: number;
   setTab: (tab: number) => void;
+  room: ExtendedRoom;
+  setRoom: (room: ExtendedRoom) => void;
 }
 
 function RoomSettingsMenu(props: RoomSettingsMenuProps) {
@@ -37,15 +39,15 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
           </button>
         </li>
 
-        <li>
-          <LogoutButton />
-        </li>
+        <li>Delete room</li>
       </ul>
       {isOpen && (
         <div className="absolute top-0 left-0 h-0 min-h-screen z-10 bg-bg_black w-full px-6 md:w-[calc(100%-7.5rem)] md:ml-[7.5rem]">
           {props.tab === 1 ? (
-            <>
+            <div className="grid">
               <div className="flex gap-2 text-h4 mt-4">
+                <button onClick={() => setIsOpen(false)}>Settings</button>
+                <span>/</span>
                 <button
                   onClick={() => setIsOpen(false)}
                   className="font-medium"
@@ -53,7 +55,8 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
                   Edit Room
                 </button>
               </div>
-            </>
+              <EditRoomForm room={props.room} setRoom={props.setRoom} />
+            </div>
           ) : (
             <>
               <div className="flex gap-2 text-h4 mt-4">
@@ -61,8 +64,9 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
                   onClick={() => setIsOpen(false)}
                   className="font-medium"
                 >
-                  Edit Members
+                  Settings
                 </button>
+                <button onClick={() => setIsOpen(false)}>Edit Room</button>
               </div>
             </>
           )}

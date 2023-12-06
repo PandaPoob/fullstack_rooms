@@ -10,7 +10,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
         }`}
       >
         <MainNavigation />
-        <div className="w-full px-6">{props.children}</div>
+        <div className="w-full px-6 pb-24 md:pb-0">{props.children}</div>
       </div>
     </div>
   );

@@ -27,7 +27,12 @@ function Settings({ roomData }: SettingsProps) {
           />
 
           <div className="lg:hidden">
-            <RoomSettingsMenu tab={tab} setTab={setTab} />
+            <RoomSettingsMenu
+              tab={tab}
+              setTab={setTab}
+              room={room}
+              setRoom={setRoom}
+            />
           </div>
 
           <div className="hidden lg:block lg:min-h-[calc(100%-7rem)]">
