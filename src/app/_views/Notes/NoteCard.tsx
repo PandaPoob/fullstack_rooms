@@ -1,18 +1,5 @@
 "use client";
-import { NoteWidget } from "@prisma/client";
-import { NoteItem } from "@prisma/client";
-import Link from "next/link";
-import { useState } from "react";
-
-interface Notes {
-  id: string;
-  room_fk: string;
-  updated_at: Date;
-  noteItem: NoteItem[];
-}
-
 interface NoteCardProps {
-  id: string;
   title: string;
   text: string;
 }

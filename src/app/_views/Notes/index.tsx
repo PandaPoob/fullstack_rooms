@@ -1,5 +1,4 @@
 "use client";
-import { User } from "next-auth";
 import { Field, Form, Formik, FormikHelpers } from "formik";
 import { NoteItem, NoteWidget, Room } from "@prisma/client";
 import NoteCard from "./NoteCard";
@@ -7,14 +6,14 @@ import NoteList from "./NoteList";
 import Link from "next/link";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { CreateNoteForm } from "@/app/_models/notes";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 
-interface Notes {
+interface NotesProps {
   notes: NoteItem[];
   room_id: string;
 }
 
-function Notes(props: any) {
+function Notes(props: NotesProps) {
   // Success msg
   function setSuccess(arg0: boolean) {
     throw new Error("Function not implemented.");
@@ -25,7 +24,7 @@ function Notes(props: any) {
   }
 
   // Display form
-  const [dispayForm, setDisplayForm] = useState(false);
+  const [displayForm, setDisplayForm] = useState(false);
 
   // Formatting
   const [format, setFormat] = useState("");
@@ -38,7 +37,6 @@ function Notes(props: any) {
   };
 
   // Alignment
-
   const [algignment, setAlignment] = useState("");
   const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
     if (algignment === alignmentType) {
@@ -48,7 +46,6 @@ function Notes(props: any) {
     }
   };
 
-  console.log("Props notes:", props.notes);
   return (
     <div>
       {/* Breadcrumb, skal udvikles ordentligt */}
@@ -68,11 +65,11 @@ function Notes(props: any) {
           </ul>
         </li>
         <h1 className="text-h1 mt-4">
-          {dispayForm ? "New Note" : "All Notes"}
+          {displayForm ? "New Note" : "All Notes"}
         </h1>
       </div>
 
-      {dispayForm && (
+      {displayForm && (
         <Formik
           initialValues={{
             title: "",
@@ -93,7 +90,6 @@ function Notes(props: any) {
               },
               body: formval,
             });
-            console.log(formval);
             if (resp.ok) {
               const data = await resp.json();
             } else {
@@ -266,7 +262,7 @@ function Notes(props: any) {
         </Formik>
       )}
 
-      {!dispayForm && (
+      {!displayForm && (
         <div className="flex justify-end">
           <button onClick={() => setDisplayForm(true)}>
             {" "}
@@ -293,7 +289,7 @@ function Notes(props: any) {
         </div>
       )}
 
-      {!dispayForm && <NoteList notes={props.notes} />}
+      {!displayForm && <NoteList notes={props.notes} room_id={props.room_id} />}
     </div>
   );
 }

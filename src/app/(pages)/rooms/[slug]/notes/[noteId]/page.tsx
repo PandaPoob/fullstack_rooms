@@ -31,7 +31,7 @@ async function NotePage({
   const session = await requireAuthentication(authOptions, params.slug);
   const data = await getData(params.noteId);
 
-  return <Note data={data} />;
+  return <Note noteItem={data.noteItem} roomId={params.slug} />;
 }
 
 export default NotePage;

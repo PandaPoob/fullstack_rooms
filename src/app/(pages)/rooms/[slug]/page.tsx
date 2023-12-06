@@ -81,17 +81,14 @@ async function getData(params: { slug: string }) {
 
 async function RoomPage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
-  console.log(data.notes);
 
   return (
     data && (
-      <>
-        <RoomView
-          room={data.room}
-          notes={data.notes?.noteItem}
-          sessionUser={data.session.user}
-        />
-      </>
+      <RoomView
+        room={data.room}
+        noteItem={data?.note}
+        sessionUser={data.session.user}
+      />
     )
   );
 }

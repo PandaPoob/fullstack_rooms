@@ -2,23 +2,13 @@
 import { EditNote } from "@/app/_models/notes";
 import { NoteItem } from "@prisma/client";
 import { Field, Form, Formik } from "formik";
-import { format } from "path";
-import { CreateNoteForm } from "@/app/_models/notes";
-import { SetStateAction, useEffect, useState } from "react";
+import { SetStateAction, useState } from "react";
 import Link from "next/link";
 
 interface NoteProps {
-  room_id: any;
-  data: {
-    noteItem: NoteItem;
-  };
+  noteItem: NoteItem;
+  roomId: string;
 }
-
-// Singleview for en note
-// Herinde skal formen være med initial valies
-// Popstate singleview
-// Edit note
-// Delete note
 
 function Note(props: NoteProps) {
   // Success msg
@@ -58,7 +48,7 @@ function Note(props: NoteProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: props.data.noteItem.id }),
+        body: JSON.stringify({ id: props.noteItem.id }),
       });
 
       if (resp.ok) {
@@ -76,11 +66,11 @@ function Note(props: NoteProps) {
 
   return (
     <div>
-      <h1 className="mt-12 text-h1">{props.data.noteItem.title}</h1>
+      <h1 className="mt-12 text-h1">{props.noteItem.title}</h1>
       <Formik
         initialValues={{
-          title: props.data.noteItem.title,
-          text: props.data.noteItem.text,
+          title: props.noteItem.title,
+          text: props.noteItem.text,
         }}
         onSubmit={async (values: EditNote, actions) => {
           try {
@@ -90,7 +80,7 @@ function Note(props: NoteProps) {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                id: props.data.noteItem.id,
+                id: props.noteItem.id,
                 title: values.title,
                 text: values.text,
                 note_widget_fk: values.note_widget_fk,
@@ -133,7 +123,7 @@ function Note(props: NoteProps) {
                 </button>
               </div>
               <div className="flex justify-end">
-                <Link href={`/rooms/${props.room_id}/notes`}>
+                <Link href={`/rooms/${props.roomId}/notes`}>
                   <button
                     type="button"
                     onClick={handleDelete}

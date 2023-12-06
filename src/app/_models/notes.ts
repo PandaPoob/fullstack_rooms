@@ -7,5 +7,5 @@ export interface CreateNoteForm {
 export interface EditNote {
   title: string;
   text: string;
-  note_widget_fk: string;
+  note_widget_fk?: string;
 }
