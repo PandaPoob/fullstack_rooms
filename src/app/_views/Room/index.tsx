@@ -12,24 +12,30 @@ interface Roomprops {
   noteItem?: NoteItem;
 }
 
-function RoomView(props: Roomprops) {
+async function RoomView(props: Roomprops) {
   // rooms/id/notes/note_widget_fk
   return (
     <div>
       <DigitalClock title={`Welcome, ${props.room.title}`} />
       <div>Dashboard content here</div>
-
-      <Link href={`/rooms/${props.room.id}/notes`}>
-        {props.noteItem ? (
-          <NoteCard
-            title={props.noteItem.title}
-            text={props.noteItem.text}
-            date={props.noteItem.created_at}
-          />
-        ) : (
-          <p className="">No notes yet</p>
-        )}
-      </Link>
+      <section className="grid grid-cols-4 gap-4">
+        <div>
+          <Link href={`/rooms/${props.room.id}/notes`}>
+            {props.noteItem ? (
+              <NoteCard
+                title={props.noteItem.title}
+                text={props.noteItem.text}
+                date={props.noteItem.created_at}
+              />
+            ) : (
+              <p className="">No notes yet</p>
+            )}
+          </Link>
+        </div>
+        <div>widget 2</div>
+        <div>widget 3</div>
+        <div>widget 4</div>
+      </section>
     </div>
   );
 }
