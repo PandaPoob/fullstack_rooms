@@ -1,12 +1,15 @@
 import { User } from "next-auth";
-import { NoteItem, Room } from "@prisma/client";
+import { NoteItem, Room, TaskItem } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
 interface Roomprops {
   room: Room;
-  noteItem?: NoteItem;
   sessionUser: User;
+  modalParams: { modal: string } | undefined | null;
+  taskWidgetId: string;
+  tasks?: TaskItem[];
+  noteItem?: NoteItem;
 }
 
 function RoomView(props: Roomprops) {
