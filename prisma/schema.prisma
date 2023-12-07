@@ -104,9 +104,9 @@ model NoteItem {
   title             String
   text              String
   created_at        DateTime        @default(now())
-  updated_at        DateTime        @default(now())
+  updated_at        DateTime        @default(now())     
   note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
-  note_widget_fk    String         
+  note_widget_fk    String       
 }
 
 model TaskWidget {

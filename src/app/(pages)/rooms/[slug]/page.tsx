@@ -86,7 +86,7 @@ async function RoomPage({ params }: { params: { slug: string } }) {
     data && (
       <RoomView
         room={data.room}
-        note={data.note}
+        noteItem={data?.note}
         sessionUser={data.session.user}
       />
     )
