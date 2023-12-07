@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-// import TaskForm from "@/app/_components/forms/TaskForm";
+import TaskForm from "@/app/_components/forms/TaskForm";
 import { Room, TaskItem } from "@prisma/client";
 import TaskItemForm from "./forms/TaskItemForm";
 import { useState } from "react";
@@ -59,7 +59,7 @@ export default function TaskModal({
               </div>
             </div>
 
-            {/* <TaskForm room={room} taskWidgetId={taskWidgetId} /> */}
+            <TaskForm room={room} taskWidgetId={taskWidgetId} />
 
             <div className="my-4">
               <input
