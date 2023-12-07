@@ -2,6 +2,7 @@ import { UserId } from "@/app/_models/user";
 import { notifyUsers } from "@/app/_utils/apis/notification";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import { participantcreateschema } from "@/app/_utils/validation/schemas/participant-create-schema";
+import participantdeleteschema from "@/app/_utils/validation/schemas/participant-delete-schema";
 import { maxParticipants } from "@/app/_utils/validation/validationVariables";
 import { db } from "@/lib/prisma-client";
 import { Participant } from "@prisma/client";
@@ -25,8 +26,6 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const { roomId, emails } = participantcreateschema.parse(body);
-
-    console.log(emails);
 
     const room = await db.room.findUnique({
       where: {
@@ -152,9 +151,77 @@ export async function POST(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    //validate user
-    //validate that user is admin
+    const resp = await authenticateUser(req);
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+    const { user } = resp.data;
+
+    const body = await req.json();
+    const { roomId, userId } = participantdeleteschema.parse(body);
+
+    console.log(body);
+
+    const room = await db.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+      },
+    });
+
+    if (!room) {
+      return NextResponse.json(
+        {
+          error: "Room not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    //Validate user is admin
+    if (user!.id !== room.admin_fk) {
+      return NextResponse.json(
+        {
+          error: "Access to edit room forbidden",
+        },
+        { status: 403 }
+      );
+    }
+
     //validate that user cant delete themselves
+    if (userId === user!.id) {
+      return NextResponse.json(
+        {
+          error: "Admin cannot be deleted",
+        },
+        { status: 400 }
+      );
+    }
+
+    //delete participant
+
+    //notification
+
+    return NextResponse.json(
+      {
+        msg: "Ok",
+        user: "meeeeeow",
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     if (error instanceof z.ZodError) {

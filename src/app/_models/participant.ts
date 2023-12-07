@@ -8,3 +8,8 @@ export interface ParticipantCreateForm {
   emails: string[] | [];
   roomId: string;
 }
+
+export interface ParticipantDeleteForm {
+  userId: string;
+  roomId: string;
+}
