@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         task_widget_fk,
         order: 3,
         checked: false,
-        created_by_fk,
+        created_by_fk: created_by_fk,
       },
     });
 
