@@ -1,24 +1,34 @@
+"use client";
 import { UserEdit } from "@/app/_models/user";
 import { Status } from "@prisma/client";
-import { User } from "next-auth";
 import ProfileSettingsMenu from "./ProfileSettingsMenu";
 import LogoutButton from "@/app/_components/LogoutButton";
 import EditUserForm from "@/app/_components/forms/EditUserForm";
-import ProfileInfoBanner from "./ProfileInfoBanner";
+import SettingsBanner from "@/app/_components/misc/SettingsBanner";
+import { useSession } from "next-auth/react";
 
 interface Profileprops {
   profile: UserEdit;
   statusOptions: Status[];
-  session: User;
 }
 
 function ProfileView(props: Profileprops) {
+  const { data: session } = useSession();
+
   return (
     <main>
       <h2 className="text-h2 mb-7 md:mt-7">Profile settings</h2>
       <div className="lg:flex lg:gap-2">
         <div className="bg-dark rounded-xl lg:w-[30%] xl:w-1/4 xxl:w-1/5 lg:min-h-[calc(100vh-7.5rem)] flex flex-col">
-          <ProfileInfoBanner />
+          {session && (
+            <SettingsBanner
+              img={
+                session.user.image ? session.user.image : "/default_avatar.png"
+              }
+              nameTitle={`${session.user.first_name} ${session.user.last_name}`}
+              subTitle={session.user.email as string}
+            />
+          )}
 
           <div className="lg:hidden">
             <ProfileSettingsMenu
