@@ -73,7 +73,7 @@ function ParticipantCard(props: ParticipantCardProps) {
                 }
               }}
             >
-              {({ isSubmitting, errors, values, setFieldValue }) => {
+              {({ isSubmitting }) => {
                 return (
                   <Form className="grid gap-3 xxl:px-20">
                     <Field type="hidden" name="roomId" id="roomId" />

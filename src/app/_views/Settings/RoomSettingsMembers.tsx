@@ -14,9 +14,9 @@ function RoomSettingsMembers(props: RoomSettingsMembersProps) {
   return (
     <div>
       <div className="mb-12">
-        <h2 className="text-h3 font-medium mb-5">Members</h2>
+        <h2 className="text-h3 font-medium hidden md:block">Members</h2>
 
-        <ul className="flex flex-col border-t border-grey border-opacity-30">
+        <ul className="flex flex-col border-t border-grey border-opacity-30 mt-5">
           {props.participants?.map((p) => (
             <ParticipantCard
               key={p.id}

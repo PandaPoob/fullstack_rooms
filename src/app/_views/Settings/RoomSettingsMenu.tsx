@@ -2,12 +2,16 @@
 import EditRoomForm from "@/app/_components/forms/EditRoomForm";
 import { ExtendedRoom } from "@/app/_models/room";
 import { useState } from "react";
+import RoomSettingsMembers from "./RoomSettingsMembers";
+import { ExtendedParticipant } from "@/app/_models/participant";
 
 interface RoomSettingsMenuProps {
   tab: number;
   setTab: (tab: number) => void;
   room: ExtendedRoom;
   setRoom: (room: ExtendedRoom) => void;
+  participants?: ExtendedParticipant[];
+  setParticipants: (participants: ExtendedParticipant[]) => void;
 }
 
 function RoomSettingsMenu(props: RoomSettingsMenuProps) {
@@ -60,26 +64,25 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
           ) : (
             <>
               <div className="flex gap-2 text-h4 mt-4">
+                <button onClick={() => setIsOpen(false)}>Settings</button>
+                <span>/</span>
                 <button
-                  onClick={() => setIsOpen(false)}
                   className="font-medium"
+                  onClick={() => setIsOpen(false)}
                 >
-                  Settings
+                  Members
                 </button>
-                <button onClick={() => setIsOpen(false)}>Edit Room</button>
+              </div>
+              <div>
+                <RoomSettingsMembers
+                  room={props.room}
+                  setRoom={props.setRoom}
+                  participants={props.participants}
+                  setParticipants={props.setParticipants}
+                />
               </div>
             </>
           )}
-
-          {/*           <div className="flex gap-2 text-h4 mt-4">
-            <button onClick={() => setIsOpen(false)}>Settings</button>
-            <span>/</span>
-            <button className="font-medium">Edit profile</button>
-          </div>
-          <EditUserForm
-            profile={props.profile}
-            statusOptions={props.statusOptions}
-          /> */}
         </div>
       )}
     </div>

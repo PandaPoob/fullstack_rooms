@@ -35,6 +35,8 @@ function Settings({ roomData }: SettingsProps) {
               setTab={setTab}
               room={room}
               setRoom={setRoom}
+              participants={participants}
+              setParticipants={setParticipants}
             />
           </div>
 
