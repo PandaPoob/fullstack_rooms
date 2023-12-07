@@ -1,30 +1,29 @@
 "use client";
-import { Field, Form, Formik, FormikHelpers } from "formik";
-import { NoteItem, NoteWidget, Room } from "@prisma/client";
-import NoteCard from "./NoteCard";
+import { Field, Form, Formik } from "formik";
+import { NoteItem } from "@prisma/client";
 import NoteList from "./NoteList";
 import Link from "next/link";
-import DigitalClock from "@/app/_components/layout/DigitalClock";
 import { CreateNoteForm } from "@/app/_models/notes";
 import { SetStateAction, useState } from "react";
+import ErrorToast from "@/app/_components/toasts/ErrorToast";
+import { useRouter } from "next/navigation";
 
 interface NotesProps {
   notes: NoteItem[];
   room_id: string;
+  noteWidgetId: string;
 }
 
 function Notes(props: NotesProps) {
-  // Success msg
-  function setSuccess(arg0: boolean) {
-    throw new Error("Function not implemented.");
-  }
-  // Error msg
-  function setErrorMsg(msg: any) {
-    throw new Error("Function not implemented.");
-  }
+  const router = useRouter();
 
   // Display form
   const [displayForm, setDisplayForm] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const clearError = () => {
+    setErrorMsg("");
+  };
 
   // Formatting
   const [format, setFormat] = useState("");
@@ -70,196 +69,199 @@ function Notes(props: NotesProps) {
       </div>
 
       {displayForm && (
-        <Formik
-          initialValues={{
-            title: "",
-            text: "",
-            note_widget_fk: "clpuagzes0000h9w7gp79y2un",
-          }}
-          onSubmit={async (values: CreateNoteForm, actions) => {
-            console.log("Form Values:", values);
-            const formval = JSON.stringify({
-              title: values.title,
-              text: values.text,
-              note_widget_fk: values.note_widget_fk,
-            });
-            const resp = await fetch("/api/notes", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: formval,
-            });
-            if (resp.ok) {
-              const data = await resp.json();
-            } else {
-              const data = await resp.json();
-              actions.setSubmitting(false);
-
-              if (data.msg) {
-                setErrorMsg(data.msg);
+        <>
+          <Formik
+            initialValues={{
+              title: "",
+              text: "",
+              note_widget_fk: props.noteWidgetId,
+            }}
+            onSubmit={async (values: CreateNoteForm, actions) => {
+              const formval = JSON.stringify({
+                title: values.title,
+                text: values.text,
+                note_widget_fk: values.note_widget_fk,
+              });
+              const resp = await fetch("/api/notes", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: formval,
+              });
+              if (resp.ok) {
+                const data = await resp.json();
+                router.push(`/rooms/${props.room_id}/notes/${data.note.id}`);
               } else {
-                setErrorMsg(data.error[0].message);
+                const data = await resp.json();
+                actions.setSubmitting(false);
+
+                if (data.msg) {
+                  setErrorMsg(data.msg);
+                } else {
+                  setErrorMsg(data.error[0].message);
+                }
               }
-            }
-          }}
-        >
-          {({ isSubmitting }) => (
-            <Form className="grid gap-3 mt-2" autoComplete="off">
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="text-h5 rounded-3xl justify-center "
-                >
-                  {isSubmitting ? (
-                    <span>Submitting...</span>
-                  ) : (
-                    <span>Save Note</span>
-                  )}
-                </button>
-              </div>
-              <div className="bg-primary rounded-md w-full">
-                {/* Værktøjslinje */}
-                <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
-                  <div className="flex gap-6 text-h5 mt-2 mx-4">
-                    {/* Bold */}
-                    <button
-                      type="button"
-                      onClick={() => handleFormatClick("bold")}
-                      className="bold"
-                    >
-                      B
-                    </button>
-                    {/* Italic */}
-                    <button
-                      type="button"
-                      onClick={() => handleFormatClick("italic")}
-                      className="italic"
-                    >
-                      I
-                    </button>
-                    {/* Underline */}
-                    <button
-                      type="button"
-                      onClick={() => handleFormatClick("underline")}
-                      className="underline"
-                    >
-                      U
-                    </button>
-                  </div>
-                  <div className="flex gap-6 mx-4">
-                    {/* Align left */}
-                    <button
-                      type="button"
-                      onClick={() => handleAlignmentClick("left")}
-                    >
-                      {" "}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 15 15"
-                      >
-                        <path
-                          fill="currentColor"
-                          fillRule="evenodd"
-                          d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-
-                    {/* Align center */}
-                    <button
-                      type="button"
-                      onClick={() => handleAlignmentClick("center")}
-                    >
-                      {" "}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 15 15"
-                      >
-                        <path
-                          fill="none"
-                          stroke="currentColor"
-                          d="M15 3.5H0m10 4H5m7 4H3"
-                        />
-                      </svg>
-                    </button>
-
-                    {/* Align right */}
-                    <button
-                      type="button"
-                      onClick={() => handleAlignmentClick("right")}
-                    >
-                      {" "}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="18"
-                        height="18"
-                        viewBox="0 0 15 15"
-                      >
-                        <path
-                          fill="currentColor"
-                          fillRule="evenodd"
-                          d="M0 3h15v1H0V3Zm9 4h6v1H9V7Zm-3 4h9v1H6v-1Z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+            }}
+          >
+            {({ isSubmitting }) => (
+              <Form className="grid gap-3 mt-2" autoComplete="off">
+                {/* Submit Button */}
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="text-h5 rounded-3xl justify-center "
+                  >
+                    {isSubmitting ? (
+                      <span>Submitting...</span>
+                    ) : (
+                      <span>Save Note</span>
+                    )}
+                  </button>
                 </div>
-                {/* Værktøjslinje end */}
-                {/* Note Title Field */}
-                <div className="bg-primary rounded-md">
-                  <div className="flex items-center">
-                    <Field
-                      type="text"
-                      name="title"
-                      placeholder="Title ..."
-                      className="w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary"
-                    />
+                <div className="bg-primary rounded-md w-full">
+                  {/* Værktøjslinje */}
+                  <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
+                    <div className="flex gap-6 text-h5 mt-2 mx-4">
+                      {/* Bold */}
+                      <button
+                        type="button"
+                        onClick={() => handleFormatClick("bold")}
+                        className="bold"
+                      >
+                        B
+                      </button>
+                      {/* Italic */}
+                      <button
+                        type="button"
+                        onClick={() => handleFormatClick("italic")}
+                        className="italic"
+                      >
+                        I
+                      </button>
+                      {/* Underline */}
+                      <button
+                        type="button"
+                        onClick={() => handleFormatClick("underline")}
+                        className="underline"
+                      >
+                        U
+                      </button>
+                    </div>
+                    <div className="flex gap-6 mx-4">
+                      {/* Align left */}
+                      <button
+                        type="button"
+                        onClick={() => handleAlignmentClick("left")}
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Align center */}
+                      <button
+                        type="button"
+                        onClick={() => handleAlignmentClick("center")}
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="none"
+                            stroke="currentColor"
+                            d="M15 3.5H0m10 4H5m7 4H3"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Align right */}
+                      <button
+                        type="button"
+                        onClick={() => handleAlignmentClick("right")}
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M0 3h15v1H0V3Zm9 4h6v1H9V7Zm-3 4h9v1H6v-1Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
-                  {/* Note Text Field */}
-                  <div className="flex items-center">
-                    <Field
-                      as="textarea"
-                      name="text"
-                      placeholder="Text ..."
-                      rows={4}
-                      className={` ${
-                        format.includes("bold")
-                          ? "font-bold"
-                          : format.includes("italic")
-                          ? "italic"
-                          : format.includes("underline")
-                          ? "underline"
-                          : "normal"
-                      } ${
-                        algignment === "left"
-                          ? "text-left"
-                          : algignment === "center"
-                          ? "text-center"
-                          : algignment === "right"
-                          ? "text-right"
-                          : ""
-                      } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
-                    />
+                  {/* Værktøjslinje end */}
+                  {/* Note Title Field */}
+                  <div className="bg-primary rounded-md">
+                    <div className="flex items-center">
+                      <Field
+                        type="text"
+                        name="title"
+                        placeholder="Title ..."
+                        className="w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary"
+                      />
+                    </div>
+                    {/* Note Text Field */}
+                    <div className="flex items-center">
+                      <Field
+                        as="textarea"
+                        name="text"
+                        placeholder="Text ..."
+                        rows={4}
+                        className={` ${
+                          format.includes("bold")
+                            ? "font-bold"
+                            : format.includes("italic")
+                            ? "italic"
+                            : format.includes("underline")
+                            ? "underline"
+                            : "normal"
+                        } ${
+                          algignment === "left"
+                            ? "text-left"
+                            : algignment === "center"
+                            ? "text-center"
+                            : algignment === "right"
+                            ? "text-right"
+                            : ""
+                        } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
+                      />
+                    </div>
+                    {/* Hidden Field for note_widget_fk */}
+                    <Field type="hidden" name="note_widget_fk" />
                   </div>
-                  {/* Hidden Field for note_widget_fk */}
-                  <Field type="hidden" name="note_widget_fk" />
+                  <p className="flex justify-end text-xs text-secondary m-2">
+                    March 25, 2023
+                  </p>
                 </div>
-                <p className="flex justify-end text-xs text-secondary m-2">
-                  March 25, 2023
-                </p>
-              </div>
-            </Form>
-          )}
-        </Formik>
+              </Form>
+            )}
+          </Formik>
+          <ErrorToast msg={errorMsg} onDismiss={clearError} />
+        </>
       )}
 
       {!displayForm && (

@@ -14,9 +14,12 @@ async function getData(params: { slug: string }) {
     redirect("/error");
   }
 
-  const notes = await db.noteItem.findMany({
+  const notes = await db.noteWidget.findUnique({
     where: {
-      note_widget: { room_fk: params!.slug as string },
+      room_fk: params.slug,
+    },
+    include: {
+      note_item: true,
     },
   });
   if (!notes) {
@@ -25,13 +28,22 @@ async function getData(params: { slug: string }) {
 
   const data = {
     session,
-    notes,
+    notes: notes.note_item,
+    noteWidgetId: notes.id,
   };
   return data;
 }
 
 async function NotePage({ params }: { params: { slug: string } }) {
   const data = await getData(params);
-  return data && <Notes room_id={params.slug} notes={data.notes} />;
+  return (
+    data && (
+      <Notes
+        room_id={params.slug}
+        notes={data.notes}
+        noteWidgetId={data.noteWidgetId}
+      />
+    )
+  );
 }
 export default NotePage;

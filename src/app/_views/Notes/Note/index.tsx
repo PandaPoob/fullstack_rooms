@@ -3,7 +3,8 @@ import { EditNote } from "@/app/_models/notes";
 import { NoteItem } from "@prisma/client";
 import { Field, Form, Formik } from "formik";
 import { SetStateAction, useState } from "react";
-import Link from "next/link";
+import ErrorToast from "@/app/_components/toasts/ErrorToast";
+import { useRouter } from "next/navigation";
 
 interface NoteProps {
   noteItem: NoteItem;
@@ -11,17 +12,14 @@ interface NoteProps {
 }
 
 function Note(props: NoteProps) {
-  // Success msg
-  function setSuccess(arg0: boolean) {
-    throw new Error("Function not implemented.");
-  }
-  // Error msg
-  function setErrorMsg(msg: any) {
-    throw new Error("Function not implemented.");
-  }
-
-  // Formatting
+  const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
   const [format, setFormat] = useState("");
+
+  const clearError = () => {
+    setErrorMsg("");
+  };
+  // Formatting
   const handleFormatClick = (formatType: SetStateAction<string>) => {
     if (format === formatType) {
       setFormat(""); // Reset if clicked twice on the same format
@@ -42,25 +40,19 @@ function Note(props: NoteProps) {
   };
 
   const handleDelete = async () => {
-    try {
-      const resp = await fetch("/api/notes", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: props.noteItem.id }),
-      });
+    const resp = await fetch("/api/notes", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: props.noteItem.id }),
+    });
 
-      if (resp.ok) {
-        const data = await resp.json();
-      } else {
-        const data = await resp.json();
-
-        // Handle error, e.g., show an error message
-      }
-    } catch (error) {
-      // Handle fetch error
-      console.error("Error:", error);
+    if (resp.ok) {
+      const data = await resp.json();
+      router.push(`/rooms/${props.roomId}/notes`);
+    } else {
+      const data = await resp.json();
     }
   };
 
@@ -73,36 +65,32 @@ function Note(props: NoteProps) {
           text: props.noteItem.text,
         }}
         onSubmit={async (values: EditNote, actions) => {
-          try {
-            const resp = await fetch(`/api/notes`, {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                id: props.noteItem.id,
-                title: values.title,
-                text: values.text,
-                note_widget_fk: values.note_widget_fk,
-              }),
-            });
+          const resp = await fetch(`/api/notes`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: props.noteItem.id,
+              title: values.title,
+              text: values.text,
+              note_widget_fk: values.note_widget_fk,
+            }),
+          });
 
-            if (resp.ok) {
-              // Handle success, e.g., show a success message or redirect
-              const data = await resp.json();
-              setSuccess(true);
+          if (resp.ok) {
+            // Handle success, e.g., show a success message or redirect
+            const data = await resp.json();
+          } else {
+            // Handle error, e.g., show an error message
+            const data = await resp.json();
+            if (data.msg) {
+              setErrorMsg(data.msg);
             } else {
-              // Handle error, e.g., show an error message
-              const data = await resp.json();
-              setErrorMsg(data.msg || data.error[0].message);
+              setErrorMsg(data.error[0].message);
             }
-          } catch (error) {
-            // Handle fetch error
-            console.error("Error:", error);
-            setErrorMsg("An error occurred while updating the note.");
-          } finally {
-            actions.setSubmitting(false);
           }
+          actions.setSubmitting(false);
         }}
       >
         {({ isSubmitting }) => (
@@ -123,20 +111,18 @@ function Note(props: NoteProps) {
                 </button>
               </div>
               <div className="flex justify-end">
-                <Link href={`/rooms/${props.roomId}/notes`}>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    disabled={isSubmitting}
-                    className="text-h5 rounded-3xl justify-center "
-                  >
-                    {isSubmitting ? (
-                      <span>Deleting...</span>
-                    ) : (
-                      <span>Delete Note</span>
-                    )}
-                  </button>
-                </Link>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isSubmitting}
+                  className="text-h5 rounded-3xl justify-center "
+                >
+                  {isSubmitting ? (
+                    <span>Deleting...</span>
+                  ) : (
+                    <span>Delete Note</span>
+                  )}
+                </button>
               </div>
             </div>
 
@@ -184,7 +170,7 @@ function Note(props: NoteProps) {
                     >
                       <path
                         fill="currentColor"
-                        fill-rule="evenodd"
+                        fillRule="evenodd"
                         d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
                         clipRule="evenodd"
                       />
@@ -278,10 +264,9 @@ function Note(props: NoteProps) {
           </Form>
         )}
       </Formik>
+      <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </div>
   );
 }
 
 export default Note;
-
-// {props.data.noteItem.title}
