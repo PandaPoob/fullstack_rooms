@@ -1,5 +1,4 @@
 import { ExtendedRoom } from "@/app/_models/room";
-import { Room } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 

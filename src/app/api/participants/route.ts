@@ -5,7 +5,6 @@ import { participantcreateschema } from "@/app/_utils/validation/schemas/partici
 import participantdeleteschema from "@/app/_utils/validation/schemas/participant-delete-schema";
 import { maxParticipants } from "@/app/_utils/validation/validationVariables";
 import { db } from "@/lib/prisma-client";
-import { Participant } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -166,8 +165,6 @@ export async function DELETE(req: NextRequest) {
 
     const body = await req.json();
     const { roomId, userId } = participantdeleteschema.parse(body);
-
-    console.log(body);
 
     const room = await db.room.findUnique({
       where: {

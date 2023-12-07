@@ -1,11 +1,9 @@
 "use client";
 import SettingsBanner from "@/app/_components/misc/SettingsBanner";
 import { ExtendedRoom } from "@/app/_models/room";
-import { Room } from "@prisma/client";
 import RoomSettingsMenu from "./RoomSettingsMenu";
 import { useState } from "react";
 import EditRoomForm from "@/app/_components/forms/EditRoomForm";
-import EditRoomParticipants from "@/app/_components/forms/EditRoomParticipantsForm";
 import RoomSettingsMembers from "./RoomSettingsMembers";
 
 interface SettingsProps {
