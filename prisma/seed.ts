@@ -89,6 +89,28 @@ async function main() {
     },
   });
 
+  const taskWidget1 = await prisma.taskWidget.create({
+    data: {
+      room: { connect: { id: room1.id } },
+    },
+  });
+
+  const taskWidget2 = await prisma.taskWidget.create({
+    data: {
+      room: { connect: { id: room2.id } },
+    },
+  });
+
+  const taskItem = await prisma.taskItem.create({
+    data: {
+      text: "Do the dishes",
+      order: 1,
+      checked: false,
+      created_by: { connect: { id: user1.id } },
+      task_widget: { connect: { id: taskWidget1.id } },
+    },
+  });
+
   //PARTICIPANTS
   // Connect user1 to both rooms
   await prisma.participant.create({
