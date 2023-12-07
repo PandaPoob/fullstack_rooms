@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       taskcreateschema.parse(body);
 
     // Save the task item to the database
-    /*     const createdTaskItem = await db.taskItem.create({
+    const createdTaskItem = await db.taskItem.create({
       data: {
         text,
         task_widget_fk,
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
         created_by_fk: created_by_fk,
       },
     });
- */
+
     // hent latest created_at - asc - tag den order og sige +1 - laves i api
     return NextResponse.json({ msg: "Ok" }, { status: 200 });
   } catch (error) {
