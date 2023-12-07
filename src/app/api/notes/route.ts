@@ -1,16 +1,14 @@
 import { db } from "@/lib/prisma-client";
 import * as z from "zod";
 import createnoteschema from "../../_utils/validation/schemas/create-note-schema";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 // Handle POST requests
 export async function POST(req: Request) {
   try {
     // Validation schema
     const body = await req.json();
-    console.log(body);
     const { title, text, note_widget_fk } = createnoteschema.parse(body);
-    // console.log("Parsed request body:", { title, text, note_widget_fk });
 
     // Post a new note to the database
     const newNote = await db.noteItem.create({
@@ -32,6 +30,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
+    console.log(error);
     if (error instanceof z.ZodError) {
       // Zod validation errors
       const validationErrors = error.issues.map((issue) => {
@@ -53,43 +52,72 @@ export async function POST(req: Request) {
   }
 }
 
-// // Handle DELETE requests
-// export async function DELETE(req: Request) {
-//   try {
-//     const noteId = await req.json();
+// Handle PUT (edit note) request
+export async function PUT(req: Request) {
+  try {
+    const { id, title, text } = await req.json();
 
-//     // Prisma delete the note ID
-//     await db.noteWidget.delete({
-//       where: {
-//         id: noteId,
-//       },
-//     });
+    // Opdater note item ID
+    const updatedNote = await db.noteItem.update({
+      where: {
+        id,
+      },
+      data: {
+        title,
+        text,
+        updated_at: new Date(), // Opdaterer updated_at timestamp
+      },
+    });
 
-//     // Success response for note deletion
-//     return NextResponse.json(
-//       {
-//         msg: "Note deleted",
-//       },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     if (error instanceof z.ZodError) {
-//       // Zod validation errors
-//       const validationErrors = error.issues.map((issue) => {
-//         return {
-//           message: issue.message,
-//         };
-//       });
+    // Success response for note update
+    return NextResponse.json(
+      {
+        note: updatedNote,
+        msg: "Note updated",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.log(error);
+  }
+}
 
-//       // Return a validation error response
-//       return NextResponse.json({ error: validationErrors }, { status: 400 });
-//     } else {
-//       // Other errors
-//       console.error(error);
-//       return NextResponse.json(
-//         { error: "Internal Server Error" },
-//         { status: 500 }
-//       );
-//     }
-//   }
-// }
+// Handle DELETE requests
+export async function DELETE(req: Request) {
+  try {
+    const { id } = await req.json();
+
+    // Prisma delete note item ID
+    const deletedNote = await db.noteItem.delete({
+      where: {
+        id,
+      },
+    });
+
+    // Success response for note deletion
+    return NextResponse.json(
+      {
+        note: deletedNote,
+        msg: "Note deleted",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      // Zod validation errors
+      const validationErrors = error.issues.map((issue) => ({
+        message: issue.message,
+      }));
+
+      // Return a validation error response
+      return NextResponse.json({ error: validationErrors }, { status: 400 });
+    } else {
+      // Other errors
+      console.error(error);
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 }
+      );
+    }
+  }
+}

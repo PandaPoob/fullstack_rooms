@@ -57,6 +57,15 @@ async function getData(params: { slug: string }) {
       },
     });
 
+    const taskWidget = await db.taskWidget.findUnique({
+      where: {
+        room_fk: room.id,
+      },
+      include: {
+        task_item: true,
+      },
+    });
+
     const participant = await db.participant.findFirst({
       where: {
         room_id: params.slug as string,
@@ -72,6 +81,8 @@ async function getData(params: { slug: string }) {
     const data = {
       room,
       session,
+      tasks: taskWidget?.task_item,
+      taskWidgetId: taskWidget!.id as string,
       note: notes?.note_item[0],
     };
 
@@ -79,15 +90,23 @@ async function getData(params: { slug: string }) {
   }
 }
 
-async function RoomPage({ params }: { params: { slug: string } }) {
+type RoomPageProps = {
+  searchParams: { modal: string } | undefined | null;
+  params: { slug: string };
+};
+
+async function RoomPage({ params, searchParams }: RoomPageProps) {
   const data = await getData(params);
 
   return (
     data && (
       <RoomView
         room={data.room}
-        note={data.note}
         sessionUser={data.session.user}
+        modalParams={searchParams}
+        taskWidgetId={data.taskWidgetId}
+        tasks={data.tasks}
+        noteItem={data?.note}
       />
     )
   );
