@@ -211,14 +211,63 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    //delete participant
+    const existingParticipant = await db.participant.findFirst({
+      where: {
+        user_id: userId,
+        room_id: roomId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!existingParticipant) {
+      return NextResponse.json(
+        {
+          error: "Could not find participant",
+        },
+        { status: 404 }
+      );
+    }
 
-    //notification
+    //delete participant
+    const deletedParticipant = await db.participant.delete({
+      where: {
+        id: existingParticipant.id,
+      },
+    });
+
+    const notification = await db.notification.create({
+      data: {
+        read: false,
+        user: { connect: { id: deletedParticipant.user_id } },
+        meta_user: { connect: { id: user!.id } },
+        meta_action: "removed you",
+        meta_target: "room",
+        meta_target_name: room.title,
+      },
+      select: {
+        user_id: true,
+      },
+    });
+
+    const notificationArray = [];
+    notificationArray.push(notification);
+
+    const notificationResult = await notifyUsers(
+      notificationArray as UserId[],
+      {
+        msg: "Removed from room!",
+      }
+    );
+
+    if (!notificationResult.success) {
+      console.error("Error: Pusher notification trigger in delete from room");
+    }
 
     return NextResponse.json(
       {
         msg: "Ok",
-        user: "meeeeeow",
+        user: deletedParticipant,
       },
       { status: 200 }
     );
