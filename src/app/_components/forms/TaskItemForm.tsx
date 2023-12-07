@@ -3,7 +3,7 @@ import { Field, Form, Formik } from "formik";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
-// import TaskFormInput from "./formInputs/TaskFormInput";
+import TaskFormInput from "./formInputs/TaskFormInput";
 import { boolean } from "zod";
 
 type TaskItemProps = {
@@ -25,7 +25,7 @@ function TaskItemForm({ id, text, checked }: TaskItemProps) {
   return (
     <div className="flex flex-col">
       <div className="flex flex-row w-full">
-        {/* <Formik
+        <Formik
           initialValues={{
             checked: boolean,
           }}
@@ -64,7 +64,7 @@ function TaskItemForm({ id, text, checked }: TaskItemProps) {
               <TaskFormInput key={id} id={id} text={text} checked={checked} />
             </Form>
           )}
-        </Formik> */}
+        </Formik>
         <Formik
           initialValues={{
             taskId: id,
