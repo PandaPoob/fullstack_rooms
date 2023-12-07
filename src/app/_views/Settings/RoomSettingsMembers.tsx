@@ -18,7 +18,13 @@ function RoomSettingsMembers(props: RoomSettingsMembersProps) {
 
         <ul className="flex flex-col border-t border-grey border-opacity-30">
           {props.participants?.map((p) => (
-            <ParticipantCard key={p.id} {...p} room={props.room} />
+            <ParticipantCard
+              key={p.id}
+              {...p}
+              room={props.room}
+              participants={props.participants}
+              setParticipants={props.setParticipants}
+            />
           ))}
         </ul>
       </div>

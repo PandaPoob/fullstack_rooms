@@ -1,5 +1,8 @@
 import ErrorToast from "@/app/_components/toasts/ErrorToast";
-import { ParticipantDeleteForm } from "@/app/_models/participant";
+import {
+  ExtendedParticipant,
+  ParticipantDeleteForm,
+} from "@/app/_models/participant";
 import { ExtendedRoom } from "@/app/_models/room";
 import participantdeleteschema from "@/app/_utils/validation/schemas/participant-delete-schema";
 import { User } from "@prisma/client";
@@ -11,6 +14,8 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 interface ParticipantCardProps {
   user?: User;
   room: ExtendedRoom;
+  setParticipants: (participants: ExtendedParticipant[]) => void;
+  participants?: ExtendedParticipant[];
 }
 
 function ParticipantCard(props: ParticipantCardProps) {
@@ -56,11 +61,12 @@ function ParticipantCard(props: ParticipantCardProps) {
                   });
                   if (resp.ok) {
                     const data = await resp.json();
-                    /*      const updatedParticipants = [
-                    ...props.participants!,
-                    ...data.newParticipants,
-                  ];
-                  props.setParticipants(updatedParticipants); */
+
+                    const updatedParticipants = props.participants?.filter(
+                      (participant) => participant.id !== data.user.id
+                    );
+
+                    props.setParticipants(updatedParticipants!);
                   } else {
                     setErrorMsg("An error occurred");
                   }
