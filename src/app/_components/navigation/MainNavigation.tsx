@@ -15,7 +15,7 @@ async function MainNavigation() {
           </Link>
 
           <div className="h-full w-full md:auto md:h-screen bg-bg_black">
-            <nav className="fixed bottom-0 left-0 w-screen md:relative md:w-auto md:h-full z-20">
+            <nav className="fixed bottom-0 left-0 w-screen md:relative md:w-auto md:h-full z-20 bg-bg_black">
               <ul className="flex w-full justify-evenly items-center md:justify-start pb-3 pt-2 md:pt-7 md:w-auto md:flex-col md:items-start md:gap-6 md:px-9 md:h-full">
                 <li>
                   <Link

@@ -1,8 +1,8 @@
 "use client";
-import { Room } from "@prisma/client";
 import RoomCard from "./RoomCard";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { ExtendedRoom } from "@/app/_models/room";
 
 function RoomsList() {
   //@TODO add favorite rooms
@@ -31,7 +31,7 @@ function RoomsList() {
   return (
     <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
       {rooms.length !== 0 &&
-        rooms.map((room: Room) => {
+        rooms.map((room: ExtendedRoom) => {
           return <RoomCard key={room.id} {...room} />;
         })}
     </div>

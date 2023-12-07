@@ -4,6 +4,8 @@ import { email } from "@/app/_utils/validation/validations/email-validation";
 import { RoomCreateForm } from "@/app/_models/room";
 import { useSession } from "next-auth/react";
 import { maxParticipants } from "@/app/_utils/validation/validationVariables";
+import { ExtendedParticipant } from "@/app/_models/participant";
+import { calculateMaxAdditionalParticipants } from "@/app/_utils/validation/schemas/participant-create-schema";
 
 interface EmailFieldArrayProps {
   setFieldValue: (
@@ -12,12 +14,16 @@ interface EmailFieldArrayProps {
   ) => Promise<void | FormikErrors<RoomCreateForm>>;
   emails: string[];
   emailsError: string | string[] | undefined;
+  isEditRoom?: boolean;
+  participants?: ExtendedParticipant[];
 }
 
 function EmailFieldArray({
   setFieldValue,
   emails,
   emailsError,
+  isEditRoom,
+  participants,
 }: EmailFieldArrayProps) {
   const { data: session } = useSession();
   const [inputEmail, setInputEmail] = useState("");
@@ -31,29 +37,55 @@ function EmailFieldArray({
       return;
     }
     const cleanEmail = inputEmail.toLowerCase().trim();
+    let hasError = false;
 
-    //Validate that email is not logged user
-    if (session?.user.email === cleanEmail) {
-      setError("You will automatically be part of the room");
-      return;
+    if (isEditRoom) {
+      //validate that user is not already part of the room
+      const alreadyParticipant = participants?.some(
+        (participant) => participant.user?.email === cleanEmail
+      );
+      if (alreadyParticipant) {
+        setError("User is already part of the room");
+        hasError = true;
+      }
+      const maxAdditionalParticipants = calculateMaxAdditionalParticipants(
+        participants!
+      );
+      //Validate that no more than 12 users can be added
+      if (maxAdditionalParticipants === 0) {
+        setError(`Max number of users in a room is ${maxParticipants}`);
+        hasError = true;
+      }
+    } else {
+      //Validate that email is not logged user
+      if (session?.user.email === cleanEmail) {
+        setError("You will automatically be part of the room");
+        hasError = true;
+
+        return;
+      }
+
+      const updatedEmails = [...emails, cleanEmail];
+
+      //Validate that no more than 12 users can be added
+      if (updatedEmails.length >= maxParticipants) {
+        setError(`Max number of users in a room is ${maxParticipants}`);
+        hasError = true;
+
+        return;
+      }
+
+      //Validate that email is not already added
+      const isEmailAlreadyAdded = emails.includes(cleanEmail);
+      if (isEmailAlreadyAdded) {
+        setError("User already added");
+        hasError = true;
+
+        return;
+      }
     }
 
-    const updatedEmails = [...emails, cleanEmail];
-
-    //Validate that no more than 12 users can be added
-    if (updatedEmails.length >= maxParticipants) {
-      setError(`Max number of users in a room is ${maxParticipants}`);
-      return;
-    }
-
-    //Validate that email is not already added
-    const isEmailAlreadyAdded = emails.includes(cleanEmail);
-    if (isEmailAlreadyAdded) {
-      setError("User already added");
-      return;
-    }
-
-    if (!error) {
+    if (!hasError) {
       //check if email exists
       const resp = await fetch(`/api/user/email`, {
         method: "POST",

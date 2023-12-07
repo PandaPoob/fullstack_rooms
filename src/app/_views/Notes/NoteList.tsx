@@ -1,24 +1,25 @@
+"use client";
 import { NoteItem } from "@prisma/client";
 import NoteCard from "./NoteCard";
 import Link from "next/link";
 
 interface NoteListProps {
   notes: NoteItem[];
-  roomId: string;
+  room_id: string;
 }
 
-function NoteList({ notes, roomId }: NoteListProps) {
+function NoteList(props: NoteListProps) {
   return (
-    <div className="py-7 flex flex-col gap-5 justify-center items-center md:flex-wrap md:flex-row">
-      {notes.length === 0 ? (
-        <div>no notes</div>
-      ) : (
-        notes.map((note) => (
-          <Link key={note.id} href={`/rooms/${roomId}/notes/${note.id}`}>
-            <NoteCard {...note} />
-          </Link>
-        ))
-      )}
+    <div className="py-7 grid grid-cols-4 gap-5 justify-center items-center">
+      {props.notes.map((note: NoteItem) => (
+        <Link key={note.id} href={`/rooms/${props.room_id}/notes/${note.id}`}>
+          <NoteCard
+            title={note.title}
+            text={note.text}
+            date={note.created_at}
+          />
+        </Link>
+      ))}
     </div>
   );
 }

@@ -3,9 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 model Room {
@@ -23,6 +23,7 @@ model Room {
   note_widget  NoteWidget?
   task_widget  TaskWidget?
 }
+
  model Cover {
   id                  String      @default(cuid()) @id
   formatted_url        String      
@@ -42,7 +43,6 @@ model Location {
   @@id([latitude, longitude])
 }
 
-
 model Participant {
   id            String     @default(cuid()) @id
   user          User       @relation(fields: [user_id], references: [id])
@@ -56,7 +56,11 @@ model Participant {
   @@unique([user_id, room_id]) // Ensure each user is in a room only once
 }
 
-
+model Status {
+  id    String      @default(cuid()) @id
+  title String      @unique
+  users User[]      // one to many
+}
 model User {
   id                  String      @default(cuid()) @id
   first_name          String
@@ -72,59 +76,18 @@ model User {
   status              Status      @relation(fields: [status_fk], references: [id]) 
   status_fk           String
   rooms               Room[]     //many-to-many 
+  created_tasks       TaskItem[]
   participants        Participant[]  //defining opposite relation
   receivedNotifications  Notification[]   @relation("Receiver")
   triggeredNotifications Notification[]   @relation("Triggerer")
   @@map(name: "users") 
 }
-model Status {
-  id    String      @default(cuid()) @id
-  title String      @unique
-  users User[]      // one to many
-}
+
  model Avatar {
   id                    String      @default(cuid()) @id
   formatted_url         String      
   cloudinary_public_id  String      
   user                  User?       @relation("UserAvatar")
-}
-
-
-model NoteWidget {
-  id                  String       @default(cuid()) @id
-  room                Room         @relation(fields: [room_fk], references: [id])
-  room_fk             String       @unique
-  note_item           NoteItem[]
-  @@unique([id, room_fk])
-
-}
-
-model NoteItem {
-  id                String         @default(cuid()) @id
-  title             String
-  text              String
-  created_at        DateTime        @default(now())
-  updated_at        DateTime        @default(now())
-  note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
-  note_widget_fk    String         
-}
-
-model TaskWidget {
-id                  String          @default(cuid()) @id
-room                Room            @relation(fields: [room_fk], references: [id])
-room_fk             String          @unique
-tasks               TaskItem[]
-}
-
-model TaskItem {
-id                  String      @default(cuid()) @id 
-text                String
-task_widget_fk      String
-task_widget         TaskWidget  @relation(fields: [task_widget_fk], references: [id])
-created_at          DateTime    @default(now())
-updated_at          DateTime    @default(now())
-order               Int
-checked             Boolean
 }
 
 model Notification {
@@ -139,4 +102,43 @@ meta_action         String
 meta_target         String
 meta_target_name    String
 meta_link           String?
+}
+
+model TaskWidget {
+  id        String      @id @default(cuid())
+  room_fk   String      @unique
+  task_item TaskItem[]
+  room      Room        @relation(fields: [room_fk], references: [id])
+}
+
+model TaskItem {
+  id             String     @id @default(cuid())
+  text           String
+  order          Int
+  checked        Boolean
+  created_at     DateTime   @default(now())
+  task_widget_fk String
+  updated_at     DateTime   @default(now())
+  updated_by     String?
+  created_by_fk  String
+  created_by     User       @relation(fields: [created_by_fk], references: [id])
+  task_widget    TaskWidget @relation(fields: [task_widget_fk], references: [id])
+}
+
+model NoteWidget {
+  id                  String       @default(cuid()) @id
+  room                Room         @relation(fields: [room_fk], references: [id])
+  room_fk             String       @unique
+  note_item           NoteItem[]
+  @@unique([id, room_fk])
+}
+
+model NoteItem {
+  id                String         @default(cuid()) @id
+  title             String
+  text              String
+  created_at        DateTime        @default(now())
+  updated_at        DateTime        @default(now())     
+  note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
+  note_widget_fk    String       
 }

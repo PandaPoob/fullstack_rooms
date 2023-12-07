@@ -40,6 +40,7 @@ function LoginForm() {
             setErrorMsg(loginData.error);
             actions.setSubmitting(false);
           } else {
+            router.push("/rooms")
             router.refresh();
           }
         }}
