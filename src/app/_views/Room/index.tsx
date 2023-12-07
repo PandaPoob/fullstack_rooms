@@ -3,6 +3,9 @@ import { NoteItem, Room, TaskItem } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
+import TaskWidget from "@/app/_components/TaskWidget";
+import TaskModal from "@/app/_components/TaskModal";
+
 interface Roomprops {
   room: Room;
   sessionUser: User;
@@ -32,7 +35,29 @@ async function RoomView(props: Roomprops) {
             )}
           </Link>
         </div>
-        <div>widget 2</div>
+        <div>
+          <Link href={`/rooms/${props.room.id}/?modal=true`}>
+            <>
+              <div className="bg-primary rounded-xl py-6 pl-6 my-2 h-[250px] flex-row">
+                <TaskWidget
+                  tasks={props.tasks}
+                  room={props.room}
+                  taskWidgetId={props.taskWidgetId}
+                  modalParams={props.modalParams}
+                />
+              </div>
+            </>
+          </Link>
+
+          {props.modalParams?.modal && (
+            <TaskModal
+              tasks={props.tasks}
+              room={props.room}
+              taskWidgetId={props.taskWidgetId}
+              modalParams={props.modalParams}
+            />
+          )}
+        </div>
         <div>widget 3</div>
         <div>widget 4</div>
       </section>
