@@ -16,6 +16,11 @@ export const dateFormat = /^\d{4}-\d{2}-\d{2}$/; //YYYY-MM-DD
 //AGE//
 export const minAge = 13;
 
+//TASK TEXT//
+export const minText = 1;
+export const maxText = 20;
+// ---------- Notes
+
 // ---------- Notes
 
 // TITLE
