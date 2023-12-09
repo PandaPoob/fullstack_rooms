@@ -163,6 +163,12 @@ function NotificationList() {
                 case "edited":
                   article = "the";
                   break;
+                case "invited":
+                  article = "you to the";
+                  break;
+                case "removed":
+                  article = "you from the";
+                  break;
                 default:
                   article = "the";
               }
