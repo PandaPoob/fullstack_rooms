@@ -19,9 +19,13 @@ export default function TaskModal({
 }: TaskWidgetProps) {
   const [showOnlyChecked, setShowOnlyChecked] = useState(false);
 
+  // Sort tasks in ascending order
+  const sortedTasks = tasks?.sort((a, b) => a.order - b.order);
+
+  // Apply filtering based on show-only-checked
   const filteredTasks = showOnlyChecked
-    ? tasks?.filter((task) => task.checked)
-    : tasks;
+    ? sortedTasks?.filter((task) => task.checked)
+    : sortedTasks;
 
   return (
     <div

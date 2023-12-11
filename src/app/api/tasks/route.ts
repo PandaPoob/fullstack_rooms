@@ -10,12 +10,15 @@ export async function POST(req: Request) {
     const { text, task_widget_fk, created_by_fk } =
       taskcreateschema.parse(body);
 
+    // Query the database to get the count of existing tasks
+    const existingTasksCount = await db.taskItem.count();
+
     // Save the task item to the database
     const createdTaskItem = await db.taskItem.create({
       data: {
         text,
         task_widget_fk,
-        order: 3,
+        order: existingTasksCount + 1,
         checked: false,
         created_by_fk: created_by_fk,
       },
@@ -51,15 +54,36 @@ export async function PUT(req: Request) {
     const updateBody = await req.json();
     const { id, checked, updated_by } = updateBody;
 
-    console.log("Id:", id);
-    console.log("Checked:", checked);
-    console.log("Updated By:", updated_by);
     // Assuming you have a Task model in your Prisma schema
+    const existingTask = await db.taskItem.findUnique({
+      where: { id: id },
+    });
+
+    if (!existingTask) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    let newOrder;
+
+    // If the task is checked, keep its current order
+    if (checked) {
+      newOrder = existingTask.order;
+    } else {
+      // If the task is unchecked, move it to the end of the list (higher order value)
+      const maxOrderTask = await db.taskItem.findFirst({
+        orderBy: { order: "desc" },
+      });
+
+      newOrder = maxOrderTask ? maxOrderTask.order + 1 : 1;
+    }
+
+    // Update the task with the new order
     const updatedTask = await db.taskItem.update({
       where: { id: id },
       data: {
         checked,
         updated_by,
+        order: newOrder,
       },
     });
 
@@ -96,12 +120,37 @@ export async function DELETE(req: Request) {
     const { id } = deleteBody;
     console.log("Delete Body:", deleteBody);
 
-    // Find all tasks
-
-    // Use Prisma's delete method to delete the task by ID
-    const findAndDeletedTask = await db.taskItem.delete({
+    // Find the task to be deleted
+    const taskToDelete = await db.taskItem.findUnique({
       where: {
         id: id,
+      },
+    });
+
+    if (!taskToDelete) {
+      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+    }
+
+    const orderToDelete = taskToDelete.order;
+
+    // Delete the task
+    const deletedTask = await db.taskItem.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    // Update the order of the remaining tasks
+    await db.taskItem.updateMany({
+      where: {
+        order: {
+          gt: orderToDelete,
+        },
+      },
+      data: {
+        order: {
+          decrement: 1,
+        },
       },
     });
 
