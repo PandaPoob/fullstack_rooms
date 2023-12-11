@@ -22,13 +22,29 @@ export async function GET(req: NextRequest) {
 
     // Function to find the best matches based on the search query
     const findBestMatches = (searchQuery: string) => {
+      const exactMatches: any[] = [];
+      const startMatches: any[] = [];
       // Filter cities based on search query logic
-      const matchedCities = cities.filter((city: any) => {
-        // Adjust the search logic as per your requirements
-        return city.name.toLowerCase().includes(searchQuery.toLowerCase());
+      cities.forEach((city: any) => {
+        const cityName = city.name.toLowerCase();
+        if (cityName === searchQuery.toLowerCase()) {
+          exactMatches.push(city);
+        }
       });
+      if (exactMatches.length < 5) {
+        cities.forEach((city: any) => {
+          const cityName = city.name.toLowerCase();
+          if (
+            cityName.startsWith(searchQuery.toLowerCase()) &&
+            !exactMatches.includes(city)
+          ) {
+            startMatches.push(city);
+          }
+        });
+      }
+      const combinedMatches = [...exactMatches, ...startMatches].slice(0, 5);
 
-      return matchedCities.slice(0, 4);
+      return combinedMatches;
     };
 
     // Example usage:
