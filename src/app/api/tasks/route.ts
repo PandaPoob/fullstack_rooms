@@ -80,7 +80,10 @@ export async function PUT(req: Request) {
     });
 
     // const body = await req.json();
-    return NextResponse.json({ msg: "succes" }, { status: 200 });
+    return NextResponse.json(
+      { msg: "succes", updatedTask: updatedTask },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {

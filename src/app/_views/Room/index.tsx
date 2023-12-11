@@ -5,7 +5,7 @@ import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
 import TaskWidget from "@/app/_views/Tasks/TaskWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
-// import ServerModal from "@/app/_components/modals/ServerModal";
+import ServerModal from "@/app/_components/modals/ServerModal";
 
 interface Roomprops {
   room: Room;
@@ -51,12 +51,18 @@ async function RoomView(props: Roomprops) {
           </Link>
 
           {props.modalParams?.modal && (
-            <TaskModal
+            <ServerModal
               tasks={props.tasks}
               room={props.room}
               taskWidgetId={props.taskWidgetId}
               modalParams={props.modalParams}
-            />
+            >
+              <TaskModal
+                tasks={props.tasks}
+                room={props.room}
+                taskWidgetId={props.taskWidgetId}
+              />
+            </ServerModal>
           )}
         </div>
         <div>widget 3</div>

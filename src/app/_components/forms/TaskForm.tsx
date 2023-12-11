@@ -52,7 +52,6 @@ function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
             if (resp.ok) {
               setSuccess(true);
               const data = await resp.json();
-              console.log(data.createdTask);
               const updatedTasks = [...taskList, data.createdTask];
               setTaskList(updatedTasks);
 

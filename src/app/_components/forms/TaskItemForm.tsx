@@ -46,8 +46,20 @@ function TaskItemForm({
           }),
         });
 
-        if (!resp.ok) {
+        if (resp.ok) {
+          setSuccess(true);
           const data = await resp.json();
+
+          // Create a new array with the updated task
+          const updatedTasks = taskList.map((task) =>
+            task.id === data.updatedTask.id ? data.updatedTask : task
+          );
+          // Update the taskList state with the new array
+          setTaskList(updatedTasks);
+        } else {
+          const data = await resp.json();
+          actions.setSubmitting(false);
+
           if (data.msg) {
             setErrorMsg(data.msg);
           } else {
