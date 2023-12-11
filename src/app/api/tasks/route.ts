@@ -63,19 +63,8 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "Task not found" }, { status: 404 });
     }
 
-    let newOrder;
-
-    // If the task is checked, keep its current order
-    if (checked) {
-      newOrder = existingTask.order;
-    } else {
-      // If the task is unchecked, move it to the end of the list (higher order value)
-      const maxOrderTask = await db.taskItem.findFirst({
-        orderBy: { order: "desc" },
-      });
-
-      newOrder = maxOrderTask ? maxOrderTask.order + 1 : 1;
-    }
+    // Save the current order before updating
+    const currentOrder = existingTask.order;
 
     // Update the task with the new order
     const updatedTask = await db.taskItem.update({
@@ -83,12 +72,12 @@ export async function PUT(req: Request) {
       data: {
         checked,
         updated_by,
-        order: newOrder,
+        order: currentOrder,
       },
     });
 
     // const body = await req.json();
-    return NextResponse.json({ msg: "Ok" }, { status: 200 });
+    return NextResponse.json({ msg: "succes" }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {
@@ -154,7 +143,7 @@ export async function DELETE(req: Request) {
       },
     });
 
-    return NextResponse.json({ msg: "Ok" }, { status: 200 });
+    return NextResponse.json({ msg: "succes" }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {

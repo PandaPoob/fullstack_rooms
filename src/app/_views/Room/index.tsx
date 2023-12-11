@@ -3,8 +3,8 @@ import { NoteItem, Room, TaskItem } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
-import TaskWidget from "@/app/_components/TaskWidget";
-import TaskModal from "@/app/_components/TaskModal";
+import TaskWidget from "@/app/_views/Tasks/TaskWidget";
+import TaskModal from "@/app/_views/Tasks/TaskModal";
 
 interface Roomprops {
   room: Room;

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import TaskForm from "@/app/_components/forms/TaskForm";
 import { Room, TaskItem } from "@prisma/client";
-import TaskItemForm from "./forms/TaskItemForm";
+import TaskItemForm from "@/app/_components/forms/TaskItemForm";
 import { useState } from "react";
 
 interface TaskWidgetProps {
