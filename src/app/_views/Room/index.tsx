@@ -5,6 +5,7 @@ import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
 import TaskWidget from "@/app/_views/Tasks/TaskWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
+// import ServerModal from "@/app/_components/modals/ServerModal";
 
 interface Roomprops {
   room: Room;

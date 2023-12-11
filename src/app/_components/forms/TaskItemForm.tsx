@@ -3,14 +3,23 @@ import { Field, Form, Formik } from "formik";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
+import { TaskItem } from "@prisma/client";
 
 type TaskItemProps = {
   id: string;
   text: string;
   checked: boolean;
+  setTaskList: (tasks: TaskItem[]) => void;
+  taskList: TaskItem[];
 };
 
-function TaskItemForm({ id, text, checked }: TaskItemProps) {
+function TaskItemForm({
+  id,
+  text,
+  checked,
+  setTaskList,
+  taskList,
+}: TaskItemProps) {
   const { data: session } = useSession();
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -109,6 +118,10 @@ function TaskItemForm({ id, text, checked }: TaskItemProps) {
               if (resp.ok) {
                 setSuccess(true);
                 const data = await resp.json();
+                const updatedTasks = taskList.filter(
+                  (task) => task.id !== data.deletedTask.id
+                );
+                setTaskList(updatedTasks);
               } else {
                 const data = await resp.json();
                 actions.setSubmitting(false);

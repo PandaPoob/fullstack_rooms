@@ -143,7 +143,10 @@ export async function DELETE(req: Request) {
       },
     });
 
-    return NextResponse.json({ msg: "succes" }, { status: 200 });
+    return NextResponse.json(
+      { msg: "succes", deletedTask: deletedTask },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {

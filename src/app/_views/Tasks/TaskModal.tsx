@@ -18,14 +18,9 @@ export default function TaskModal({
   taskWidgetId,
 }: TaskWidgetProps) {
   const [showOnlyChecked, setShowOnlyChecked] = useState(false);
+  const [taskList, setTaskList] = useState<TaskItem[]>(tasks || []);
 
-  // Sort tasks in ascending order
-  const sortedTasks = tasks?.sort((a, b) => a.order - b.order);
-
-  // Apply filtering based on show-only-checked
-  const filteredTasks = showOnlyChecked
-    ? sortedTasks?.filter((task) => task.checked)
-    : sortedTasks;
+  // prisma query ascendy sort
 
   return (
     <div
@@ -68,7 +63,7 @@ export default function TaskModal({
             <div className="my-4">
               <input
                 type="checkbox"
-                onChange={() => setShowOnlyChecked(!showOnlyChecked)}
+                onChange={(event) => setShowOnlyChecked(event.target.checked)}
                 className="mr-2 border-secondary bg-primary ring-offset-primary "
               />
               <label htmlFor="" className="text-mini">
@@ -79,14 +74,29 @@ export default function TaskModal({
           </div>
           <div className="h-full">
             <ul className="max-h-[50%] md:max-h-[65%] h-full flex overflow-y-scroll	flex-col">
-              {filteredTasks?.map((taskitem) => (
-                <TaskItemForm
-                  key={taskitem.id}
-                  id={taskitem.id}
-                  text={taskitem.text}
-                  checked={taskitem.checked}
-                />
-              ))}
+              {!showOnlyChecked
+                ? taskList?.map((taskitem) => (
+                    <TaskItemForm
+                      key={taskitem.id}
+                      id={taskitem.id}
+                      text={taskitem.text}
+                      checked={taskitem.checked}
+                      setTaskList={setTaskList}
+                      taskList={taskList}
+                    />
+                  ))
+                : taskList
+                    .filter((task) => task.checked)
+                    .map((task) => (
+                      <TaskItemForm
+                        key={task.id}
+                        id={task.id}
+                        text={task.text}
+                        checked={task.checked}
+                        setTaskList={setTaskList}
+                        taskList={taskList}
+                      />
+                    ))}
             </ul>
           </div>
         </div>
