@@ -13,6 +13,10 @@ const locationschema = z.object({
     invalid_type_error: `City must be a string`,
   }),
   state: z.string().optional(),
+  roomId: z.string({
+    required_error: `RoomId is required`,
+    invalid_type_error: `RoomId must be a string`,
+  }),
 });
 
 export default locationschema;

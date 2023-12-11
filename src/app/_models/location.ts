@@ -16,4 +16,5 @@ export interface LocationFormType {
   country: string;
   city: string;
   state?: string;
+  roomId: string;
 }

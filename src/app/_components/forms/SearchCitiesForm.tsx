@@ -9,16 +9,19 @@ import { City } from "@/app/_models/location";
 
 interface SearchCitiesFormProps {
   setCityResult: (cities: City[]) => void;
+  cityResult: City[] | [];
 }
 
-function SearchCitiesForm({ setCityResult }: SearchCitiesFormProps) {
+function SearchCitiesForm({
+  setCityResult,
+  cityResult,
+}: SearchCitiesFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
   const { data: session } = useSession();
 
   const clearError = () => {
     setErrorMsg("");
   };
-
   return (
     <>
       <Formik
@@ -33,7 +36,6 @@ function SearchCitiesForm({ setCityResult }: SearchCitiesFormProps) {
         )}
         onSubmit={async (values: { search: string }, actions) => {
           actions.setSubmitting(true);
-
           if (session) {
             const resp = await fetch(
               `/api/location?searchQuery=${values.search}`,
@@ -46,7 +48,6 @@ function SearchCitiesForm({ setCityResult }: SearchCitiesFormProps) {
             );
             if (resp.ok) {
               const data = await resp.json();
-              console.log(data);
               setCityResult(data.citiesResult);
             } else {
               setErrorMsg("An error occurred");
@@ -54,10 +55,23 @@ function SearchCitiesForm({ setCityResult }: SearchCitiesFormProps) {
           }
         }}
       >
-        {({ isSubmitting, errors, touched, isValid }) => {
+        {({
+          isSubmitting,
+          errors,
+          touched,
+          isValid,
+          setFieldValue,
+          setErrors,
+        }) => {
           return (
             <Form className="flex gap-3 xxl:px-20">
-              <SearchInput error={errors.search} touched={touched.search}>
+              <SearchInput
+                error={errors.search}
+                touched={touched.search}
+                setFieldValue={setFieldValue}
+                cityResult={cityResult}
+                setErrors={setErrors}
+              >
                 <button
                   type="submit"
                   disabled={isSubmitting || !isValid}

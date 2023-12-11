@@ -16,7 +16,6 @@ interface SettingsProps {
 function Settings({ roomData }: SettingsProps) {
   const searchParams = useSearchParams();
   const tabParams = searchParams.get("tab");
-
   const [tab, setTab] = useState(tabParams ? parseInt(tabParams) : 1);
   const [room, setRoom] = useState(roomData);
   const [participants, setParticipants] = useState(roomData.participants);
@@ -108,7 +107,7 @@ function Settings({ roomData }: SettingsProps) {
               />
             </div>
           ) : (
-            <RoomSettingsLocation room={room} />
+            <RoomSettingsLocation room={room} setRoom={setRoom} />
           )}
         </div>
       </div>

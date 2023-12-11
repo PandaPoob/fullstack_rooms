@@ -6,16 +6,25 @@ import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
 import { City, LocationFormType } from "@/app/_models/location";
 import locationschema from "@/app/_utils/validation/schemas/location-schema";
+import { ExtendedRoom } from "@/app/_models/room";
 
 interface LocationFormProps {
   city: City;
   hasLocation: boolean;
   setCityResult: (city: City[] | []) => void;
+  roomId: string;
+  setRoom: (room: ExtendedRoom) => void;
 }
 
-function LocationForm({ city, hasLocation, setCityResult }: LocationFormProps) {
+function LocationForm({
+  city,
+  hasLocation,
+  setCityResult,
+  roomId,
+  setRoom,
+}: LocationFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
 
   const clearError = () => {
     setErrorMsg("");
@@ -31,14 +40,11 @@ function LocationForm({ city, hasLocation, setCityResult }: LocationFormProps) {
           country: city.country,
           city: city.name,
           state: city.state || undefined,
+          roomId: roomId,
         }}
         validationSchema={toFormikValidationSchema(locationschema)}
         onSubmit={async (values: LocationFormType, actions) => {
-          console.log("got here");
-
           actions.setSubmitting(true);
-
-          console.log(values);
 
           if (session) {
             const method = hasLocation ? "PUT" : "POST";
@@ -48,10 +54,11 @@ function LocationForm({ city, hasLocation, setCityResult }: LocationFormProps) {
               headers: {
                 Authorization: `Bearer ${session.token.sub}`,
               },
+              body: JSON.stringify({ ...values }),
             });
             if (resp.ok) {
               const data = await resp.json();
-              console.log(data);
+              setRoom(data.updatedRoom);
               setCityResult([]);
             } else {
               setErrorMsg("An error occurred");
@@ -68,18 +75,21 @@ function LocationForm({ city, hasLocation, setCityResult }: LocationFormProps) {
               <Field type="hidden" name="country" id="country" />
               <Field type="hidden" name="city" id="city" />
               <Field type="hidden" name="state" id="state" />
+              <Field type="hidden" name="roomId" id="roomId" />
+
               <div className="flex gap-1">
                 <p>{city.name},</p>
+                {city.state && <p>{city.state},</p>}
                 <p>{city.country}</p>
               </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-white text-h5 text-grey py-2 px-3 rounded-full flex items-center border border-white justify-center hover:bg-opacity-0 hover:text-white transition"
+                className="bg-white text-h5 text-grey py-2 px-3 rounded-full flex items-center border border-white justify-center hover:bg-opacity-0 hover:text-white transition min-w-[9.7rem] min-h-[2.3rem]"
               >
                 {isSubmitting ? (
                   <svg
-                    className="animate-spin h-4 w-4 text-white"
+                    className="animate-spin h-4 w-4 text-primary"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"

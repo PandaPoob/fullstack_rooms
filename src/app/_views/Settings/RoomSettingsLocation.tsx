@@ -6,11 +6,12 @@ import { useState } from "react";
 
 interface RoomSettingsLocationProps {
   room: ExtendedRoom;
+  setRoom: (room: ExtendedRoom) => void;
 }
 
-function RoomSettingsLocation({ room }: RoomSettingsLocationProps) {
-  //if it has location
+function RoomSettingsLocation({ room, setRoom }: RoomSettingsLocationProps) {
   const [cityResult, setCityResult] = useState<City[]>([]);
+
   return (
     <div>
       <h2 className="text-h3 font-medium hidden md:block mb-2">
@@ -18,7 +19,11 @@ function RoomSettingsLocation({ room }: RoomSettingsLocationProps) {
       </h2>
       <div>
         {room.location ? (
-          <>there is location</>
+          <p>
+            {room.location.city},{" "}
+            {room.location.state && room.location.state + ", "}
+            {room.location.country}
+          </p>
         ) : (
           <p className="text-darkGrey">
             No location added, add a location down below
@@ -31,7 +36,10 @@ function RoomSettingsLocation({ room }: RoomSettingsLocationProps) {
           Here you can search for a weather location by looking up cities
         </p>
 
-        <SearchCitiesForm setCityResult={setCityResult} />
+        <SearchCitiesForm
+          setCityResult={setCityResult}
+          cityResult={cityResult}
+        />
         <div>
           {cityResult.length !== 0 && (
             <div>
@@ -42,9 +50,11 @@ function RoomSettingsLocation({ room }: RoomSettingsLocationProps) {
                 {cityResult.map((city) => (
                   <LocationForm
                     key={city.id}
+                    roomId={room.id}
                     city={city}
                     hasLocation={room.location ? true : false}
                     setCityResult={setCityResult}
+                    setRoom={setRoom}
                   />
                 ))}
               </ul>

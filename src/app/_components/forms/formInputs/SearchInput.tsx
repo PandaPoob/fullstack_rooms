@@ -1,14 +1,32 @@
-import { Field, ErrorMessage } from "formik";
+import { City } from "@/app/_models/location";
+import { Field, ErrorMessage, FormikErrors } from "formik";
+import { useEffect } from "react";
 
 function SearchInput({
   error,
   touched,
   children,
+  cityResult,
+  setFieldValue,
+  setErrors,
 }: {
   error: string | undefined;
   touched: boolean | undefined;
   children: React.ReactNode;
+  cityResult: City[] | [];
+  setFieldValue: (
+    field: any,
+    value: any,
+    validate?: boolean
+  ) => Promise<void | FormikErrors<{ search: string }>>;
+  setErrors: any;
 }) {
+  useEffect(() => {
+    if (cityResult && cityResult.length === 0) {
+      setFieldValue("search", "", false);
+      setErrors({});
+    }
+  }, [cityResult]);
   return (
     <div className="min-h-[5.3rem] flex flex-col w-full">
       <label
