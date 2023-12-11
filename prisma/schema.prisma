@@ -16,7 +16,7 @@ model Room {
   admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
   admin_fk     String
   location     Location?   @relation(fields: [location_id], references: [id])
-  location_id  String?
+  location_id  Float?
   participants Participant[]   // Define the many-to-many relationship
   cover        Cover?       @relation("RoomCover", fields: [cover_id], references: [id])
   cover_id     String?      @unique
@@ -32,7 +32,7 @@ model Room {
 }
 
 model Location {
-  id            String            @default(cuid()) @unique 
+  id            Float            @unique 
   latitude      Float
   longitude     Float
   country       String?

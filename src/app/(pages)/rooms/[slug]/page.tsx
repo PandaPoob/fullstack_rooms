@@ -41,6 +41,10 @@ async function getData(params: { slug: string }) {
           },
         },
       },
+      include: {
+        cover: true,
+        location: true,
+      },
     });
 
     if (!room) {

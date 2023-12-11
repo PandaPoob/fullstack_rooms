@@ -42,6 +42,17 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
             Edit Members
           </button>
         </li>
+        <li>
+          <button
+            onClick={() => {
+              props.setTab(3);
+              setIsOpen(true);
+            }}
+            className="px-6 py-3 w-full border-b border-darkGrey border-opacity-30 font-medium transition hover:bg-opacity-30 hover:bg-bg_black"
+          >
+            Location settings
+          </button>
+        </li>
 
         <li>Delete room</li>
       </ul>
