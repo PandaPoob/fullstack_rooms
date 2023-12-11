@@ -2,21 +2,22 @@
 import { ExtendedRoom } from "@/app/_models/room";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import Weather from "./Weather";
 
 interface WeatherWidgetProps {
   roomData: ExtendedRoom;
+  weatherData?: any;
 }
 
-function WeatherWidget({ roomData }: WeatherWidgetProps) {
-  console.log(roomData);
+function WeatherWidget({ roomData, weatherData }: WeatherWidgetProps) {
   const { data: session } = useSession();
 
   return (
-    <div className="bg-primary rounded-xl p-6">
+    <div className="bg-primary rounded-xl">
       {roomData.location ? (
-        <div>data here</div>
+        <Weather weatherData={weatherData} locationData={roomData.location} />
       ) : (
-        <div>
+        <div className="p-6">
           <span>No weather data</span>
           {roomData.admin_fk === session?.user.id && (
             <>

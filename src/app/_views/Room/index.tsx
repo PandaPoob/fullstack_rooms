@@ -14,10 +14,10 @@ interface Roomprops {
   taskWidgetId: string;
   tasks?: TaskItem[];
   noteItem?: NoteItem;
+  weatherData?: any;
 }
 
 async function RoomView(props: Roomprops) {
-  // rooms/id/notes/note_widget_fk
   return (
     <div>
       <div className="flex justify-between">
@@ -45,7 +45,10 @@ async function RoomView(props: Roomprops) {
       </div>
       <section className="md:grid md:grid-cols-2 md:gap-3">
         <div className="grid gap-3">
-          <WeatherWidget roomData={props.room} />
+          <WeatherWidget
+            roomData={props.room}
+            weatherData={props.weatherData}
+          />
 
           <div className="md:flex md:gap-3">
             <div className="md:w-1/2">

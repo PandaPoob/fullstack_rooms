@@ -17,6 +17,9 @@ function RoomSettingsLocation({ room, setRoom }: RoomSettingsLocationProps) {
       <h2 className="text-h3 font-medium hidden md:block mb-2">
         Weather location
       </h2>
+      <h2 className="text-h5 font-medium md:hidden mb-2 mt-6">
+        Current location:
+      </h2>
       <div>
         {room.location ? (
           <p>

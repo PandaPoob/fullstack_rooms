@@ -5,7 +5,7 @@ import RoomSettingsMenu from "./RoomSettingsMenu";
 import { useState } from "react";
 import EditRoomForm from "@/app/_components/forms/EditRoomForm";
 import RoomSettingsMembers from "./RoomSettingsMembers";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import RoomSettingsLocation from "./RoomSettingsLocation";
 
@@ -14,6 +14,7 @@ interface SettingsProps {
 }
 
 function Settings({ roomData }: SettingsProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const tabParams = searchParams.get("tab");
   const [tab, setTab] = useState(tabParams ? parseInt(tabParams) : 1);
@@ -22,9 +23,11 @@ function Settings({ roomData }: SettingsProps) {
 
   return (
     <main>
-      <h2 className="text-h2 mb-7 md:mt-7 font-normal">
+      <h2 className="text-h3 md:text-h2 mb-7 md:mt-7 font-normal">
         <span className="flex gap-2">
-          <Link href={`/rooms/${room.id}`}>{room.title}</Link>
+          <Link href={`/rooms/${room.id}`} onClick={() => router.refresh()}>
+            {room.title}
+          </Link>
           <span>/</span>
           <span className="font-medium">Room settings</span>
         </span>
