@@ -5,19 +5,33 @@ import RoomSettingsMenu from "./RoomSettingsMenu";
 import { useState } from "react";
 import EditRoomForm from "@/app/_components/forms/EditRoomForm";
 import RoomSettingsMembers from "./RoomSettingsMembers";
+import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import RoomSettingsLocation from "./RoomSettingsLocation";
 
 interface SettingsProps {
   roomData: ExtendedRoom;
 }
 
 function Settings({ roomData }: SettingsProps) {
-  const [tab, setTab] = useState(1);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParams = searchParams.get("tab");
+  const [tab, setTab] = useState(tabParams ? parseInt(tabParams) : 1);
   const [room, setRoom] = useState(roomData);
   const [participants, setParticipants] = useState(roomData.participants);
 
   return (
     <main>
-      <h2 className="text-h2 mb-7 md:mt-7">Room settings</h2>
+      <h2 className="text-h3 md:text-h2 mb-7 md:mt-7 font-normal">
+        <span className="flex gap-2">
+          <Link href={`/rooms/${room.id}`} onClick={() => router.refresh()}>
+            {room.title}
+          </Link>
+          <span>/</span>
+          <span className="font-medium">Room settings</span>
+        </span>
+      </h2>
       <div className="lg:flex lg:gap-2">
         <div className="bg-dark rounded-xl lg:w-[30%] xl:w-1/4 xxl:w-1/5 lg:min-h-[calc(100vh-7.5rem)] flex flex-col">
           <SettingsBanner
@@ -64,7 +78,18 @@ function Settings({ roomData }: SettingsProps) {
                   Members
                 </button>
               </li>
-
+              <li>
+                <button
+                  onClick={() => setTab(3)}
+                  className={`px-6 py-3 w-full border-b border-darkGrey border-opacity-30 font-medium transition hover:bg-opacity-30 hover:bg-bg_black ${
+                    tab === 3
+                      ? "text-white font-medium"
+                      : "text-darkGrey font-normal"
+                  }`}
+                >
+                  Weather location
+                </button>
+              </li>
               <li className="mt-auto">Delete room</li>
             </ul>
           </div>
@@ -75,7 +100,7 @@ function Settings({ roomData }: SettingsProps) {
             <div>
               <EditRoomForm room={room} setRoom={setRoom} />
             </div>
-          ) : (
+          ) : tab === 2 ? (
             <div>
               <RoomSettingsMembers
                 room={room}
@@ -84,6 +109,8 @@ function Settings({ roomData }: SettingsProps) {
                 setParticipants={setParticipants}
               />
             </div>
+          ) : (
+            <RoomSettingsLocation room={room} setRoom={setRoom} />
           )}
         </div>
       </div>
