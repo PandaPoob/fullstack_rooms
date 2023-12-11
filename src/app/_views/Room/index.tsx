@@ -38,7 +38,7 @@ async function RoomView(props: Roomprops) {
         <div>
           <Link href={`/rooms/${props.room.id}/?modal=true`}>
             <>
-              <div className="bg-primary rounded-xl py-6 pl-6 my-2 h-[250px] flex-row">
+              <div className="bg-primary rounded-lg py-6 pl-6 h-[250px] flex-row">
                 <TaskWidget
                   tasks={props.tasks}
                   room={props.room}

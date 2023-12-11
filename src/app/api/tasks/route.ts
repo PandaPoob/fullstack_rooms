@@ -47,7 +47,23 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
-    const body = await req.json();
+    console.log("inside put api");
+    const updateBody = await req.json();
+    const { id, checked, updated_by } = updateBody;
+
+    console.log("Id:", id);
+    console.log("Checked:", checked);
+    console.log("Updated By:", updated_by);
+    // Assuming you have a Task model in your Prisma schema
+    const updatedTask = await db.taskItem.update({
+      where: { id: id },
+      data: {
+        checked,
+        updated_by,
+      },
+    });
+
+    // const body = await req.json();
     return NextResponse.json({ msg: "Ok" }, { status: 200 });
   } catch (error) {
     console.error("Error:", error);
@@ -73,8 +89,14 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
+    console.log("inside put api");
     const deleteBody = await req.json();
+    console.log("Delete Body:", deleteBody);
+
     const { id } = deleteBody;
+    console.log("Delete Body:", deleteBody);
+
+    // Find all tasks
 
     // Use Prisma's delete method to delete the task by ID
     const findAndDeletedTask = await db.taskItem.delete({
