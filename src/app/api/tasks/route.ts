@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     const existingTasksCount = await db.taskItem.count();
 
     // Save the task item to the database
-    const createdTaskItem = await db.taskItem.create({
+    const createdTask = await db.taskItem.create({
       data: {
         text,
         task_widget_fk,
@@ -25,7 +25,10 @@ export async function POST(req: Request) {
     });
 
     // hent latest created_at - asc - tag den order og sige +1 - laves i api
-    return NextResponse.json({ msg: "Ok" }, { status: 200 });
+    return NextResponse.json(
+      { msg: "success", createdTask: createdTask },
+      { status: 200 }
+    );
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {

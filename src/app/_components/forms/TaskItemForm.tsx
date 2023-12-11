@@ -9,16 +9,16 @@ type TaskItemProps = {
   id: string;
   text: string;
   checked: boolean;
-  setTaskList: (tasks: TaskItem[]) => void;
   taskList: TaskItem[];
+  setTaskList: (tasks: TaskItem[]) => void;
 };
 
 function TaskItemForm({
   id,
   text,
   checked,
-  setTaskList,
   taskList,
+  setTaskList,
 }: TaskItemProps) {
   const { data: session } = useSession();
 

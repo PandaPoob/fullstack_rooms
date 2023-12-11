@@ -6,24 +6,21 @@ import taskSchema from "@/app/_utils/validation/schemas/create-task-schema";
 import TaskInput from "./formInputs/TaskInput";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
-import { Room } from "@prisma/client";
+import { Room, TaskItem } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
 interface TaskWidgetProps {
   room: Room;
   taskWidgetId: string;
+  taskList: TaskItem[];
+  setTaskList: (tasks: TaskItem[]) => void;
 }
 
-function TaskForm({ taskWidgetId }: TaskWidgetProps) {
+function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
   const { data: session } = useSession();
-
-  //   const router = useRouter();
 
   const [errorMsg, setErrorMsg] = useState("");
   const [success, setSuccess] = useState<boolean>(false);
-
-  // const task_widget_fk = task.task_widget_fk;
-  // const created_by_fk = task.created_by_fk;
 
   const clearError = () => {
     setErrorMsg("");
@@ -55,6 +52,9 @@ function TaskForm({ taskWidgetId }: TaskWidgetProps) {
             if (resp.ok) {
               setSuccess(true);
               const data = await resp.json();
+              console.log(data.createdTask);
+              const updatedTasks = [...taskList, data.createdTask];
+              setTaskList(updatedTasks);
 
               actions.resetForm({
                 values: {

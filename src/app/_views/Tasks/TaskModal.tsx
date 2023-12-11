@@ -58,7 +58,12 @@ export default function TaskModal({
               </div>
             </div>
 
-            <TaskForm room={room} taskWidgetId={taskWidgetId} />
+            <TaskForm
+              room={room}
+              taskWidgetId={taskWidgetId}
+              taskList={taskList}
+              setTaskList={setTaskList}
+            />
 
             <div className="my-4">
               <input
@@ -81,8 +86,8 @@ export default function TaskModal({
                       id={taskitem.id}
                       text={taskitem.text}
                       checked={taskitem.checked}
-                      setTaskList={setTaskList}
                       taskList={taskList}
+                      setTaskList={setTaskList}
                     />
                   ))
                 : taskList
@@ -93,8 +98,8 @@ export default function TaskModal({
                         id={task.id}
                         text={task.text}
                         checked={task.checked}
-                        setTaskList={setTaskList}
                         taskList={taskList}
+                        setTaskList={setTaskList}
                       />
                     ))}
             </ul>
