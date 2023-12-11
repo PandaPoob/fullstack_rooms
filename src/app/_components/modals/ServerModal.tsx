@@ -2,20 +2,10 @@ import { ReactNode } from "react";
 import { Room, TaskItem } from "@prisma/client";
 
 interface ServerModalProps {
-  tasks?: TaskItem[];
-  room: Room;
-  taskWidgetId: string;
-  modalParams: { modal: string } | undefined | null;
   children?: ReactNode;
 }
 
-export default function ServerModal({
-  tasks,
-  room,
-  taskWidgetId,
-  modalParams,
-  children,
-}: ServerModalProps) {
+export default function ServerModal({ children }: ServerModalProps) {
   // ... (your existing modal code)
 
   return (

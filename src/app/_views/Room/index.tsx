@@ -51,12 +51,7 @@ async function RoomView(props: Roomprops) {
           </Link>
 
           {props.modalParams?.modal && (
-            <ServerModal
-              tasks={props.tasks}
-              room={props.room}
-              taskWidgetId={props.taskWidgetId}
-              modalParams={props.modalParams}
-            >
+            <ServerModal>
               <TaskModal
                 tasks={props.tasks}
                 room={props.room}

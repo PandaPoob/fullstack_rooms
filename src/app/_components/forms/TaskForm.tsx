@@ -16,7 +16,12 @@ interface TaskWidgetProps {
   setTaskList: (tasks: TaskItem[]) => void;
 }
 
-function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
+function TaskForm({
+  room,
+  taskWidgetId,
+  taskList,
+  setTaskList,
+}: TaskWidgetProps) {
   const { data: session } = useSession();
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -32,6 +37,7 @@ function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
         initialValues={{
           text: "",
           task_widget_fk: taskWidgetId, // Set task_widget_fk based on task prop
+          roomId: room.id,
         }}
         validationSchema={toFormikValidationSchema(taskSchema)}
         onSubmit={async (values: CreateTaskForm, actions) => {
@@ -47,6 +53,7 @@ function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
                 text: values.text,
                 task_widget_fk: values.task_widget_fk,
                 created_by_fk: session.user.id,
+                roomId: values.roomId,
               }),
             });
             if (resp.ok) {
@@ -59,6 +66,7 @@ function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
                 values: {
                   text: "",
                   task_widget_fk: taskWidgetId,
+                  roomId: room.id,
                 },
               });
             } else {
@@ -79,6 +87,7 @@ function TaskForm({ taskWidgetId, taskList, setTaskList }: TaskWidgetProps) {
             <TaskInput error={errors.text} touched={touched.text} />
             <Field type="hidden" name="task_widget_fk" />
             <Field type="hidden" name="created_by_fk" />
+            <Field type="hidden" name="roomId" />
             <div className="w-full">
               <button
                 type="submit"
