@@ -28,6 +28,8 @@ const config: Config = {
       success: "#77B184", //green
       warning: "#E85959", //red
       info: "#B17E30", //yellow
+      "calendar-red": "#BE4E4E",
+      "calendar-blue": "#4D65BB",
     },
     extend: {
       backgroundImage: {

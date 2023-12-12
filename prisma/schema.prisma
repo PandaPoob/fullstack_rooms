@@ -22,6 +22,7 @@ model Room {
   cover_id     String?      @unique
   note_widget  NoteWidget?
   task_widget  TaskWidget?
+  events       Event[]
 }
 
  model Cover {
@@ -80,6 +81,9 @@ model User {
   participants        Participant[]  //defining opposite relation
   receivedNotifications  Notification[]   @relation("Receiver")
   triggeredNotifications Notification[]   @relation("Triggerer")
+  created_events      Event[]
+  eventsAttending     EventAttendee[]
+
   @@map(name: "users") 
 }
 
@@ -141,4 +145,28 @@ model NoteItem {
   updated_at        DateTime        @default(now())     
   note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
   note_widget_fk    String       
+}
+
+model Event {
+  id                String         @default(cuid()) @id
+  title             String
+  start_time        DateTime
+  end_time          DateTime?
+  all_day           Boolean
+  location          String?
+  description       String?
+  admin             User           @relation(fields: [admin_fk], references: [id])
+  admin_fk          String
+  room              Room           @relation(fields: [room_id], references: [id]) 
+  room_id           String
+  attendees       EventAttendee[]
+}
+
+model EventAttendee {
+  user      User     @relation(fields: [user_id], references: [id])
+  user_id   String
+  event     Event    @relation(fields: [event_id], references: [id])
+  event_id  String
+  reply     String //accepted, declined, pending
+  @@id([user_id, event_id])
 }
