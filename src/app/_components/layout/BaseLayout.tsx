@@ -121,7 +121,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
           width="760"
           height="620"
           viewBox="0 0 760 620"
-          className="absolute md:-top-[70rem] md:left-[50rem] animate-wiggle2"
+          className="absolute md:-top-[70rem] md:left-[50rem] animate-wiggle2 -left-[12rem] -top-[80rem]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
