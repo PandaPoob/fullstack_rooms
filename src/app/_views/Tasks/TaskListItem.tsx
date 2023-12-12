@@ -14,7 +14,6 @@ function TaskListItem({ id, text, checked }: TaskItemProps) {
         type="checkbox"
         className="m-1 cursor-pointer bg-primary peer h-5 w-5 focus:ring-0 focus:ring-gray-500 focus:ring-offset-0 text-info bg-gray-800 border border-gray-500 rounded-full"
         defaultChecked={checked}
-        // onChange={() => console.log("bob")}
       />
       <label
         htmlFor={id}
