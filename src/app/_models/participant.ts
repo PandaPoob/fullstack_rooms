@@ -1,7 +1,8 @@
-import { Participant, User } from "@prisma/client";
+import { Participant } from "@prisma/client";
+import { ExtendedUser } from "./user";
 
 export interface ExtendedParticipant extends Participant {
-  user?: User;
+  user?: ExtendedUser;
 }
 
 export interface ParticipantCreateForm {

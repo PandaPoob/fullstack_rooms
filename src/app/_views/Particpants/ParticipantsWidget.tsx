@@ -11,14 +11,12 @@ function Participants(props: ParticipantsProps) {
   console.log("party", props.room.participants);
   const { participants } = props.room;
 
-  console.log("party", participants);
-
   return (
     <>
       <h3 className="text-h3 font-medium">Participants</h3>
-      <p className="text-mini text-grey">{participants.length} participants</p>
+      <p className="text-mini text-grey">{participants?.length} participants</p>
       <div className="flex flex-wrap">
-        {participants.map((participant) => (
+        {participants?.map((participant) => (
           <div
             key={participant.id}
             className="relative p-2 flex flex-col border border-primary overflow-hidden"
@@ -28,7 +26,7 @@ function Participants(props: ParticipantsProps) {
                 <Image
                   src={
                     participant.user?.avatar
-                      ? participant.user.avatar.formatted_url
+                      ? participant.user.avatar?.formatted_url
                       : "/default_avatar.png"
                   }
                   alt={`${participant.user?.first_name}'s avatar picture`}
@@ -40,12 +38,14 @@ function Participants(props: ParticipantsProps) {
               </div>
               <div
                 className={`absolute bottom-0.5 right-0.5 z-[9999] rounded-full w-3 h-3   
-                    ${getStatusColor(participant.user?.status.title)}`}
+                ${getStatusColor(
+                  participant.user?.status?.title || "defaultColor"
+                )}`}
               />
             </div>
             <div>
               <p className="text-mini text-grey mt-3 text-center">
-                {participant.user.first_name}
+                {participant?.user?.first_name}
               </p>
             </div>
           </div>
