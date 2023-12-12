@@ -3,8 +3,30 @@ import { db } from "@/lib/prisma-client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
-import { Participant } from "@prisma/client";
+import { Location, Participant } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+
+async function getWeatherData(location?: Location) {
+  if (!location) {
+    return null;
+  } else if (location) {
+    const { latitude, longitude } = location;
+
+    const resp = await fetch(
+      `http://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_APP_ID}&units=metric&cnt=6`,
+      {
+        method: "GET",
+      }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      return data.list;
+    } else {
+      console.log("Error fetching weather");
+      return null;
+    }
+  }
+}
 
 async function updateVisitedAt(participant: Participant) {
   try {
@@ -40,6 +62,10 @@ async function getData(params: { slug: string }) {
             user_id: session.user.id as string,
           },
         },
+      },
+      include: {
+        cover: true,
+        location: true,
       },
     });
 
@@ -82,22 +108,25 @@ async function getData(params: { slug: string }) {
       await updateVisitedAt(participant);
     }
 
+    const weatherData = await getWeatherData(room.location!);
+
     const data = {
       room,
       session,
       tasks: taskWidget?.task_item,
       taskWidgetId: taskWidget!.id as string,
       note: notes?.note_item[0],
+      weatherData,
     };
 
     return data;
   }
 }
 
-type RoomPageProps = {
+interface RoomPageProps {
   searchParams: { modal: string } | undefined | null;
   params: { slug: string };
-};
+}
 
 async function RoomPage({ params, searchParams }: RoomPageProps) {
   const data = await getData(params);
@@ -111,6 +140,7 @@ async function RoomPage({ params, searchParams }: RoomPageProps) {
         taskWidgetId={data.taskWidgetId}
         tasks={data.tasks}
         noteItem={data?.note}
+        weatherData={data.weatherData}
       />
     )
   );

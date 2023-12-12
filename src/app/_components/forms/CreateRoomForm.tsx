@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import TitleInput from "./formInputs/TitleInput";
 import { RoomCreateForm } from "@/app/_models/room";
-import createroomschema from "@/app/_utils/validation/schemas/create-room-schema";
+import createroomschema from "@/app/_utils/validation/schemas/room-create-schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import EmailFieldArray from "./formInputs/EmailFieldArray";
 import { useSession } from "next-auth/react";

@@ -177,9 +177,9 @@ function TaskItemForm({
                   />
                   <label
                     htmlFor={id}
-                    className="ml-4 absolute left-0 top-1 text-secondary text-sm transition-all px-5
+                    className="ml-4 absolute left-auto top-1 text-secondary text-sm transition-all px-5
           peer-placeholder-shown:text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
-          peer-focus:top-1 peer-focus:text-sm peer-focus:translate-y-0"
+          peer-focus:top-1 peer-focus:text-sm peer-focus:translate-y-0 whitespace-nowrap"
                   >
                     {text}
                   </label>

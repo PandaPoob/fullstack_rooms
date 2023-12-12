@@ -9,18 +9,18 @@ datasource db {
 }
 
 model Room {
-  id           String        @id @default(cuid())
+  id           String      @default(cuid()) @id
   title        String
-  created_at   DateTime      @default(now())
-  updated_at   DateTime      @default(now())
+  created_at   DateTime    @default(now())
+  updated_at   DateTime    @default(now())
+  admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
   admin_fk     String
-  location_id  String?
-  cover_id     String?       @unique
+  location     Location?   @relation(fields: [location_id], references: [id])
+  location_id  Float?
+  participants Participant[]   // Define the many-to-many relationship
+  cover        Cover?       @relation("RoomCover", fields: [cover_id], references: [id])
+  cover_id     String?      @unique
   note_widget  NoteWidget?
-  participants Participant[]
-  admin        User          @relation(fields: [admin_fk], references: [id])
-  cover        Cover?        @relation("RoomCover", fields: [cover_id], references: [id])
-  location     Location?     @relation(fields: [location_id], references: [id])
   task_widget  TaskWidget?
 }
 
@@ -32,15 +32,15 @@ model Cover {
 }
 
 model Location {
-  id        String  @unique @default(cuid())
-  latitude  Float
-  longitude Float
-  country   String?
-  city      String?
-  state     String?
-  rooms     Room[]
+  id            Float            @unique 
+  latitude      Float
+  longitude     Float
+  country       String?
+  city          String?
+  state         String?
+  rooms         Room[]
 
-  @@id([latitude, longitude])
+  @@unique([latitude, longitude])
 }
 
 model Participant {
