@@ -1,9 +1,10 @@
 import { User } from "next-auth";
-import { NoteItem, Room, TaskItem } from "@prisma/client";
+import { NoteItem, Room, TaskItem, Participant } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
 import TaskWidget from "@/app/_views/Tasks/TaskWidget";
+import ParticipantsWidget from "@/app/_views/Particpants/ParticipantsWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
 import ServerModal from "@/app/_components/modals/ServerModal";
 import WeatherWidget from "./widgets/weather/WeatherWidget";
@@ -90,6 +91,9 @@ async function RoomView(props: Roomprops) {
                 </ServerModal>
               )}
             </div>
+          </div>
+          <div className="w-full p-4 bg-primary rounded-xl">
+            <ParticipantsWidget room={props.room} />
           </div>
         </div>
         <div>

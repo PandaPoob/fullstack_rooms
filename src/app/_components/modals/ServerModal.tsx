@@ -10,7 +10,7 @@ export default function ServerModal({ children }: ServerModalProps) {
 
   return (
     <div
-      className="fixed z-10 inset-0 overflow-y-auto "
+      className="fixed z-20 inset-0 overflow-y-auto "
       id="error-modal"
       aria-labelledby="modal-title"
       role="dialog"

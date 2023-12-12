@@ -66,6 +66,16 @@ async function getData(params: { slug: string }) {
       include: {
         cover: true,
         location: true,
+        participants: {
+          include: {
+            user: {
+              include: {
+                avatar: true,
+                status: true,
+              },
+            },
+          },
+        },
       },
     });
 
