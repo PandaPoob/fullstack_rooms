@@ -11,7 +11,7 @@ function NoteCard(props: NoteCardProps) {
   const newDate = formatDate(props.date);
 
   return (
-    <article className="w-full md:w-68 md:h-36 bg-primary rounded-lg p-2">
+    <article className="bg-primary rounded-xl p-6  md:h-[180px] flex-row ">
       <div className="flex justify-between items-center mt-2 mb-4">
         <p className="text-xs text-secondary">{newDate}</p>
       </div>
