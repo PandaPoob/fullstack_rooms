@@ -4,7 +4,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
   return (
     <div className="text-white min-h-screen max-w-screen relative overflow-hidden">
       <div
-        className={`grid relative z-20 md:min-h-screen ${
+        className={`grid relative md:relative z-20 md:min-h-screen ${
           props.session && "md:grid-cols-[8.125rem,1fr]"
         }`}
       >
@@ -19,7 +19,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
           width="760"
           height="620"
           viewBox="0 0 760 620"
-          className="absolute -top-[18rem] -left-[2rem] animate-wiggle1"
+          className="absolute md:-top-[18rem] md:-left-[2rem] animate-wiggle1 -top-[40rem]"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -70,7 +70,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
           width="760"
           height="620"
           viewBox="0 0 760 620"
-          className="absolute -top-[25rem] left-[55rem] animate-wiggle1"
+          className="absolute md:-top-[15rem] md:left-[55rem] animate-wiggle1"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -121,7 +121,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
           width="760"
           height="620"
           viewBox="0 0 760 620"
-          className="absolute -top-[70rem] left-[50rem] animate-wiggle2"
+          className="absolute md:-top-[70rem] md:left-[50rem] animate-wiggle2"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
@@ -172,7 +172,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
           width="760"
           height="620"
           viewBox="0 0 760 620"
-          className="absolute -top-[50rem] left-[10rem] animate-wiggle3"
+          className="absolute md:-top-[55rem] md:left-[5rem] animate-wiggle3"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
