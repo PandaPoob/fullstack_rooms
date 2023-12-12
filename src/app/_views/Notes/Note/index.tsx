@@ -96,12 +96,37 @@ function Note(props: NoteProps) {
     <div>
       {/* <Link href={`/rooms/${props.room_id}/notes/`}>
         <p>Go back</p>
+        
       </Link> */}
+      <li className="flex gap-2 text-sm">
+        <ul>
+          <Link href={`/rooms/${props.roomId}`}>
+            <ul className="md:mt-10  text-secondary hover:text-white ease-in">
+              {props.roomId}
+            </ul>
+          </Link>
+        </ul>
+        <ul>
+          <p className="md:mt-10  text-secondary">/</p>
+        </ul>
+        <Link href={`/rooms/${props.roomId}/notes/`}>
+          <ul className="md:mt-10  text-secondary hover:text-white ease-in">
+            All Notes
+          </ul>
+        </Link>
+        <ul>
+          <p className="md:mt-10  text-secondary">/</p>
+        </ul>
+        <ul>
+          <ul className="md:mt-10 font-bold">{props.noteItem.title}</ul>
+        </ul>
+      </li>
+      {/* 
       <Link className="flex gap-2" href={`/rooms/${props.roomId}/notes/`}>
         <p className="md:mt-10">All notes</p>
         <p className="md:mt-10">/</p>
         <p className="md:mt-10 font-medium"> {props.noteItem.title}</p>
-      </Link>
+      </Link> */}
       <h1 className="mt-6 text-h1">{props.noteItem.title}</h1>
       <Formik
         initialValues={{

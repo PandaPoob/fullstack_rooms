@@ -85,10 +85,13 @@ function Notes(props: NotesProps) {
     <div>
       {/* Breadcrumb, skal udvikles ordentligt */}
       <div className="mt-8">
-        <li className="flex gap-2 text-sm text-white opacity-80">
-          <Link href={"/rooms"}>
-            <ul>Room Name</ul> {/* skal mappes, så room name er displayed */}
+        <li className="flex gap-2 text-sm  opacity-80">
+          <Link href={`/rooms/${props.room_id}`}>
+            <ul className="text-secondary hover:text-white ease-in">
+              {props.room_id}
+            </ul>
           </Link>
+          <ul>/</ul>
           <ul>
             <button
               onClick={() => setDisplayForm(false)}
