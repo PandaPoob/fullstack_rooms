@@ -83,7 +83,11 @@ function EditRoomForm(props: EditRoomFormProps) {
                 isValidating={isValidating}
               />
 
-              <TitleInput error={errors.title} touched={touched.title} />
+              <TitleInput
+                error={errors.title}
+                touched={touched.title}
+                placeholder="Datababes"
+              />
               <Field type="hidden" name="roomId" id="roomId" />
 
               <button

@@ -6,3 +6,10 @@ export interface FormattedCalenderEvent {
   allDay: boolean;
   end?: Date | null;
 }
+
+export interface EventCreateForm {
+  title: string;
+  description?: string;
+  roomId: string;
+  location?: string;
+}

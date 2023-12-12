@@ -150,6 +150,7 @@ model NoteItem {
 model Event {
   id                String         @default(cuid()) @id
   title             String
+  
   start_time        DateTime
   end_time          DateTime?
   all_day           Boolean

@@ -7,6 +7,20 @@ import { Session } from "next-auth";
 import { redirect } from "next/navigation";
 
 async function getData(id: string) {
+  const rooms = await db.room.findMany({
+    where: {
+      participants: {
+        some: {
+          user_id: id,
+        },
+      },
+    },
+    select: {
+      title: true,
+      id: true,
+    },
+  });
+
   const userEvents = await db.user.findUnique({
     where: {
       id: id,
@@ -47,9 +61,17 @@ async function getData(id: string) {
         return formattedEvent;
       });
 
-    return formattedEvents;
+    const data = {
+      formattedEvents: formattedEvents,
+      rooms: rooms,
+    };
+    return data;
   } else {
-    return null;
+    const data = {
+      formattedEvents: null,
+      rooms: rooms,
+    };
+    return data;
   }
 }
 
@@ -57,7 +79,9 @@ async function CalendarPage() {
   const session = await requireAuthentication(authOptions);
   const data = await getData(session.user.id as string);
 
-  return <CalendarView userEvents={data} />;
+  return (
+    <CalendarView userEvents={data.formattedEvents} roomOptions={data.rooms} />
+  );
 }
 
 export default CalendarPage;
