@@ -26,9 +26,9 @@ export default function ServerModal({ children }: ServerModalProps) {
         </span>
         <div
           style={{ height: "65vh" }}
-          className="h-full inline-block align-bottom bg-bg_black border border-secondary rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6"
+          className="h-full inline-block align-bottom bg-bg_black border border-grey rounded-lg pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full "
         >
-          <div className="h-full">{children}</div>
+          <div className="h-full relative px-10">{children}</div>
         </div>
       </div>
     </div>

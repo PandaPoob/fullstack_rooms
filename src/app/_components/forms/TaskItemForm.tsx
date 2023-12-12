@@ -9,6 +9,7 @@ type TaskItemProps = {
   id: string;
   text: string;
   checked: boolean;
+  order: number;
   taskList: TaskItem[];
   setTaskList: (tasks: TaskItem[]) => void;
 };
@@ -17,6 +18,7 @@ function TaskItemForm({
   id,
   text,
   checked,
+  order,
   taskList,
   setTaskList,
 }: TaskItemProps) {
@@ -42,6 +44,7 @@ function TaskItemForm({
           body: JSON.stringify({
             id: id,
             checked: !isChecked, // Use the inverted state
+            order: order,
             updated_by: session.user.id,
           }),
         });
@@ -58,7 +61,6 @@ function TaskItemForm({
           setTaskList(updatedTasks);
         } else {
           const data = await resp.json();
-          actions.setSubmitting(false);
 
           if (data.msg) {
             setErrorMsg(data.msg);
@@ -68,6 +70,79 @@ function TaskItemForm({
         }
       } catch (error) {
         console.error("Error making API call:", error);
+      }
+    }
+  };
+
+  // Handling the order buttons
+  const handleMoveUp = async () => {
+    console.log("move up");
+    const currentIndex = taskList.findIndex((task) => task.id === id);
+    console.log("move up", currentIndex);
+    if (currentIndex > 0) {
+      const updatedTasks = [...taskList];
+      [updatedTasks[currentIndex], updatedTasks[currentIndex - 1]] = [
+        updatedTasks[currentIndex - 1],
+        updatedTasks[currentIndex],
+      ];
+      console.log("move up updated list", updatedTasks);
+      setTaskList(updatedTasks);
+
+      // Placeholder for API call to update task order in the database
+      if (session) {
+        try {
+          const resp = await fetch("/api/tasks?orderUpdate=true", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.token.sub}`,
+            },
+            body: JSON.stringify({ tasks: updatedTasks }),
+          });
+
+          if (!resp.ok) {
+            const data = await resp.json();
+            setErrorMsg(data.msg || data.error[0].message);
+          }
+        } catch (error) {
+          console.error("Error making API call:", error);
+        }
+      }
+    }
+  };
+
+  const handleMoveDown = async () => {
+    console.log("move down");
+    const currentIndex = taskList.findIndex((task) => task.id === id);
+    console.log("move down", currentIndex);
+    if (currentIndex < taskList.length - 1) {
+      const updatedTasks = [...taskList];
+      [updatedTasks[currentIndex], updatedTasks[currentIndex + 1]] = [
+        updatedTasks[currentIndex + 1],
+        updatedTasks[currentIndex],
+      ];
+      console.log("move up updated list", updatedTasks);
+      setTaskList(updatedTasks);
+
+      // Placeholder for API call to update task order in the database
+      if (session) {
+        try {
+          const resp = await fetch("/api/tasks?orderUpdate=true", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session.token.sub}`,
+            },
+            body: JSON.stringify({ tasks: updatedTasks }),
+          });
+
+          if (!resp.ok) {
+            const data = await resp.json();
+            setErrorMsg(data.msg || data.error[0].message);
+          }
+        } catch (error) {
+          console.error("Error making API call:", error);
+        }
       }
     }
   };
@@ -83,23 +158,24 @@ function TaskItemForm({
           initialValues={{
             taskId: id,
             checked: isChecked,
+            order: order,
           }}
           onSubmit={toggleChecked}
         >
           {({ isSubmitting, errors, touched }) => (
             <Form className="flex w-full">
-              <div className="w-full">
+              <div className="w-full flex items-center">
                 <div className="grid relative">
                   <Field
                     id={id}
                     type="checkbox"
                     checked={isChecked}
                     onChange={toggleChecked}
-                    className="m-1 cursor-pointer bg-primary peer h-5 w-5 focus:ring-2 focus:ring-white focus:ring-offset-0  border border-gray-500 rounded-full"
+                    className=" cursor-pointer bg-primary peer h-5 w-5 focus:ring-2 focus:ring-white focus:ring-offset-0  border border-gray-500 rounded-full"
                   />
                   <label
                     htmlFor={id}
-                    className="ml-4 mt-1 absolute left-0 top-1 text-secondary text-sm transition-all px-5
+                    className="ml-4 absolute left-0 top-1 text-secondary text-sm transition-all px-5
           peer-placeholder-shown:text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
           peer-focus:top-1 peer-focus:text-sm peer-focus:translate-y-0"
                   >
@@ -110,6 +186,43 @@ function TaskItemForm({
             </Form>
           )}
         </Formik>
+        {/* Arrow up and down button */}
+        <div className="flex mx-2">
+          <button
+            type="button"
+            onClick={handleMoveDown}
+            className="m-1 text-gray-300  text-mini"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#8F8F8F"
+                d="M8.12 9.29L12 13.17l3.88-3.88a.996.996 0 1 1 1.41 1.41l-4.59 4.59a.996.996 0 0 1-1.41 0L6.7 10.7a.996.996 0 0 1 0-1.41c.39-.38 1.03-.39 1.42 0z"
+              />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={handleMoveUp}
+            className="m-1 text-gray-300 text-mini"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#8F8F8F"
+                d="M8.12 14.71L12 10.83l3.88 3.88a.996.996 0 1 0 1.41-1.41L12.7 8.71a.996.996 0 0 0-1.41 0L6.7 13.3a.996.996 0 0 0 0 1.41c.39.38 1.03.39 1.42 0z"
+              />
+            </svg>
+          </button>
+        </div>
         <Formik
           initialValues={{
             taskId: id,
@@ -153,7 +266,7 @@ function TaskItemForm({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-btn-gradient py-2 px-5 rounded-full text-mini"
+                  className="bg-btn-gradient pb-2 pt-3 px-7 rounded-full text-mini mx-2"
                 >
                   {isSubmitting ? (
                     <span>Deleting...</span>

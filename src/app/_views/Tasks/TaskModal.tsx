@@ -24,14 +24,14 @@ export default function TaskModal({
     <>
       <div className="w-full mt-3 text-center sm:mt-0  sm:text-left gap-3">
         <div className="flex justify-between items-start">
-          <h3 className="text-lg leading-6 font-medium" id="modal-title">
+          <h2 className="text-5xl leading-6 my-10 font-medium" id="modal-title">
             Tasks
-          </h3>
-          <div className="sm:flex sm:flex-row-reverse">
+          </h2>
+          <div className="absolute top-0 right-0 mr-4">
             <Link
               href={`/rooms/${room.id}/`}
               type="button"
-              className="w-full inline-flex justify-center rounded-md border-transparent shadow-sm px-4 py-2 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+              className="w-full inline-flex justify-center px-4 py-2 text-base font-medium text-white hover:bg-blue-700  sm:ml-3 sm:w-auto sm:text-sm"
             >
               &#10005;
             </Link>
@@ -66,6 +66,7 @@ export default function TaskModal({
                   id={taskitem.id}
                   text={taskitem.text}
                   checked={taskitem.checked}
+                  order={taskitem.order}
                   taskList={taskList}
                   setTaskList={setTaskList}
                 />
@@ -78,6 +79,7 @@ export default function TaskModal({
                     id={task.id}
                     text={task.text}
                     checked={task.checked}
+                    order={task.order}
                     taskList={taskList}
                     setTaskList={setTaskList}
                   />

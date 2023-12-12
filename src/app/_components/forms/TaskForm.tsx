@@ -92,7 +92,7 @@ function TaskForm({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-btn-gradient text-h6 pb-2 pt-3 mx-auto min-w-[10rem] w-full md:min-h-[3.5rem] rounded-3xl flex items-center justify-center"
+                className="bg-btn-gradient text-h6 pb-2 pt-3 mx-auto min-w-[10rem] w-full md:min-h-[3rem] rounded-3xl flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <span>Creating task...</span>

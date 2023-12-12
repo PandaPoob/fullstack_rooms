@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
             user: true,
           },
         },
+        task_widget: true,
       },
     });
 
@@ -52,15 +53,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Query the database to get the count of existing tasks
-    const existingTasksCount = await db.taskItem.count();
+    if (!room.task_widget || room.task_widget.id !== task_widget_fk) {
+      return NextResponse.json(
+        {
+          error: "Taskwidget not found",
+        },
+        { status: 404 }
+      );
+    }
 
+    // Query the database to get the count of existing tasks
+    const existingTasksCount = await db.taskItem.count({
+      where: {
+        task_widget_fk: room.task_widget.id,
+      },
+    });
+    console.log("count", existingTasksCount);
     // Create task
     const createdTask = await db.taskItem.create({
       data: {
         text: text,
         task_widget_fk,
-        order: existingTasksCount + 1,
+        order: existingTasksCount,
         checked: false,
         created_by_fk: created_by_fk,
       },
@@ -151,39 +165,64 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(req: Request) {
+export async function PUT(req: NextRequest) {
   try {
     console.log("inside put api");
+    const paramsIsOrder = req.nextUrl.searchParams.get("orderUpdate");
+    console.log("handle down", paramsIsOrder);
     const updateBody = await req.json();
-    const { id, checked, updated_by } = updateBody;
 
-    // Assuming you have a Task model in your Prisma schema
-    const existingTask = await db.taskItem.findUnique({
-      where: { id: id },
-    });
+    if (paramsIsOrder) {
+      // make order update // updateMany //
+      const { tasks } = updateBody;
+      console.log("inside param", tasks);
+      // If the order has changed, update the order of other tasks
+      const updatedTasks = await Promise.all(
+        tasks.map(async ({ id }, index) => {
+          const updatedTask = await db.taskItem.update({
+            where: { id: id },
+            data: { order: index },
+          });
+          return updatedTask;
+        })
+      );
 
-    if (!existingTask) {
-      return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      console.log("Updated order of other tasks:", updatedTasks);
+
+      return NextResponse.json(
+        { msg: "success", updatedTasks: updatedTasks },
+        { status: 200 }
+      );
+    } else {
+      // update checkhed here
+      const { id, checked, updated_by, order } = updateBody;
+
+      // Assuming you have a Task model in your Prisma schema
+      const existingTask = await db.taskItem.findUnique({
+        where: { id: id },
+      });
+      if (!existingTask) {
+        return NextResponse.json({ error: "Task not found" }, { status: 404 });
+      }
+
+      // Save the current order before updating
+      const currentOrder = existingTask.order;
+      console.log("Currentorder", currentOrder);
+
+      // Update the task with the new order
+      const updatedTask = await db.taskItem.update({
+        where: { id: id },
+        data: {
+          checked,
+          updated_by,
+          order: currentOrder,
+        },
+      });
+      return NextResponse.json(
+        { msg: "success", updatedTask: updatedTask },
+        { status: 200 }
+      );
     }
-
-    // Save the current order before updating
-    const currentOrder = existingTask.order;
-
-    // Update the task with the new order
-    const updatedTask = await db.taskItem.update({
-      where: { id: id },
-      data: {
-        checked,
-        updated_by,
-        order: currentOrder,
-      },
-    });
-
-    // const body = await req.json();
-    return NextResponse.json(
-      { msg: "succes", updatedTask: updatedTask },
-      { status: 200 }
-    );
   } catch (error) {
     console.error("Error:", error);
     if (error instanceof z.ZodError) {
