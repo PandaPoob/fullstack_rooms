@@ -37,7 +37,7 @@ function Participants(props: ParticipantsProps) {
                 />
               </div>
               <div
-                className={`absolute bottom-0.5 right-0.5 z-[9999] rounded-full w-3 h-3   
+                className={`absolute bottom-0.5 right-0.5 z-10 rounded-full w-3 h-3   
                 ${getStatusColor(
                   participant.user?.status?.title || "defaultColor"
                 )}`}

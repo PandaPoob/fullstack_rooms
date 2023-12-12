@@ -98,7 +98,11 @@ async function getData(params: { slug: string }) {
         room_fk: room.id,
       },
       include: {
-        task_item: true,
+        task_item: {
+          orderBy: {
+            order: "asc", // replace 'order' with the actual field you want to use for sorting
+          },
+        },
       },
     });
 
