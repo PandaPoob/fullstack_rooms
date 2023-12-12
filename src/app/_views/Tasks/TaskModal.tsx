@@ -9,7 +9,6 @@ interface TaskWidgetProps {
   tasks?: TaskItem[];
   room: Room;
   taskWidgetId: string;
-  // modalParams: { modal: string } | undefined | null;
 }
 
 export default function TaskModal({
@@ -62,6 +61,8 @@ export default function TaskModal({
           {!showOnlyChecked
             ? taskList?.map((taskitem) => (
                 <TaskItemForm
+                  room={room}
+                  taskWidgetId={taskWidgetId}
                   key={taskitem.id}
                   id={taskitem.id}
                   text={taskitem.text}
@@ -75,6 +76,8 @@ export default function TaskModal({
                 .filter((task) => task.checked)
                 .map((task) => (
                   <TaskItemForm
+                    room={room}
+                    taskWidgetId={taskWidgetId}
                     key={task.id}
                     id={task.id}
                     text={task.text}

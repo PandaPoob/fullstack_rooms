@@ -3,9 +3,11 @@ import { Field, Form, Formik } from "formik";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import ErrorToast from "../toasts/ErrorToast";
-import { TaskItem } from "@prisma/client";
+import { Room, TaskItem } from "@prisma/client";
 
 type TaskItemProps = {
+  room: Room;
+  taskWidgetId: string;
   id: string;
   text: string;
   checked: boolean;
@@ -15,6 +17,8 @@ type TaskItemProps = {
 };
 
 function TaskItemForm({
+  room,
+  taskWidgetId,
   id,
   text,
   checked,
@@ -46,6 +50,8 @@ function TaskItemForm({
             checked: !isChecked, // Use the inverted state
             order: order,
             updated_by: session.user.id,
+            task_widget_fk: taskWidgetId,
+            roomId: room.id,
           }),
         });
 
@@ -76,16 +82,13 @@ function TaskItemForm({
 
   // Handling the order buttons
   const handleMoveUp = async () => {
-    console.log("move up");
     const currentIndex = taskList.findIndex((task) => task.id === id);
-    console.log("move up", currentIndex);
     if (currentIndex > 0) {
       const updatedTasks = [...taskList];
       [updatedTasks[currentIndex], updatedTasks[currentIndex - 1]] = [
         updatedTasks[currentIndex - 1],
         updatedTasks[currentIndex],
       ];
-      console.log("move up updated list", updatedTasks);
       setTaskList(updatedTasks);
 
       // Placeholder for API call to update task order in the database
@@ -112,16 +115,13 @@ function TaskItemForm({
   };
 
   const handleMoveDown = async () => {
-    console.log("move down");
     const currentIndex = taskList.findIndex((task) => task.id === id);
-    console.log("move down", currentIndex);
     if (currentIndex < taskList.length - 1) {
       const updatedTasks = [...taskList];
       [updatedTasks[currentIndex], updatedTasks[currentIndex + 1]] = [
         updatedTasks[currentIndex + 1],
         updatedTasks[currentIndex],
       ];
-      console.log("move up updated list", updatedTasks);
       setTaskList(updatedTasks);
 
       // Placeholder for API call to update task order in the database
@@ -159,6 +159,7 @@ function TaskItemForm({
             taskId: id,
             checked: isChecked,
             order: order,
+            roomId: room.id,
           }}
           onSubmit={toggleChecked}
         >
@@ -166,6 +167,7 @@ function TaskItemForm({
             <Form className="flex w-full">
               <div className="w-full flex items-center">
                 <div className="grid relative">
+                  <Field type="hidden" name="roomId" />
                   <Field
                     id={id}
                     type="checkbox"
@@ -238,6 +240,8 @@ function TaskItemForm({
                 },
                 body: JSON.stringify({
                   id: values.taskId,
+                  task_widget_fk: taskWidgetId,
+                  roomId: room.id,
                 }),
               });
               if (resp.ok) {
@@ -277,6 +281,8 @@ function TaskItemForm({
               </div>
 
               <Field type="hidden" name="taskId" />
+              <Field type="hidden" name="roomId" />
+              <Field type="hidden" name="roomId" />
             </Form>
           )}
         </Formik>

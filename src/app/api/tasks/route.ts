@@ -21,13 +21,12 @@ export async function POST(req: NextRequest) {
         { status: resp.status }
       );
     }
-
     const { user } = resp.data;
+    //
+
     const body = await req.json();
-    // const { text, task_widget_fk, created_by_fk } = body;
     const { text, task_widget_fk, created_by_fk, roomId } =
       taskcreateschema.parse(body);
-    // console.log("api", body);
 
     // Finding the room that belongs to roomId
     const room = await db.room.findUnique({
@@ -62,24 +61,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Query the database to get the count of existing tasks
-    const existingTasksCount = await db.taskItem.count({
-      where: {
-        task_widget_fk: room.task_widget.id,
-      },
-    });
-    console.log("count", existingTasksCount);
-    // Create task
-    const createdTask = await db.taskItem.create({
-      data: {
-        text: text,
-        task_widget_fk,
-        order: existingTasksCount,
-        checked: false,
-        created_by_fk: created_by_fk,
-      },
-    });
-
     // Check that user.id exist in participants
     const isUserParticipant = room.participants.some(
       (p) => p.user_id === user!.id
@@ -93,6 +74,23 @@ export async function POST(req: NextRequest) {
         { status: 403 }
       );
     }
+
+    // Query the database to get the count of existing tasks
+    const existingTasksCount = await db.taskItem.count({
+      where: {
+        task_widget_fk: room.task_widget.id,
+      },
+    });
+    // Create task
+    const createdTask = await db.taskItem.create({
+      data: {
+        text: text,
+        task_widget_fk,
+        order: existingTasksCount,
+        checked: false,
+        created_by_fk: created_by_fk,
+      },
+    });
 
     // This is the room participant without the creator of the task
     const otherParticipations = room.participants.filter(
@@ -128,10 +126,9 @@ export async function POST(req: NextRequest) {
           }
         })
       );
-      console.log("noti", notifications);
 
       const notificationResult = await notifyUsers(notifications as UserId[], {
-        msg: "Added to room!",
+        msg: "Created a task!",
       });
 
       if (!notificationResult.success) {
@@ -167,16 +164,28 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    console.log("inside put api");
+    //Validate user
+    const resp = await authenticateUser(req);
+
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+
+    const { user } = resp.data;
+    //
     const paramsIsOrder = req.nextUrl.searchParams.get("orderUpdate");
-    console.log("handle down", paramsIsOrder);
     const updateBody = await req.json();
-    console.log("inside param1", updateBody);
 
     if (paramsIsOrder) {
-      // make order update // updateMany //
+      // make order update
       const { tasks } = updateBody;
-      console.log("inside param2", tasks);
       // If the order has changed, update the order of other tasks
       const updatedTasks = await Promise.all(
         tasks.map(
@@ -190,15 +199,47 @@ export async function PUT(req: NextRequest) {
         )
       );
 
-      console.log("Updated order of other tasks:", updatedTasks);
-
       return NextResponse.json(
         { msg: "success", updatedTasks: updatedTasks },
         { status: 200 }
       );
     } else {
       // update checkhed here
-      const { id, checked, updated_by, order } = updateBody;
+      const { id, checked, updated_by, order, task_widget_fk, roomId } =
+        updateBody;
+
+      // Finding the room that belongs to roomId
+      const room = await db.room.findUnique({
+        where: {
+          id: roomId,
+        },
+        include: {
+          participants: {
+            include: {
+              user: true,
+            },
+          },
+          task_widget: true,
+        },
+      });
+
+      if (!room) {
+        return NextResponse.json(
+          {
+            error: "Room not found",
+          },
+          { status: 404 }
+        );
+      }
+
+      if (!room.task_widget || room.task_widget.id !== task_widget_fk) {
+        return NextResponse.json(
+          {
+            error: "Taskwidget not found",
+          },
+          { status: 404 }
+        );
+      }
 
       // Assuming you have a Task model in your Prisma schema
       const existingTask = await db.taskItem.findUnique({
@@ -210,7 +251,6 @@ export async function PUT(req: NextRequest) {
 
       // Save the current order before updating
       const currentOrder = existingTask.order;
-      console.log("Currentorder", currentOrder);
 
       // Update the task with the new order
       const updatedTask = await db.taskItem.update({
@@ -221,6 +261,68 @@ export async function PUT(req: NextRequest) {
           order: currentOrder,
         },
       });
+
+      // Check that user.id exist in participants
+      const isUserParticipant = room.participants.some(
+        (p) => p.user_id === user!.id
+      );
+
+      if (!isUserParticipant) {
+        return NextResponse.json(
+          {
+            error: "User is not a participant in the room",
+          },
+          { status: 403 }
+        );
+      }
+
+      // This is the room participant without the creator of the task
+      const otherParticipations = room.participants.filter(
+        (p) => p.user_id !== user!.id
+      );
+
+      // Create notifications
+      if (otherParticipations.length !== 0) {
+        const notifications = await Promise.all(
+          otherParticipations.map(async (p) => {
+            try {
+              const notification = await db.notification.create({
+                data: {
+                  read: false,
+                  user: { connect: { id: p.user_id } },
+                  meta_user: { connect: { id: user!.id } },
+                  meta_action: "edited",
+                  meta_target: "task",
+                  meta_target_name: updatedTask.text,
+                  meta_link: `/rooms/${room.id}/?modal=true`,
+                },
+                select: {
+                  user_id: true,
+                },
+              });
+              return notification;
+            } catch (error) {
+              console.error(
+                `Error occurred while editing a notification for ${p}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+
+        const notificationResult = await notifyUsers(
+          notifications as UserId[],
+          {
+            msg: "Added to room!",
+          }
+        );
+
+        if (!notificationResult.success) {
+          console.error("Error: Pusher notification trigger for task actions");
+        }
+      }
+
       return NextResponse.json(
         { msg: "success", updatedTask: updatedTask },
         { status: 200 }
@@ -248,14 +350,74 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE(req: NextRequest) {
   try {
-    console.log("inside put api");
-    const deleteBody = await req.json();
-    console.log("Delete Body:", deleteBody);
+    //Validate user
+    const resp = await authenticateUser(req);
 
-    const { id } = deleteBody;
-    console.log("Delete Body:", deleteBody);
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+
+    const { user } = resp.data;
+    //
+    const deleteBody = await req.json();
+
+    const { id, roomId, task_widget_fk } = deleteBody;
+
+    // Finding and checking the room that belongs to roomId
+    const room = await db.room.findUnique({
+      where: {
+        id: roomId,
+      },
+      include: {
+        participants: {
+          include: {
+            user: true,
+          },
+        },
+        task_widget: true,
+      },
+    });
+
+    if (!room) {
+      return NextResponse.json(
+        {
+          error: "Room not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    if (!room.task_widget || room.task_widget.id !== task_widget_fk) {
+      return NextResponse.json(
+        {
+          error: "Taskwidget not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Check that user.id exist in participants
+    const isUserParticipant = room.participants.some(
+      (p) => p.user_id === user!.id
+    );
+
+    if (!isUserParticipant) {
+      return NextResponse.json(
+        {
+          error: "User is not a participant in the room",
+        },
+        { status: 403 }
+      );
+    }
 
     // Find the task to be deleted
     const taskToDelete = await db.taskItem.findUnique({
@@ -290,6 +452,50 @@ export async function DELETE(req: Request) {
         },
       },
     });
+
+    // This is the room participant without the creator of the task
+    const otherParticipations = room.participants.filter(
+      (p) => p.user_id !== user!.id
+    );
+
+    // Create notifications
+    if (otherParticipations.length !== 0) {
+      const notifications = await Promise.all(
+        otherParticipations.map(async (p) => {
+          try {
+            const notification = await db.notification.create({
+              data: {
+                read: false,
+                user: { connect: { id: p.user_id } },
+                meta_user: { connect: { id: user!.id } },
+                meta_action: "deleted",
+                meta_target: "task",
+                meta_target_name: deletedTask.text,
+                meta_link: `/rooms/${room.id}/?modal=true`,
+              },
+              select: {
+                user_id: true,
+              },
+            });
+            return notification;
+          } catch (error) {
+            console.error(
+              `Error occurred while creating notification for ${p}:`,
+              error
+            );
+            return null;
+          }
+        })
+      );
+
+      const notificationResult = await notifyUsers(notifications as UserId[], {
+        msg: "Deleted a task!",
+      });
+
+      if (!notificationResult.success) {
+        console.error("Error: Pusher notification trigger for task actions");
+      }
+    }
 
     return NextResponse.json(
       { msg: "succes", deletedTask: deletedTask },
