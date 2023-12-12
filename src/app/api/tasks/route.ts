@@ -171,20 +171,23 @@ export async function PUT(req: NextRequest) {
     const paramsIsOrder = req.nextUrl.searchParams.get("orderUpdate");
     console.log("handle down", paramsIsOrder);
     const updateBody = await req.json();
+    console.log("inside param1", updateBody);
 
     if (paramsIsOrder) {
       // make order update // updateMany //
       const { tasks } = updateBody;
-      console.log("inside param", tasks);
+      console.log("inside param2", tasks);
       // If the order has changed, update the order of other tasks
       const updatedTasks = await Promise.all(
-        tasks.map(async ({ id }, index) => {
-          const updatedTask = await db.taskItem.update({
-            where: { id: id },
-            data: { order: index },
-          });
-          return updatedTask;
-        })
+        tasks.map(
+          async ({ id }: { id: string }, { index }: { index: number }) => {
+            const updatedTask = await db.taskItem.update({
+              where: { id: id },
+              data: { order: index },
+            });
+            return updatedTask;
+          }
+        )
       );
 
       console.log("Updated order of other tasks:", updatedTasks);
