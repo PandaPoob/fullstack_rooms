@@ -25,23 +25,59 @@ function Notes(props: NotesProps) {
     setErrorMsg("");
   };
 
-  // Formatting
-  const [format, setFormat] = useState("");
-  const handleFormatClick = (formatType: SetStateAction<string>) => {
-    if (format === formatType) {
-      setFormat(""); // Reset if clicked twice on the same format
+  const [textFormat, setTextFormat] = useState("");
+  const [titleFormat, setTitleFormat] = useState("");
+
+  const [isTitle, setIsTitle] = useState(true); // On click på input felt, som sætter state
+  // Title is true (da det er først)
+
+  // Text format
+  const handleTextFormatClick = (formatType: string) => {
+    if (textFormat === formatType) {
+      setTextFormat(""); // Reset if clicked twice on the same format
     } else {
-      setFormat(formatType); // Set the format if not set already
+      setTextFormat(formatType);
+    }
+  };
+
+  // Title format
+  const handleTitleFormatClick = (formatType: string) => {
+    if (titleFormat === formatType) {
+      setTitleFormat(""); // Reset if clicked twice on the same format
+    } else {
+      setTitleFormat(formatType);
     }
   };
 
   // Alignment
-  const [algignment, setAlignment] = useState("");
-  const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
-    if (algignment === alignmentType) {
-      setAlignment(""); // Reset if clicked twice on the same alignment
+  // const [algignment, setAlignment] = useState("");
+  // const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
+  //   if (algignment === alignmentType) {
+  //     setAlignment(""); // Reset if clicked twice on the same alignment
+  //   } else {
+  //     setAlignment(alignmentType); // Set the alignment if not set already
+  //   }
+  // };
+
+  // Text Alignment
+  const [textAlignment, setTextAlignment] = useState("");
+
+  const handleTextAlignmentClick = (alignmentType: string) => {
+    if (textAlignment === alignmentType) {
+      setTextAlignment(""); // Reset if clicked twice on the same alignment
     } else {
-      setAlignment(alignmentType); // Set the alignment if not set already
+      setTextAlignment(alignmentType); // Set the alignment if not set already
+    }
+  };
+
+  // Title Alignment
+  const [titleAlignment, setTitleAlignment] = useState("");
+
+  const handleTitleAlignmentClick = (alignmentType: string) => {
+    if (titleAlignment === alignmentType) {
+      setTitleAlignment(""); // Reset if clicked twice on the same alignment
+    } else {
+      setTitleAlignment(alignmentType); // Set the alignment if not set already
     }
   };
 
@@ -80,6 +116,10 @@ function Notes(props: NotesProps) {
               const formval = JSON.stringify({
                 title: values.title,
                 text: values.text,
+                text_format: textFormat,
+                title_format: titleFormat,
+                text_alignment: textAlignment,
+                title_alignment: titleAlignment,
                 note_widget_fk: values.note_widget_fk,
               });
               const resp = await fetch("/api/notes", {
@@ -123,37 +163,89 @@ function Notes(props: NotesProps) {
                 <div className="bg-primary rounded-md w-full">
                   {/* Værktøjslinje */}
                   <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
-                    <div className="flex gap-6 text-h5 mt-2 mx-4">
+                    {/* Text Format */}
+                    <div
+                      className={`flex gap-6 text-h5 mt-2 mx-4 ${
+                        isTitle ? "hidden" : "block"
+                      }`}
+                    >
                       {/* Bold */}
                       <button
                         type="button"
-                        onClick={() => handleFormatClick("bold")}
-                        className="bold"
+                        onClick={() => handleTextFormatClick("bold")}
+                        className={`${textFormat.includes("bold") && "bold"}`}
                       >
                         B
                       </button>
                       {/* Italic */}
                       <button
                         type="button"
-                        onClick={() => handleFormatClick("italic")}
-                        className="italic"
+                        onClick={() => handleTextFormatClick("italic")}
+                        className={`${
+                          textFormat.includes("italic") && "italic"
+                        }`}
                       >
                         I
                       </button>
                       {/* Underline */}
                       <button
                         type="button"
-                        onClick={() => handleFormatClick("underline")}
-                        className="underline"
+                        onClick={() => handleTextFormatClick("underline")}
+                        className={`${
+                          textFormat.includes("underline") && "underline"
+                        }`}
                       >
                         U
                       </button>
                     </div>
-                    <div className="flex gap-6 mx-4">
+                    {/* Title Format */}
+                    <div
+                      className={`flex gap-6 text-h5 mt-2 mx-4 ${
+                        !isTitle ? "hidden" : "block"
+                      }`}
+                    >
+                      {/* Bold */}
+                      <button
+                        type="button"
+                        onClick={() => handleTitleFormatClick("bold")}
+                        className={`${textFormat.includes("bold") && "bold"}`}
+                      >
+                        B
+                      </button>
+                      {/* Italic */}
+                      <button
+                        type="button"
+                        onClick={() => handleTitleFormatClick("italic")}
+                        className={`${
+                          textFormat.includes("italic") && "italic"
+                        }`}
+                      >
+                        I
+                      </button>
+                      {/* Underline */}
+                      <button
+                        type="button"
+                        onClick={() => handleTitleFormatClick("underline")}
+                        className={`${
+                          textFormat.includes("underline") && "underline"
+                        }`}
+                      >
+                        U
+                      </button>
+                    </div>
+                    {/* Title Alignment */}
+                    <div
+                      className={`flex gap-6 mx-4 ${
+                        !isTitle ? "block" : "hidden"
+                      }`}
+                    >
                       {/* Align left */}
                       <button
                         type="button"
-                        onClick={() => handleAlignmentClick("left")}
+                        onClick={() => handleTitleAlignmentClick("left")}
+                        className={
+                          titleAlignment.includes("left") ? "left" : ""
+                        }
                       >
                         {" "}
                         <svg
@@ -174,7 +266,10 @@ function Notes(props: NotesProps) {
                       {/* Align center */}
                       <button
                         type="button"
-                        onClick={() => handleAlignmentClick("center")}
+                        onClick={() => handleTitleAlignmentClick("center")}
+                        className={
+                          titleAlignment.includes("center") ? "center" : ""
+                        }
                       >
                         {" "}
                         <svg
@@ -194,7 +289,85 @@ function Notes(props: NotesProps) {
                       {/* Align right */}
                       <button
                         type="button"
-                        onClick={() => handleAlignmentClick("right")}
+                        onClick={() => handleTitleAlignmentClick("right")}
+                        className={
+                          titleAlignment.includes("right") ? "right" : ""
+                        }
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M0 3h15v1H0V3Zm9 4h6v1H9V7Zm-3 4h9v1H6v-1Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                    {/* Text Alignment */}
+                    <div
+                      className={`flex gap-6 mx-4 ${
+                        isTitle ? "block" : "hidden"
+                      }`}
+                    >
+                      {/* Align left */}
+                      <button
+                        type="button"
+                        onClick={() => handleTextAlignmentClick("left")}
+                        className={textAlignment.includes("left") ? "left" : ""}
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="currentColor"
+                            fillRule="evenodd"
+                            d="M15 4H0V3h15v1ZM6 8H0V7h6v1Zm3 4H0v-1h9v1Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Align center */}
+                      <button
+                        type="button"
+                        onClick={() => handleTextAlignmentClick("center")}
+                        className={
+                          textAlignment.includes("center") ? "center" : ""
+                        }
+                      >
+                        {" "}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="18"
+                          viewBox="0 0 15 15"
+                        >
+                          <path
+                            fill="none"
+                            stroke="currentColor"
+                            d="M15 3.5H0m10 4H5m7 4H3"
+                          />
+                        </svg>
+                      </button>
+
+                      {/* Align right */}
+                      <button
+                        type="button"
+                        onClick={() => handleTextAlignmentClick("right")}
+                        className={
+                          textAlignment.includes("right") ? "right" : ""
+                        }
                       >
                         {" "}
                         <svg
@@ -221,33 +394,48 @@ function Notes(props: NotesProps) {
                         type="text"
                         name="title"
                         placeholder="Title ..."
-                        className="w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary"
+                        className={`w-full rounded-md bg-primary bg text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary ${
+                          titleFormat.includes("bold") ? "bold" : ""
+                        } ${titleFormat.includes("italic") ? "italic" : ""} ${
+                          titleFormat.includes("underline") ? "underline" : ""
+                        } ${
+                          titleAlignment === "left"
+                            ? "text-left"
+                            : titleAlignment === "center"
+                            ? "text-center"
+                            : titleAlignment === "right"
+                            ? "text-right"
+                            : ""
+                        }`}
+                        onClick={() => setIsTitle(true)}
                       />
                     </div>
                     {/* Note Text Field */}
                     <div className="flex items-center">
                       <Field
-                        as="textarea"
+                        as="textarea" // Change the type attribute to as="textarea"
                         name="text"
                         placeholder="Text ..."
                         rows={4}
-                        className={` ${
-                          format.includes("bold")
+                        className={`${
+                          textFormat.includes("bold")
                             ? "font-bold"
-                            : format.includes("italic")
+                            : textFormat.includes("italic")
                             ? "italic"
-                            : format.includes("underline")
+                            : textFormat.includes("underline")
                             ? "underline"
                             : "normal"
-                        } ${
-                          algignment === "left"
+                        }
+                        ${
+                          textAlignment.includes("left")
                             ? "text-left"
-                            : algignment === "center"
+                            : textAlignment.includes("center")
                             ? "text-center"
-                            : algignment === "right"
+                            : textAlignment.includes("right")
                             ? "text-right"
-                            : ""
-                        } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
+                            : "normal"
+                        } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary `}
+                        onClick={() => setIsTitle(false)}
                       />
                     </div>
                     {/* Hidden Field for note_widget_fk */}
