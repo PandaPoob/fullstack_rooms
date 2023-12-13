@@ -12,7 +12,7 @@ function TimeInput({
   label: string;
 }) {
   return (
-    <div className="min-h-[6.7rem] flex flex-col">
+    <div className="min-h-[6.7rem] flex flex-col w-[25%]">
       <label htmlFor={name} className="font-medium text-h5 text-darkGrey mb-1">
         {label}
       </label>
@@ -20,7 +20,7 @@ function TimeInput({
         type="time"
         name={name}
         id={name}
-        className={`bg-primary text-white h-14 placeholder:text-darkGrey focus:outline-none focus:border-secondary focus:border px-5 rounded-lg 
+        className={`bg-primary text-white h-14 placeholder:text-darkGrey focus:outline-none focus:border-secondary focus:border px-5 rounded-lg text-center 
            ${error && touched && "border border-warning"}`}
       />
 

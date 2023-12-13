@@ -27,7 +27,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
             <path
               d="M559.027 338.5C559.027 414.991 478.656 477 379.514 477C280.371 477 200 414.991 200 338.5C200 262.009 280.371 200 379.514 200C478.656 200 559.027 262.009 559.027 338.5Z"
               fill="url(#paint0_linear_930_4197)"
-              fill-opacity="0.24"
+              fillOpacity="0.24"
             />
           </g>
           <defs>
@@ -38,9 +38,9 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               width="759.031"
               height="677"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -60,8 +60,8 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               y2="477"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#FF7BCA" />
-              <stop offset="1" stop-color="#FFC56F" stop-opacity="0.46" />
+              <stop stopColor="#FF7BCA" />
+              <stop offset="1" stopColor="#FFC56F" stopOpacity="0.46" />
             </linearGradient>
           </defs>
         </svg>
@@ -78,7 +78,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
             <path
               d="M559.027 338.5C559.027 414.991 478.656 477 379.514 477C280.371 477 200 414.991 200 338.5C200 262.009 280.371 200 379.514 200C478.656 200 559.027 262.009 559.027 338.5Z"
               fill="url(#paint0_linear_930_4197)"
-              fill-opacity="0.24"
+              fillOpacity="0.24"
             />
           </g>
           <defs>
@@ -89,9 +89,9 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               width="759.031"
               height="677"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -111,8 +111,8 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               y2="477"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#FF7BCA" />
-              <stop offset="1" stop-color="#FFC56F" stop-opacity="0.46" />
+              <stop stopColor="#FF7BCA" />
+              <stop offset="1" stopColor="#FFC56F" stopOpacity="0.46" />
             </linearGradient>
           </defs>
         </svg>
@@ -129,7 +129,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
             <path
               d="M559.027 338.5C559.027 414.991 478.656 477 379.514 477C280.371 477 200 414.991 200 338.5C200 262.009 280.371 200 379.514 200C478.656 200 559.027 262.009 559.027 338.5Z"
               fill="url(#paint0_linear_930_4197)"
-              fill-opacity="0.24"
+              fillOpacity="0.24"
             />
           </g>
           <defs>
@@ -140,9 +140,9 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               width="759.031"
               height="677"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -162,8 +162,8 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               y2="477"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#FF7BCA" />
-              <stop offset="1" stop-color="#FFC56F" stop-opacity="0.46" />
+              <stop stopColor="#FF7BCA" />
+              <stop offset="1" stopColor="#FFC56F" stopOpacity="0.46" />
             </linearGradient>
           </defs>
         </svg>
@@ -180,7 +180,7 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
             <path
               d="M559.027 338.5C559.027 414.991 478.656 477 379.514 477C280.371 477 200 414.991 200 338.5C200 262.009 280.371 200 379.514 200C478.656 200 559.027 262.009 559.027 338.5Z"
               fill="url(#paint0_linear_930_4197)"
-              fill-opacity="0.24"
+              fillOpacity="0.24"
             />
           </g>
           <defs>
@@ -191,9 +191,9 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               width="759.031"
               height="677"
               filterUnits="userSpaceOnUse"
-              color-interpolation-filters="sRGB"
+              colorInterpolationFilters="sRGB"
             >
-              <feFlood flood-opacity="0" result="BackgroundImageFix" />
+              <feFlood floodOpacity="0" result="BackgroundImageFix" />
               <feBlend
                 mode="normal"
                 in="SourceGraphic"
@@ -213,8 +213,8 @@ function BaseLayout(props: { children: React.ReactNode; session: boolean }) {
               y2="477"
               gradientUnits="userSpaceOnUse"
             >
-              <stop stop-color="#FF7BCA" />
-              <stop offset="1" stop-color="#FFC56F" stop-opacity="0.46" />
+              <stop stopColor="#FF7BCA" />
+              <stop offset="1" stopColor="#FFC56F" stopOpacity="0.46" />
             </linearGradient>
           </defs>
         </svg>

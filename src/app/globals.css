@@ -43,6 +43,10 @@ select option {
   font-family: var(--body-font);
 }
 
+input[type="checkbox"] {
+  accent-color: #946a2b;
+}
+
 .fc-view {
   @apply w-full h-full lg:h-3/4 xl:h-2/3;
 }
@@ -85,8 +89,12 @@ a.fc-event:hover {
   @apply border-none;
 }
 
+.fc .fc-toolbar {
+  @apply flex-wrap;
+}
+
 .fc .fc-toolbar-title {
-  @apply text-h1 mb-14 mt-7;
+  @apply text-h2 md:text-h1 mb-4 md:mb-14 mt-7;
 }
 .fc .fc-button-group {
   @apply gap-1;

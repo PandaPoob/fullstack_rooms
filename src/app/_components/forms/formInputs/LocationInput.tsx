@@ -8,7 +8,7 @@ function LocationInput({
   touched: boolean | undefined;
 }) {
   return (
-    <div className="min-h-[6.7rem] flex flex-col md:w-1/2">
+    <div className="min-h-[6.7rem] flex flex-col w-full md:w-1/2">
       <label
         htmlFor="location"
         className="font-medium text-h5 text-darkGrey mb-1"

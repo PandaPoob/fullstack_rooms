@@ -1,6 +1,4 @@
 import { EventCreateForm } from "@/app/_models/event";
-import { UserEdit } from "@/app/_models/user";
-import { Status } from "@prisma/client";
 import { Field, FormikErrors } from "formik";
 import { useState } from "react";
 
@@ -18,7 +16,7 @@ function RoomSelect(props: RoomSelectProps) {
   const [optionsOpen, setOptionsOpen] = useState(false);
 
   return (
-    <div className="min-h-[6.7rem] flex flex-col md:w-1/2">
+    <div className="min-h-[6.7rem] flex flex-col w-full md:w-1/2">
       <label
         htmlFor="roomId"
         className="font-medium text-h5 text-darkGrey mb-1"

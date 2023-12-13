@@ -19,9 +19,6 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [chosenDate, setChosenDate] = useState("");
 
-  const dateTest = new Date();
-  //console.log(dateTest);
-
   const options = {
     eventBackgroundColor: "rgba(77, 101, 187, 0.3)",
     eventBorderColor: "rgba(77, 101, 187, 0.3)",
@@ -39,8 +36,12 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
           initialView="dayGridMonth"
           dateClick={(event) => {
-            setIsOpen(true);
-            setChosenDate(event.dateStr);
+            if (!roomOptions) {
+              alert("You must have at least one room to tie the event to");
+            } else {
+              setIsOpen(true);
+              setChosenDate(event.dateStr);
+            }
           }}
           editable={true}
           events={events && ([...events] as EventSourceInput)}

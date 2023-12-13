@@ -12,7 +12,7 @@ function DateInput({
   label: string;
 }) {
   return (
-    <div className="min-h-[6.7rem] flex flex-col">
+    <div className="min-h-[6.7rem] flex flex-col w-[75%]">
       <label htmlFor={name} className="font-medium text-h5 text-darkGrey mb-1">
         {label}
       </label>

@@ -16,4 +16,5 @@ export interface EventCreateForm {
   startTime: string;
   endDate?: string;
   endTime?: string;
+  allDay: boolean;
 }
