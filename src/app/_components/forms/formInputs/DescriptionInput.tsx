@@ -8,7 +8,7 @@ function DescriptionInput({
   touched: boolean | undefined;
 }) {
   return (
-    <div className="min-h-[6.7rem] flex flex-col">
+    <div className="min-h-[10.13rem] flex flex-col">
       <label
         htmlFor="description"
         className="font-medium text-h5 text-darkGrey mb-1"

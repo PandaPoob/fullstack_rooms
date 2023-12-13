@@ -17,6 +17,7 @@ interface CalendarViewProps {
 function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
   const [events, setEvents] = useState(userEvents || []);
   const [isOpen, setIsOpen] = useState(false);
+  const [chosenDate, setChosenDate] = useState("");
 
   const dateTest = new Date();
   //console.log(dateTest);
@@ -32,12 +33,15 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
   };
 
   return (
-    <main className="relative">
+    <main>
       <div className="calendar-container font-body">
         <FullCalendar
           plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]}
           initialView="dayGridMonth"
-          dateClick={() => setIsOpen(true)}
+          dateClick={(event) => {
+            setIsOpen(true);
+            setChosenDate(event.dateStr);
+          }}
           editable={true}
           events={events && ([...events] as EventSourceInput)}
           {...(options as any)}
@@ -45,7 +49,7 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
       </div>
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
-          <CreateEventForm roomOptions={roomOptions} />
+          <CreateEventForm roomOptions={roomOptions} chosenDate={chosenDate} />
         </Modal>
       )}
     </main>

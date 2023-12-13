@@ -12,4 +12,8 @@ export interface EventCreateForm {
   description?: string;
   roomId: string;
   location?: string;
+  startDate: string;
+  startTime: string;
+  endDate?: string;
+  endTime?: string;
 }

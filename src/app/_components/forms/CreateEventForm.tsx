@@ -8,31 +8,41 @@ import { EventCreateForm } from "@/app/_models/event";
 import DescriptionInput from "./formInputs/DescriptionInput";
 import RoomSelect from "./formInputs/RoomSelect";
 import LocationInput from "./formInputs/LocationInput";
+import createeventschema from "@/app/_utils/validation/schemas/event-create-schema";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import DateInput from "./formInputs/DateInput";
+import TimeInput from "./formInputs/TimeInput";
 
 interface CreateEventFormProps {
   roomOptions: { title: string; id: string }[];
+  chosenDate: string;
 }
 
-function CreateEventForm({ roomOptions }: CreateEventFormProps) {
+function CreateEventForm({ roomOptions, chosenDate }: CreateEventFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
+  const [formValues, setFormValues] = useState<EventCreateForm>({
+    title: "",
+    description: "",
+    roomId: "",
+    location: "",
+    startDate: chosenDate,
+    startTime: "",
+    endDate: "",
+    endTime: "",
+  });
   const { data: session } = useSession();
 
   const clearError = () => {
     setErrorMsg("");
   };
 
-  const contactFormSchema = z.object({
-    first_name: z.string({
-      required_error: "Please enter your name",
-    }),
-  });
-
   return (
     <div>
       <h3 className="text-h2 font-normal mb-6">Create new event</h3>
 
       <Formik
-        initialValues={{ title: "", description: "", roomId: "", location: "" }}
+        initialValues={formValues}
+        validationSchema={toFormikValidationSchema(createeventschema)}
         onSubmit={async (values: EventCreateForm, actions) => {
           console.log(values);
         }}
@@ -44,21 +54,52 @@ function CreateEventForm({ roomOptions }: CreateEventFormProps) {
               touched={touched.title}
               placeholder="Housewarming"
             />
-            <RoomSelect
-              setFieldValue={setFieldValue}
-              options={roomOptions}
-              error={errors.roomId}
-              touched={touched.roomId}
-            />
+            <div className="flex gap-3 w-full flex-wrap">
+              <RoomSelect
+                setFieldValue={setFieldValue}
+                options={roomOptions}
+                error={errors.roomId}
+                touched={touched.roomId}
+              />
+              <LocationInput
+                error={errors.location}
+                touched={touched.location}
+              />
+            </div>
+
             <DescriptionInput
               error={errors.description}
               touched={touched.description}
             />
-            <LocationInput error={errors.location} touched={touched.location} />
-            <Field type="date" name="title" id="title" /> {/* Start time */}
+
+            <div className="flex gap-4">
+              {/* Start date */}
+              <div className="flex">
+                <DateInput
+                  error={errors.startDate}
+                  touched={touched.startDate}
+                  label={"Start date"}
+                  name={"startDate"}
+                />
+                <TimeInput
+                  error={errors.startTime}
+                  touched={touched.startTime}
+                  label={"Start time"}
+                  name={"startTime"}
+                />
+                {/* <Field type="time" /> */}
+              </div>
+              {/* End date */}
+              <DateInput
+                error={errors.startDate}
+                touched={touched.startDate}
+                label={"End date"}
+                name={"endDate"}
+              />
+            </div>
+            {/* Start time */}
             {/* End time */}
             {/* All day checkbox */}
-            {/* Location */}
             <button
               type="submit"
               disabled={isSubmitting}

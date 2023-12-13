@@ -31,7 +31,7 @@ function Modal(props: ModalProps) {
             />
           </svg>
         </button>
-        <div className="mt-8">{props.children}</div>
+        <div className="mt-4">{props.children}</div>
       </div>
     </div>
   );

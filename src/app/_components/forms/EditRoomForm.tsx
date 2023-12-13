@@ -16,7 +16,7 @@ interface EditRoomFormProps {
 
 function EditRoomForm(props: EditRoomFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const [editValues, setEditValues] = useState<RoomEditForm>({
     title: props.room.title,
     roomId: props.room.id,
