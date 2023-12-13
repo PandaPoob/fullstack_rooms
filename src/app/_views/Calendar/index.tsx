@@ -8,6 +8,7 @@ import { useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
 import Modal from "@/app/_components/modals/Modal";
 import CreateEventForm from "@/app/_components/forms/CreateEventForm";
+import ErrorToast from "@/app/_components/toasts/ErrorToast";
 
 interface CalendarViewProps {
   userEvents: FormattedCalenderEvent[] | null;
@@ -18,6 +19,7 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
   const [events, setEvents] = useState(userEvents || []);
   const [isOpen, setIsOpen] = useState(false);
   const [chosenDate, setChosenDate] = useState("");
+  const [responseMsg, setResponseMsg] = useState("");
 
   const options = {
     eventBackgroundColor: "rgba(77, 101, 187, 0.3)",
@@ -27,6 +29,20 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
       minute: "2-digit",
       hour12: false,
     },
+  };
+
+  const clearResponseMsg = () => {
+    setResponseMsg("");
+  };
+
+  const onCallBack = (event: FormattedCalenderEvent | null) => {
+    if (event) {
+      setEvents([...events, event]);
+      setResponseMsg("Successfully created a new event");
+      setIsOpen(false);
+    } else {
+      setResponseMsg("An error occurred");
+    }
   };
 
   return (
@@ -50,9 +66,14 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
       </div>
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
-          <CreateEventForm roomOptions={roomOptions} chosenDate={chosenDate} />
+          <CreateEventForm
+            roomOptions={roomOptions}
+            chosenDate={chosenDate}
+            onCallBack={onCallBack}
+          />
         </Modal>
       )}
+      <ErrorToast msg={responseMsg} onDismiss={clearResponseMsg} />
     </main>
   );
 }

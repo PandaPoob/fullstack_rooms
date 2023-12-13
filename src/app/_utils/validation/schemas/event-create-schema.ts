@@ -26,7 +26,7 @@ const createeventschema = z
     startDate: date("Start date"),
     startTime: time("Start time"),
     endDate: date("End date"),
-    endTime: time("Start time"),
+    endTime: time("End time"),
     allDay: z.boolean({
       required_error: "All day is required",
       invalid_type_error: "All day must be a boolean",
@@ -39,16 +39,17 @@ const createeventschema = z
     //Turn values into datetime js objects
     const startDateTime = new Date(startDateTimeString);
     const endDateTime = new Date(endDateTimeString);
-
-    if (
-      (!allDay && startDateTime > endDateTime) ||
-      startDateTimeString === endDateTimeString
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        message: `End date must be greater than start date`,
-        path: ["endDate"],
-      });
+    if (!allDay) {
+      if (
+        startDateTime > endDateTime ||
+        startDateTimeString === endDateTimeString
+      ) {
+        ctx.addIssue({
+          code: "custom",
+          message: `End date must be greater than start date`,
+          path: ["endDate"],
+        });
+      }
     }
   });
 export default createeventschema;

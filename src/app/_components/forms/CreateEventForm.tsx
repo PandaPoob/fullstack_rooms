@@ -1,10 +1,8 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { z } from "zod";
-import ErrorToast from "../toasts/ErrorToast";
+import { Formik, Form } from "formik";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 import TitleInput from "./formInputs/TitleInput";
-import { EventCreateForm } from "@/app/_models/event";
+import { EventCreateForm, FormattedCalenderEvent } from "@/app/_models/event";
 import DescriptionInput from "./formInputs/DescriptionInput";
 import RoomSelect from "./formInputs/RoomSelect";
 import LocationInput from "./formInputs/LocationInput";
@@ -17,6 +15,7 @@ import AlldayCheckBox from "./formInputs/AlldayCheckBox";
 interface CreateEventFormProps {
   roomOptions: { title: string; id: string }[];
   chosenDate: string;
+  onCallBack: (event: FormattedCalenderEvent | null) => void;
 }
 
 const getTimeNow = () => {
@@ -27,8 +26,11 @@ const getTimeNow = () => {
   return defaultStartTime;
 };
 
-function CreateEventForm({ roomOptions, chosenDate }: CreateEventFormProps) {
-  const [errorMsg, setErrorMsg] = useState("");
+function CreateEventForm({
+  roomOptions,
+  chosenDate,
+  onCallBack,
+}: CreateEventFormProps) {
   const [formValues, setFormValues] = useState<EventCreateForm>({
     title: "",
     description: "",
@@ -42,19 +44,40 @@ function CreateEventForm({ roomOptions, chosenDate }: CreateEventFormProps) {
   });
   const { data: session } = useSession();
 
-  const clearError = () => {
-    setErrorMsg("");
-  };
-
   return (
     <div>
       <h3 className="text-h2 font-normal mb-6">Create new event</h3>
-
       <Formik
         initialValues={formValues}
         validationSchema={toFormikValidationSchema(createeventschema)}
         onSubmit={async (values: EventCreateForm, actions) => {
-          console.log(values);
+          actions.setSubmitting(true);
+          setFormValues(values);
+          if (session) {
+            const resp = await fetch(`/api/events`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${session.token.sub}`,
+              },
+              body: JSON.stringify({ ...values }),
+            });
+
+            if (resp.ok) {
+              const data = await resp.json();
+              const newEvent = {
+                id: data.newEvent.id,
+                url: `/rooms/${data.newEvent.room_id}/events/${data.newEvent.id}`,
+                start: data.newEvent.start_time,
+                title: data.newEvent.title,
+                allDay: data.newEvent.all_day,
+                end: data.newEvent.end_time,
+              };
+              onCallBack(newEvent);
+            } else {
+              actions.setSubmitting(false);
+              onCallBack(null);
+            }
+          }
         }}
       >
         {({ isSubmitting, errors, touched, setFieldValue, values }) => {
@@ -154,7 +177,6 @@ function CreateEventForm({ roomOptions, chosenDate }: CreateEventFormProps) {
           );
         }}
       </Formik>
-      <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </div>
   );
 }

@@ -170,7 +170,6 @@ export async function POST(req: NextRequest) {
         const updatedAttendees = result.newEventAttendees.filter(
           (a) => a.user_id !== user!.id
         );
-        updatedAttendees.push({ user_id: "sadasdasgfdg" });
 
         const notifications = await Promise.all(
           updatedAttendees.map(async (a) => {
@@ -217,8 +216,6 @@ export async function POST(req: NextRequest) {
         console.error("Error occurred while creating notifications");
       }
     }
-
-    console.log("result", result);
 
     return NextResponse.json(
       {
