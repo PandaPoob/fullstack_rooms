@@ -1,4 +1,4 @@
-import { Avatar } from "@prisma/client";
+import { Avatar, Status, User } from "@prisma/client";
 
 export interface UserCredentials {
   email: string;
@@ -27,4 +27,9 @@ export interface UserEdit extends UserEditBase {
 }
 export interface UserId {
   user_id: string;
+}
+
+export interface ExtendedUser extends User {
+  avatar?: Avatar;
+  status?: Status;
 }

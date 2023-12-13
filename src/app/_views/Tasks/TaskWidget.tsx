@@ -1,5 +1,5 @@
 "use client";
-import TaskListItem from "@/app/_components/TaskListItem";
+import TaskListItem from "@/app/_views/Tasks/TaskListItem";
 import { Room, TaskItem } from "@prisma/client";
 
 interface TaskWidgetProps {

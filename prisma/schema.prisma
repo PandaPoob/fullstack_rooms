@@ -25,11 +25,11 @@ model Room {
   events       Event[]
 }
 
- model Cover {
-  id                  String      @default(cuid()) @id
-  formatted_url        String      
-  cloudinary_public_id  String      
-  room                Room?       @relation("RoomCover")
+model Cover {
+  id                   String @id @default(cuid())
+  formatted_url        String
+  cloudinary_public_id String
+  room                 Room?  @relation("RoomCover")
 }
 
 model Location {
@@ -45,23 +45,24 @@ model Location {
 }
 
 model Participant {
-  id            String     @default(cuid()) @id
-  user          User       @relation(fields: [user_id], references: [id])
+  id            String   @id @default(cuid())
   user_id       String
-  room          Room       @relation(fields: [room_id], references: [id])
   room_id       String
   is_favourited Boolean
-  created_at    DateTime  @default(now())
-  visited_at    DateTime  @default(now())
+  created_at    DateTime @default(now())
+  visited_at    DateTime @default(now())
+  room          Room     @relation(fields: [room_id], references: [id])
+  user          User     @relation(fields: [user_id], references: [id])
 
-  @@unique([user_id, room_id]) // Ensure each user is in a room only once
+  @@unique([user_id, room_id])
 }
 
 model Status {
-  id    String      @default(cuid()) @id
-  title String      @unique
-  users User[]      // one to many
+  id    String @id @default(cuid())
+  title String @unique
+  users User[]
 }
+
 model User {
   id                  String      @default(cuid()) @id
   first_name          String
@@ -87,53 +88,54 @@ model User {
   @@map(name: "users") 
 }
 
- model Avatar {
-  id                    String      @default(cuid()) @id
-  formatted_url         String      
-  cloudinary_public_id  String      
-  user                  User?       @relation("UserAvatar")
+model Avatar {
+  id                   String @id @default(cuid())
+  formatted_url        String
+  cloudinary_public_id String
+  user                 User?  @relation("UserAvatar")
 }
 
 model Notification {
-id                  String      @default(cuid()) @id
-created_at          DateTime    @default(now())
-read                Boolean
-user                User        @relation("Receiver", fields: [user_id], references: [id])
-user_id             String      
-meta_user           User        @relation("Triggerer", fields: [meta_user_id], references: [id])
-meta_user_id        String      
-meta_action         String      
-meta_target         String
-meta_target_name    String
-meta_link           String?
+  id               String   @id @default(cuid())
+  created_at       DateTime @default(now())
+  read             Boolean
+  user_id          String
+  meta_user_id     String
+  meta_action      String
+  meta_target      String
+  meta_target_name String
+  meta_link        String?
+  meta_user        User     @relation("Triggerer", fields: [meta_user_id], references: [id])
+  user             User     @relation("Receiver", fields: [user_id], references: [id])
 }
 
 model TaskWidget {
-  id        String      @id @default(cuid())
-  room_fk   String      @unique
+  id        String     @id @default(cuid())
+  room_fk   String     @unique
   task_item TaskItem[]
-  room      Room        @relation(fields: [room_fk], references: [id])
+  room      Room       @relation(fields: [room_fk], references: [id])
 }
 
 model TaskItem {
   id             String     @id @default(cuid())
   text           String
+  task_widget_fk String
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @default(now())
   order          Int
   checked        Boolean
-  created_at     DateTime   @default(now())
-  task_widget_fk String
-  updated_at     DateTime   @default(now())
-  updated_by     String?
   created_by_fk  String
+  updated_by     String?
   created_by     User       @relation(fields: [created_by_fk], references: [id])
   task_widget    TaskWidget @relation(fields: [task_widget_fk], references: [id])
 }
 
 model NoteWidget {
-  id                  String       @default(cuid()) @id
-  room                Room         @relation(fields: [room_fk], references: [id])
-  room_fk             String       @unique
-  note_item           NoteItem[]
+  id        String     @id @default(cuid())
+  room_fk   String     @unique
+  note_item NoteItem[]
+  room      Room       @relation(fields: [room_fk], references: [id])
+
   @@unique([id, room_fk])
 }
 
@@ -150,7 +152,6 @@ model NoteItem {
 model Event {
   id                String         @default(cuid()) @id
   title             String
-  
   start_time        DateTime
   end_time          DateTime?
   all_day           Boolean
