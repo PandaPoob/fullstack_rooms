@@ -1,14 +1,78 @@
 import { requireAuthentication } from "@/app/_middleware/authentication";
 import EventView from "@/app/_views/Events";
 import { authOptions } from "@/lib/auth";
+import { db } from "@/lib/prisma-client";
+import { redirect } from "next/navigation";
 
-async function getData(id: string) {}
+async function getData(
+  userId: string,
+  params: { slug: string; eventId: string }
+) {
+  if (!params.slug || !params.eventId) {
+    redirect("/error");
+  } else {
+    const room = await db.room.findUnique({
+      where: {
+        id: params.slug,
+        participants: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+      include: {
+        events: {
+          where: {
+            id: params.eventId,
+          },
+          include: {
+            attendees: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    first_name: true,
+                    last_name: true,
+                    email: true,
+                    avatar: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
 
-async function EventPage() {
+    if (!room || !room.events) {
+      redirect("/error");
+    }
+
+    //Check if user has access to this
+    const isUserinAttendees = room.events[0].attendees.some(
+      (item) => item.user_id === userId
+    );
+    if (!isUserinAttendees) {
+      redirect("/error");
+    }
+
+    const data = {
+      room: { id: room.id, title: room.title },
+      event: room.events[0],
+    };
+    return data;
+  }
+}
+
+interface EventPageProps {
+  params: { slug: string; eventId: string };
+}
+
+async function EventPage({ params }: EventPageProps) {
   const session = await requireAuthentication(authOptions);
-  const data = await getData(session.user.id as string);
-
-  return <EventView />;
+  const data = await getData(session.user.id as string, params);
+  console.log(data.event.attendees);
+  return <EventView roomData={data.room} eventData={data.event} />;
 }
 
 export default EventPage;

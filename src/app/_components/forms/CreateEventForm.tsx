@@ -4,13 +4,13 @@ import { useState } from "react";
 import TitleInput from "./formInputs/TitleInput";
 import { EventCreateForm, FormattedCalenderEvent } from "@/app/_models/event";
 import DescriptionInput from "./formInputs/DescriptionInput";
-import RoomSelect from "./formInputs/RoomSelect";
 import LocationInput from "./formInputs/LocationInput";
 import createeventschema from "@/app/_utils/validation/schemas/event-create-schema";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import DateInput from "./formInputs/DateInput";
 import TimeInput from "./formInputs/TimeInput";
 import AlldayCheckBox from "./formInputs/AlldayCheckBox";
+import CustomSelect from "./formInputs/CustomSelect";
 
 interface CreateEventFormProps {
   roomOptions: { title: string; id: string }[];
@@ -89,11 +89,13 @@ function CreateEventForm({
                 placeholder="Housewarming"
               />
               <div className="flex gap-3 w-full flex-wrap md:flex-nowrap">
-                <RoomSelect
+                <CustomSelect
                   setFieldValue={setFieldValue}
                   options={roomOptions}
                   error={errors.roomId}
                   touched={touched.roomId}
+                  label={"Room*"}
+                  name={"roomId"}
                 />
                 <LocationInput
                   error={errors.location}

@@ -3,6 +3,7 @@ import { UserId } from "@/app/_models/user";
 import { notifyUsers } from "@/app/_utils/apis/notification";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import createeventschema from "@/app/_utils/validation/schemas/event-create-schema";
+import { reply } from "@/app/_utils/validation/validations/reply-validation";
 import { db } from "@/lib/prisma-client";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -242,5 +243,76 @@ export async function POST(req: NextRequest) {
         { status: 500 }
       );
     }
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    //validate user
+    const resp = await authenticateUser(req);
+
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+    const { user } = resp.data;
+    const body = await req.json();
+    const result = reply.safeParse(body.reply);
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          error: "Reply does not have accepted value",
+        },
+        { status: 400 }
+      );
+    }
+    if (!body.eventId) {
+      return NextResponse.json(
+        {
+          error: "eventId is required",
+        },
+        { status: 400 }
+      );
+    }
+
+    const updatedAttendee = await db.eventAttendee.update({
+      where: {
+        user_id_event_id: {
+          user_id: user!.id,
+          event_id: body.eventId,
+        },
+      },
+      data: {
+        reply: result.data,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            first_name: true,
+            last_name: true,
+            email: true,
+            avatar: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(
+      {
+        msg: "Ok",
+        updatedAttendee: updatedAttendee,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
   }
 }

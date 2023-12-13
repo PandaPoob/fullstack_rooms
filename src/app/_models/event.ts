@@ -1,3 +1,6 @@
+import { Avatar, Event, EventAttendee } from "@prisma/client";
+import { ExtendedUser } from "./user";
+
 export interface FormattedCalenderEvent {
   id: string;
   url: string;
@@ -17,4 +20,20 @@ export interface EventCreateForm {
   endDate?: string;
   endTime?: string;
   allDay: boolean;
+}
+
+export interface ExpandedEvent extends Event {
+  attendees?: ExpandedEventAttendee[];
+}
+
+export interface ExpandedEventAttendee extends EventAttendee {
+  user?: ExpandedAttendeeUser;
+}
+
+interface ExpandedAttendeeUser {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar?: Avatar | null;
 }

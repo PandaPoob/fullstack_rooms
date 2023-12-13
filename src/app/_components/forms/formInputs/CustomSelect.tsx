@@ -2,26 +2,30 @@ import { EventCreateForm } from "@/app/_models/event";
 import { Field, FormikErrors } from "formik";
 import { useState } from "react";
 
-interface RoomSelectProps {
+interface CustomSelectProps {
   options: { title: string; id: string }[];
   error: string | undefined;
   touched: boolean | undefined;
   setFieldValue: (
     field: any,
     value: any
-  ) => Promise<void | FormikErrors<EventCreateForm>>;
+  ) => Promise<
+    void | FormikErrors<EventCreateForm> | FormikErrors<{ reply: string }>
+  >;
+  label: string;
+  name: string;
 }
 
-function RoomSelect(props: RoomSelectProps) {
+function CustomSelect(props: CustomSelectProps) {
   const [optionsOpen, setOptionsOpen] = useState(false);
 
   return (
     <div className="min-h-[6.7rem] flex flex-col w-full md:w-1/2">
       <label
-        htmlFor="roomId"
+        htmlFor={props.name}
         className="font-medium text-h5 text-darkGrey mb-1"
       >
-        Room*
+        {props.label}
       </label>
       <div className="grid relative">
         <Field
@@ -30,9 +34,9 @@ function RoomSelect(props: RoomSelectProps) {
           onBlur={() => setOptionsOpen(false)}
           onChange={(event: any) => {
             setOptionsOpen(false);
-            props.setFieldValue("roomId", event.target.value);
+            props.setFieldValue(props.name, event.target.value);
           }}
-          name="roomId"
+          name={props.name}
           className={`bg-primary text-white h-14 placeholder:text-darkGrey focus:outline-none focus:border-secondary focus:border px-5 rounded-lg 
            ${props.error && props.touched && "border border-warning"}`}
         >
@@ -73,4 +77,4 @@ function RoomSelect(props: RoomSelectProps) {
   );
 }
 
-export default RoomSelect;
+export default CustomSelect;

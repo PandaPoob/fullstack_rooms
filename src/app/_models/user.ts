@@ -30,6 +30,6 @@ export interface UserId {
 }
 
 export interface ExtendedUser extends User {
-  avatar?: Avatar;
+  avatar?: Avatar | null;
   status?: Status;
 }

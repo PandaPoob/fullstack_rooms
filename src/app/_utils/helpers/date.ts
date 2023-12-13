@@ -1,4 +1,4 @@
-export function formatDate(date: Date) {
+export function formatDate(date: Date, eventDetail?: boolean) {
   const jsDate = new Date(date);
 
   const options: Intl.DateTimeFormatOptions = {
@@ -14,7 +14,12 @@ export function formatDate(date: Date) {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const finalFormat = `${time} - ${formattedDate}`;
+  if (eventDetail) {
+    const finalFormat = `${formattedDate} ${time}`;
 
-  return finalFormat;
+    return finalFormat;
+  } else {
+    const finalFormat = `${time} - ${formattedDate}`;
+    return finalFormat;
+  }
 }
