@@ -8,7 +8,6 @@ interface ParticipantsProps {
 }
 
 function Participants(props: ParticipantsProps) {
-  console.log("party", props.room.participants);
   const { participants } = props.room;
 
   return (

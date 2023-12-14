@@ -161,13 +161,13 @@ model Event {
   admin_fk          String
   room              Room           @relation(fields: [room_id], references: [id]) 
   room_id           String
-  attendees       EventAttendee[]
+  attendees         EventAttendee[]
 }
 
 model EventAttendee {
   user      User     @relation(fields: [user_id], references: [id])
   user_id   String
-  event     Event    @relation(fields: [event_id], references: [id])
+  event     Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
   event_id  String
   reply     String //accepted, declined, pending
   @@id([user_id, event_id])

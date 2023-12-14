@@ -1,6 +1,8 @@
 "use client";
+import DeleteEventForm from "@/app/_components/forms/DeleteEventForm";
 import EditEventReply from "@/app/_components/forms/EditEventReply";
 import BreadCrumb from "@/app/_components/navigation/Breadcrumb";
+import ErrorToast from "@/app/_components/toasts/ErrorToast";
 import { ExpandedEvent, ExpandedEventAttendee } from "@/app/_models/event";
 import { formatDate } from "@/app/_utils/helpers/date";
 import { useSession } from "next-auth/react";
@@ -14,9 +16,14 @@ interface EventViewProps {
 
 function EventView({ roomData, eventData }: EventViewProps) {
   const { data: session } = useSession();
+  const [responseMsg, setResponseMsg] = useState("");
   const [attendees, setAttendees] = useState<
     ExpandedEventAttendee[] | undefined
   >(eventData.attendees);
+
+  const clearResponseMsg = () => {
+    setResponseMsg("");
+  };
 
   return (
     <main className="mb-4">
@@ -46,13 +53,21 @@ function EventView({ roomData, eventData }: EventViewProps) {
                 <span className="text-darkGrey font-normal">All day</span>
               )}
             </h3>
-            {session?.user.id !== eventData.admin_fk && (
+            {session && (
               <div>
-                <EditEventReply
-                  attendees={eventData.attendees}
-                  eventId={eventData.id}
-                  setAttendees={setAttendees}
-                />
+                {session?.user.id !== eventData.admin_fk ? (
+                  <EditEventReply
+                    attendees={eventData.attendees}
+                    eventId={eventData.id}
+                    setAttendees={setAttendees}
+                  />
+                ) : (
+                  <DeleteEventForm
+                    eventId={eventData.id}
+                    roomId={roomData.id}
+                    setResponseMsg={setResponseMsg}
+                  />
+                )}
               </div>
             )}
           </div>
@@ -132,6 +147,7 @@ function EventView({ roomData, eventData }: EventViewProps) {
           </div>
         </div>
       </div>
+      <ErrorToast msg={responseMsg} onDismiss={clearResponseMsg} />
     </main>
   );
 }

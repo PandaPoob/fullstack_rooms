@@ -71,7 +71,6 @@ interface EventPageProps {
 async function EventPage({ params }: EventPageProps) {
   const session = await requireAuthentication(authOptions);
   const data = await getData(session.user.id as string, params);
-  console.log(data.event.attendees);
   return <EventView roomData={data.room} eventData={data.event} />;
 }
 

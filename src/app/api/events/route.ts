@@ -316,3 +316,71 @@ export async function PUT(req: NextRequest) {
     console.error(error);
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const resp = await authenticateUser(req);
+
+    if (resp.status !== 200) {
+      const msg = resp.data.msg;
+
+      return NextResponse.json(
+        {
+          error: msg,
+        },
+        { status: resp.status }
+      );
+    }
+    const { user } = resp.data;
+    const body = await req.json();
+
+    if (!body.eventId) {
+      return NextResponse.json(
+        {
+          error: "eventId is required",
+        },
+        { status: 400 }
+      );
+    }
+
+    //find event
+    const event = await db.event.findUnique({
+      where: {
+        id: body.eventId,
+      },
+    });
+
+    if (!event) {
+      return NextResponse.json(
+        {
+          error: "Event not found",
+        },
+        { status: 404 }
+      );
+    }
+
+    //validate that the user is admin on that event
+    if (event.admin_fk !== user!.id) {
+      return NextResponse.json(
+        {
+          error: "Not authorized to perform this action",
+        },
+        { status: 403 }
+      );
+    }
+    //delete event
+    await db.event.delete({
+      where: {
+        id: event.id,
+      },
+    });
+    return NextResponse.json(
+      {
+        msg: "Event succesfully deleted",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+  }
+}
