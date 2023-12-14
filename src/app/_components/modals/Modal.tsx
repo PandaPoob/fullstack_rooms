@@ -7,8 +7,8 @@ interface ModalProps {
 
 function Modal(props: ModalProps) {
   return (
-    <div className="absolute top-0 right-0 w-screen h-screen bg-bg_black bg-opacity-10 z-40 flex justify-center md:py-24">
-      <div className="relative z-50 bg-bg_black rounded-xl w-full h-full md:max-w-5xl p-8 grid border border-primary">
+    <div className="absolute top-0 right-0 w-screen h-screen bg-bg_black bg-opacity-40 z-40 flex justify-center md:py-24">
+      <div className="relative z-50 bg-dark rounded-xl w-full h-full md:max-w-5xl p-8 grid overflow-y-scroll md:overflow-y-hidden">
         <button
           className="absolute top-6 right-6 z-50"
           onClick={() => props.setIsOpen(false)}
@@ -31,7 +31,7 @@ function Modal(props: ModalProps) {
             />
           </svg>
         </button>
-        <div className="mt-8">{props.children}</div>
+        <div className="mt-4">{props.children}</div>
       </div>
     </div>
   );

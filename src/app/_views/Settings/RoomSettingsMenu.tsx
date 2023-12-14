@@ -4,6 +4,7 @@ import { ExtendedRoom } from "@/app/_models/room";
 import { useState } from "react";
 import RoomSettingsMembers from "./RoomSettingsMembers";
 import { ExtendedParticipant } from "@/app/_models/participant";
+import RoomSettingsLocation from "./RoomSettingsLocation";
 
 interface RoomSettingsMenuProps {
   tab: number;
@@ -42,6 +43,17 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
             Edit Members
           </button>
         </li>
+        <li>
+          <button
+            onClick={() => {
+              props.setTab(3);
+              setIsOpen(true);
+            }}
+            className="px-6 py-3 w-full border-b border-darkGrey border-opacity-30 font-medium transition hover:bg-opacity-30 hover:bg-bg_black"
+          >
+            Location settings
+          </button>
+        </li>
 
         <li>Delete room</li>
       </ul>
@@ -52,26 +64,16 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
               <div className="flex gap-2 text-h4 mt-4">
                 <button onClick={() => setIsOpen(false)}>Settings</button>
                 <span>/</span>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="font-medium"
-                >
-                  Edit Room
-                </button>
+                <p className="font-medium">Edit Room</p>
               </div>
               <EditRoomForm room={props.room} setRoom={props.setRoom} />
             </div>
-          ) : (
+          ) : props.tab === 2 ? (
             <>
               <div className="flex gap-2 text-h4 mt-4">
                 <button onClick={() => setIsOpen(false)}>Settings</button>
                 <span>/</span>
-                <button
-                  className="font-medium"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Members
-                </button>
+                <p className="font-medium">Members</p>
               </div>
               <div>
                 <RoomSettingsMembers
@@ -81,6 +83,15 @@ function RoomSettingsMenu(props: RoomSettingsMenuProps) {
                   setParticipants={props.setParticipants}
                 />
               </div>
+            </>
+          ) : (
+            <>
+              <div className="flex gap-2 text-h4 mt-4">
+                <button onClick={() => setIsOpen(false)}>Settings</button>
+                <span>/</span>
+                <p className="font-medium">Weather location</p>
+              </div>
+              <RoomSettingsLocation room={props.room} setRoom={props.setRoom} />
             </>
           )}
         </div>

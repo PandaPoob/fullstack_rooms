@@ -94,7 +94,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error instanceof z.ZodError) {
       // Zod validation errors
       const validationErrors = error.issues.map((issue) => {
@@ -142,7 +142,7 @@ export async function PUT(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
