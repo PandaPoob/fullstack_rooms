@@ -12,17 +12,23 @@ interface TaskWidgetProps {
 function TaskWidget(props: TaskWidgetProps) {
   return (
     <>
-      <h3>Tasks</h3>
-      <ul className="h-full flex max-h-screen overflow-y-auto flex-col">
-        {props.tasks?.map((taskitem) => (
-          <TaskListItem
-            key={taskitem.id}
-            id={taskitem.id}
-            text={taskitem.text}
-            checked={taskitem.checked}
-          />
-        ))}
-      </ul>
+      <h3 className="text-h3 font-medium">Tasks</h3>
+      {props.tasks && props.tasks.length > 0 ? (
+        <ul className="flex h-full max-h-[200px] overflow-y-auto flex-col">
+          {props.tasks.map((taskitem) => (
+            <TaskListItem
+              key={taskitem.id}
+              id={taskitem.id}
+              text={taskitem.text}
+              checked={taskitem.checked}
+            />
+          ))}
+        </ul>
+      ) : (
+        <p className="text-mini text-center p-4">
+          Currently no tasks, add task here
+        </p>
+      )}
     </>
   );
 }

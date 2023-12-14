@@ -75,7 +75,7 @@ function RoomView(props: Roomprops) {
             <div className="md:w-1/2">
               <Link href={`/rooms/${props.room.id}/?modal=true`}>
                 <>
-                  <div className="bg-primary rounded-xl py-6 pl-6 h-[250px] flex-row">
+                  <div className="bg-primary rounded-xl p-4 h-full max-h-[250px] flex-row">
                     <TaskWidget
                       tasks={props.taskWidget?.task_item}
                       room={props.room}
