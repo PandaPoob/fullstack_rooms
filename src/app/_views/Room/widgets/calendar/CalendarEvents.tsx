@@ -18,7 +18,10 @@ function CalendarEvents({ events }: CalendarEventsProps) {
       ) : (
         <ul className="grid gap-2">
           {events.map((e) => (
-            <li className="bg-primary relative grid content-center rounded-xl">
+            <li
+              key={e.id}
+              className="bg-primary relative grid content-center rounded-xl"
+            >
               <Link
                 href={`/rooms/${e.room_id}/events/${e.id}`}
                 className="min-h-[5rem] flex items-center justify-between rounded-xl transition px-5 hover:bg-white hover:bg-opacity-10"
