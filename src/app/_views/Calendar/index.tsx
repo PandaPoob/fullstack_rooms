@@ -67,7 +67,7 @@ function CalendarView({ userEvents, roomOptions }: CalendarViewProps) {
       {isOpen && (
         <Modal setIsOpen={setIsOpen}>
           <CreateEventForm
-            roomOptions={roomOptions}
+            options={roomOptions}
             chosenDate={chosenDate}
             onCallBack={onCallBack}
           />

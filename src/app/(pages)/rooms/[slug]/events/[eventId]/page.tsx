@@ -1,5 +1,5 @@
 import { requireAuthentication } from "@/app/_middleware/authentication";
-import EventView from "@/app/_views/Events";
+import EventView from "@/app/_views/Event";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
 import { redirect } from "next/navigation";

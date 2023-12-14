@@ -3,8 +3,6 @@ import { FormattedCalenderEvent } from "@/app/_models/event";
 import CalendarView from "@/app/_views/Calendar";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/prisma-client";
-import { Session } from "next-auth";
-import { redirect } from "next/navigation";
 
 async function getData(id: string) {
   const rooms = await db.room.findMany({

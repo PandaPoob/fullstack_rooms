@@ -9,7 +9,7 @@ interface CalendarEventsProps {
 function CalendarEvents({ events }: CalendarEventsProps) {
   return (
     <div
-      className={`mt-7 lg:max-h-[23rem] ${
+      className={`mt-4 lg:max-h-[23rem] ${
         events.length > 4 && "overflow-y-scroll pb-5"
       }`}
     >

@@ -3,6 +3,7 @@ import CalendarDays from "./CalendarDays";
 import CalendarEvents from "./CalendarEvents";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 interface CalendarWidgetProps {
   calendarDayData: CalendarDay[];
@@ -52,6 +53,14 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
         onCallBack={onCallBack}
         activeDate={activeDate}
       />
+      <div className="flex mt-2">
+        <Link
+          href={`/rooms/${roomId}/events`}
+          className="text-xs text-right ml-auto"
+        >
+          All events
+        </Link>
+      </div>
       <CalendarEvents events={events} />
     </div>
   );

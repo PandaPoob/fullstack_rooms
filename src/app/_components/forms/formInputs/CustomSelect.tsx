@@ -3,7 +3,7 @@ import { Field, FormikErrors } from "formik";
 import { useState } from "react";
 
 interface CustomSelectProps {
-  options: { title: string; id: string }[];
+  options?: { title: string; id: string }[];
   error: string | undefined;
   touched: boolean | undefined;
   setFieldValue: (
@@ -40,7 +40,7 @@ function CustomSelect(props: CustomSelectProps) {
           className={`bg-primary text-white h-14 placeholder:text-darkGrey focus:outline-none focus:border-secondary focus:border px-5 rounded-lg 
            ${props.error && props.touched && "border border-warning"}`}
         >
-          {props.options.map((opt) => {
+          {props.options?.map((opt) => {
             return (
               <option
                 key={opt.id}

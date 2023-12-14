@@ -13,9 +13,10 @@ import AlldayCheckBox from "./formInputs/AlldayCheckBox";
 import CustomSelect from "./formInputs/CustomSelect";
 
 interface CreateEventFormProps {
-  roomOptions: { title: string; id: string }[];
+  options?: { title: string; id: string }[];
   chosenDate: string;
   onCallBack: (event: FormattedCalenderEvent | null) => void;
+  defaultRoom?: string;
 }
 
 const getTimeNow = () => {
@@ -27,14 +28,15 @@ const getTimeNow = () => {
 };
 
 function CreateEventForm({
-  roomOptions,
+  options,
   chosenDate,
   onCallBack,
+  defaultRoom,
 }: CreateEventFormProps) {
   const [formValues, setFormValues] = useState<EventCreateForm>({
     title: "",
     description: "",
-    roomId: roomOptions[0].id,
+    roomId: defaultRoom ? defaultRoom : options![0].id,
     location: "",
     startDate: chosenDate,
     startTime: getTimeNow(),
@@ -91,7 +93,7 @@ function CreateEventForm({
               <div className="flex gap-3 w-full flex-wrap md:flex-nowrap">
                 <CustomSelect
                   setFieldValue={setFieldValue}
-                  options={roomOptions}
+                  options={options}
                   error={errors.roomId}
                   touched={touched.roomId}
                   label={"Room*"}
