@@ -16,7 +16,7 @@ interface EditRoomFormProps {
 
 function EditRoomForm(props: EditRoomFormProps) {
   const [errorMsg, setErrorMsg] = useState("");
-  const { data: session, update } = useSession();
+  const { data: session } = useSession();
   const [editValues, setEditValues] = useState<RoomEditForm>({
     title: props.room.title,
     roomId: props.room.id,
@@ -54,7 +54,6 @@ function EditRoomForm(props: EditRoomFormProps) {
             if (resp.ok) {
               const data = await resp.json();
               if (data.updatedRoom) {
-                console.log(data);
                 props.setRoom(data.updatedRoom);
               }
             } else {
@@ -83,7 +82,11 @@ function EditRoomForm(props: EditRoomFormProps) {
                 isValidating={isValidating}
               />
 
-              <TitleInput error={errors.title} touched={touched.title} />
+              <TitleInput
+                error={errors.title}
+                touched={touched.title}
+                placeholder="Datababes"
+              />
               <Field type="hidden" name="roomId" id="roomId" />
 
               <button

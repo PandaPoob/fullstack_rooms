@@ -28,11 +28,15 @@ const config: Config = {
       success: "#77B184", //green
       warning: "#E85959", //red
       info: "#B17E30", //yellow
+      "calendar-red": "#BE4E4E",
+      "calendar-blue": "#4D65BB",
     },
     extend: {
       backgroundImage: {
         "btn-gradient":
           "linear-gradient(90deg, rgba(85, 85, 97, 0.60) 0%, #2F2F33 90%)",
+        "bg-gradient":
+          "linear-gradient(180deg, rgba(15, 15, 15, 0.00) 0%, #0F0F0F 41.15%)",
       },
       fontFamily: {
         body: "var(--body-font)",

@@ -1,5 +1,5 @@
-import { User } from "next-auth";
-import { NoteItem, Room, TaskItem, Participant } from "@prisma/client";
+"use client";
+import { NoteItem, Room } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
@@ -8,23 +8,28 @@ import ParticipantsWidget from "@/app/_views/Particpants/ParticipantsWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
 import ServerModal from "@/app/_components/modals/ServerModal";
 import WeatherWidget from "./widgets/weather/WeatherWidget";
+import CalendarWidget from "./widgets/calendar/CalendarWidget";
+import { useSession } from "next-auth/react";
+import { ExpandedTaskWidget } from "@/app/_models/tasks";
+import { CalendarDay } from "@/app/_models/event";
 
 interface Roomprops {
   room: Room;
-  sessionUser: User;
   modalParams: { modal: string } | undefined | null;
-  taskWidgetId: string;
-  tasks?: TaskItem[];
+  taskWidget: ExpandedTaskWidget | null;
+  calendarDayData: CalendarDay[];
   noteItem?: NoteItem;
   weatherData?: any;
 }
 
-async function RoomView(props: Roomprops) {
+function RoomView(props: Roomprops) {
+  const { data: session } = useSession();
+
   return (
-    <div>
+    <main>
       <div className="flex justify-between">
         <DigitalClock title={`Welcome, ${props.room.title}`} />
-        {props.room.admin_fk === props.sessionUser.id && (
+        {props.room.admin_fk === session?.user.id && (
           <Link
             className="self-start mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
             href={`/rooms/${props.room.id}/settings`}
@@ -45,7 +50,7 @@ async function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <section className="md:grid md:grid-cols-2 md:gap-3">
+      <section className="lg:grid lg:grid-cols-2 lg:gap-3">
         <div className="grid gap-3">
           <WeatherWidget
             roomData={props.room}
@@ -72,9 +77,9 @@ async function RoomView(props: Roomprops) {
                 <>
                   <div className="bg-primary rounded-xl py-6 pl-6 h-[250px] flex-row">
                     <TaskWidget
-                      tasks={props.tasks}
+                      tasks={props.taskWidget?.task_item}
                       room={props.room}
-                      taskWidgetId={props.taskWidgetId}
+                      taskWidgetId={props.taskWidget!.id}
                       modalParams={props.modalParams}
                     />
                   </div>
@@ -84,9 +89,9 @@ async function RoomView(props: Roomprops) {
               {props.modalParams?.modal && (
                 <ServerModal>
                   <TaskModal
-                    tasks={props.tasks}
+                    tasks={props.taskWidget?.task_item}
                     room={props.room}
-                    taskWidgetId={props.taskWidgetId}
+                    taskWidgetId={props.taskWidget!.id}
                   />
                 </ServerModal>
               )}
@@ -96,12 +101,12 @@ async function RoomView(props: Roomprops) {
             <ParticipantsWidget room={props.room} />
           </div>
         </div>
-        <div>
-          <div>Calender here</div>
-          <div>events here</div>
-        </div>
+        <CalendarWidget
+          calendarDayData={props.calendarDayData}
+          roomId={props.room.id}
+        />
       </section>
-    </div>
+    </main>
   );
 }
 

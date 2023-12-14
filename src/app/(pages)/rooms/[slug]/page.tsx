@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
 import { Location, Participant } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { getCalendarDays } from "@/app/_utils/helpers/date";
 
 async function getWeatherData(location?: Location) {
   if (!location) {
@@ -76,22 +77,17 @@ async function getData(params: { slug: string }) {
             },
           },
         },
+        note_widget: {
+          include: {
+            note_item: true,
+          },
+        },
       },
     });
 
     if (!room) {
       redirect("/error");
     }
-
-    // Fetch data for NoteWidget and NoteItem
-    const notes = await db.noteWidget.findUnique({
-      where: {
-        room_fk: room.id,
-      },
-      include: {
-        note_item: true,
-      },
-    });
 
     const taskWidget = await db.taskWidget.findUnique({
       where: {
@@ -114,19 +110,19 @@ async function getData(params: { slug: string }) {
     });
 
     if (participant) {
-      // Call the function to update visited_at
       await updateVisitedAt(participant);
     }
 
     const weatherData = await getWeatherData(room.location!);
 
+    const calendarDayData = await getCalendarDays();
+
     const data = {
       room,
-      session,
-      tasks: taskWidget?.task_item,
-      taskWidgetId: taskWidget!.id as string,
-      note: notes?.note_item[0],
+      taskWidget,
+      note: room.note_widget?.note_item[0],
       weatherData,
+      calendarDayData,
     };
 
     return data;
@@ -145,12 +141,11 @@ async function RoomPage({ params, searchParams }: RoomPageProps) {
     data && (
       <RoomView
         room={data.room}
-        sessionUser={data.session.user}
         modalParams={searchParams}
-        taskWidgetId={data.taskWidgetId}
-        tasks={data.tasks}
+        taskWidget={data.taskWidget}
         noteItem={data?.note}
         weatherData={data.weatherData}
+        calendarDayData={data.calendarDayData}
       />
     )
   );

@@ -25,7 +25,11 @@ function Settings({ roomData }: SettingsProps) {
     <main>
       <h2 className="text-h3 md:text-h2 mb-7 md:mt-7 font-normal">
         <span className="flex gap-2">
-          <Link href={`/rooms/${room.id}`} onClick={() => router.refresh()}>
+          <Link
+            href={`/rooms/${room.id}`}
+            className={"font-normal"}
+            onClick={() => router.refresh()}
+          >
             {room.title}
           </Link>
           <span>/</span>
