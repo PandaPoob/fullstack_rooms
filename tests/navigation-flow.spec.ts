@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-test("should navigate to the about page", async ({ page }) => {
-  // Start from the index page (the baseURL is set via the webServer in the playwright.config.ts)
+test("checks the navigation flow of a user that is not logged in", async ({
+  page,
+}) => {
   await page.goto("/");
-
   //We expect heading on home when not logged in
   await expect(page.locator("h2")).toContainText(
     "Share and organize your daily life with Rooms"
@@ -13,7 +13,7 @@ test("should navigate to the about page", async ({ page }) => {
   await page.click("text=Sign up today");
 
   //We expect to be routed to signup
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL("/signup/");
   //Signup should have h1
   await expect(page.locator("h1")).toContainText("Create your account");
 
@@ -22,6 +22,15 @@ test("should navigate to the about page", async ({ page }) => {
   await expect(page).toHaveURL("/");
   //Click login and expect to go to /login
   await page.click("text=Log in");
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL("/login/");
   await expect(page.locator("h1")).toContainText("Log into your account");
+
+  //We try to route to a route that requires authentication
+  await page.goto("/rooms/");
+
+  //Verify if redirected back to /
+  await expect(page).toHaveURL("/");
+  await expect(page.locator("h2")).toContainText(
+    "Share and organize your daily life with Rooms"
+  );
 });

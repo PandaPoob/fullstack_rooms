@@ -70,6 +70,7 @@ export async function POST(req: Request) {
       { expiresIn: "1h" }
     );
     let root;
+    console.log("HERE", process.env.NODE_ENV);
     if (process.env.NODE_ENV === "development") {
       root = "http://localhost:3000/";
     } else {

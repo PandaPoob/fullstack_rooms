@@ -52,7 +52,7 @@ function SignUpForm() {
           onSubmit={async (values: UserSignupForm, actions) => {
             //console.log(values);
             actions.setSubmitting(true);
-            const resp = await fetch("api/user/signup", {
+            const resp = await fetch("/api/user/signup", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
