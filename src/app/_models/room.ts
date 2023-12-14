@@ -1,4 +1,4 @@
-import { Cover, Room } from "@prisma/client";
+import { Cover, Location, Room } from "@prisma/client";
 import { ExtendedParticipant } from "./participant";
 
 export interface RoomCreateForm {
@@ -9,6 +9,7 @@ export interface RoomCreateForm {
 export interface ExtendedRoom extends Room {
   cover?: Cover;
   participants?: ExtendedParticipant[];
+  location?: Location;
 }
 
 export interface RoomEditForm {

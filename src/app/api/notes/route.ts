@@ -8,17 +8,81 @@ export async function POST(req: Request) {
   try {
     // Validation schema
     const body = await req.json();
-    const { title, text, note_widget_fk } = createnoteschema.parse(body);
+    const {
+      title,
+      text,
+      note_widget_fk,
+      text_format,
+      title_format,
+      title_alignment,
+      text_alignment,
+    } = createnoteschema.parse(body);
 
-    // Post a new note to the database
-    const newNote = await db.noteItem.create({
-      data: {
-        title,
-        text,
-        note_widget: {
-          connect: { id: note_widget_fk },
-        },
+    // Formatting
+    const textFormatData = await db.noteFormat.findFirst({
+      where: { formatting: text_format },
+    });
+
+    const titleFormatData = await db.noteFormat.findFirst({
+      where: { formatting: title_format },
+    });
+
+    // Alignment
+    const titleAlignData = await db.noteAlignment.findFirst({
+      where: { alignment: title_alignment },
+    });
+
+    const textAlignData = await db.noteAlignment.findFirst({
+      where: { alignment: text_alignment },
+    });
+
+    interface NoteItemCreateParams {
+      title: string;
+      text: string;
+      note_widget: {
+        connect: { id: string };
+      };
+      title_format?: {
+        connect: { id: string };
+      };
+      text_format?: {
+        connect: { id: string };
+      };
+      title_alignment?: {
+        connect: { id: string };
+      };
+      text_alignment?: {
+        connect: { id: string };
+      };
+    }
+
+    // Your logic
+    const newNoteData: NoteItemCreateParams = {
+      title,
+      text,
+      note_widget: {
+        connect: { id: note_widget_fk },
       },
+    };
+
+    if (titleFormatData && titleFormatData.id) {
+      newNoteData.title_format = { connect: { id: titleFormatData.id } };
+    }
+
+    if (textFormatData && textFormatData.id) {
+      newNoteData.text_format = { connect: { id: textFormatData.id } };
+    }
+
+    if (titleAlignData && titleAlignData.id) {
+      newNoteData.title_alignment = { connect: { id: titleAlignData.id } };
+    }
+
+    if (textAlignData && textAlignData.id) {
+      newNoteData.text_alignment = { connect: { id: textAlignData.id } };
+    }
+
+    const newNote = await db.noteItem.create({
+      data: newNoteData,
     });
 
     // Return a success response with the created note
@@ -30,7 +94,7 @@ export async function POST(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
     if (error instanceof z.ZodError) {
       // Zod validation errors
       const validationErrors = error.issues.map((issue) => {
@@ -57,6 +121,8 @@ export async function PUT(req: Request) {
   try {
     const { id, title, text } = await req.json();
 
+    const currentDate = new Date();
+    const isoDateString = currentDate.toISOString();
     // Opdater note item ID
     const updatedNote = await db.noteItem.update({
       where: {
@@ -65,7 +131,7 @@ export async function PUT(req: Request) {
       data: {
         title,
         text,
-        updated_at: new Date(), // Opdaterer updated_at timestamp
+        updated_at: isoDateString, // Opdaterer updated_at timestamp
       },
     });
 
@@ -78,7 +144,7 @@ export async function PUT(req: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 

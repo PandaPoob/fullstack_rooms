@@ -21,6 +21,7 @@ async function getData(params: { slug: string }, user: User) {
       },
       include: {
         cover: true,
+        location: true,
         participants: {
           include: {
             user: true,

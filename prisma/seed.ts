@@ -89,6 +89,24 @@ async function main() {
     },
   });
 
+  // Note formatting
+  await prisma.noteFormat.createMany({
+    data: [
+      { formatting: "bold" },
+      { formatting: "italic" },
+      { formatting: "underline" },
+    ],
+  });
+
+  // Note formatting
+  await prisma.noteAlignment.createMany({
+    data: [
+      { alignment: "center" },
+      { alignment: "right" },
+      { alignment: "left" },
+    ],
+  });
+
   const taskWidget1 = await prisma.taskWidget.create({
     data: {
       room: { connect: { id: room1.id } },
@@ -163,6 +181,127 @@ async function main() {
       room: { connect: { id: room2.id } },
       is_favourited: false,
       // Other participant data
+    },
+  });
+
+  //EVENTS
+  //Create end_time by adding 30 minutes in milliseconds
+  const endDate = new Date(currentDate.getTime() + 30 * 60000);
+  //Convert to ISO format
+  const isoEndDate = endDate.toISOString();
+  const event1 = await prisma.event.create({
+    data: {
+      title: "Housewarming",
+      start_time: isoDateString,
+      end_time: isoEndDate,
+      all_day: false,
+      location: "Morbærhaven Center 2",
+      description: "Come see our new apartment",
+      admin: { connect: { id: user1.id } },
+      room: { connect: { id: room1.id } },
+    },
+  });
+
+  const nextDay = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+  const isoNextDay = nextDay.toISOString();
+  const event2 = await prisma.event.create({
+    data: {
+      title: "Cleaning up",
+      start_time: isoNextDay,
+      all_day: true,
+      location: "Morbærhaven Center 2",
+      description: "Clean up the apartment",
+      admin: { connect: { id: user1.id } },
+      room: { connect: { id: room1.id } },
+    },
+  });
+
+  const startDate = new Date(endDate.getTime() + 30 * 60000);
+  const isoStartDate = startDate.toISOString();
+  const anotherEndDate = new Date(startDate.getTime() + 30 * 60000);
+  const isoAnotherEndDate = anotherEndDate.toISOString();
+
+  const event3 = await prisma.event.create({
+    data: {
+      title: "Barking at neighbors",
+      start_time: isoStartDate,
+      end_time: isoAnotherEndDate,
+      all_day: false,
+      location: "Garden",
+      description: "I wanna bark at neighbors, join if you want to",
+      admin: { connect: { id: user3.id } },
+      room: { connect: { id: room2.id } },
+    },
+  });
+
+  //EVENT ATTENDEES
+  //Connect all users to event1
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user1.id } },
+      event: { connect: { id: event1.id } },
+      reply: "accepted",
+    },
+  });
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user2.id } },
+      event: { connect: { id: event1.id } },
+      reply: "pending",
+    },
+  });
+
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user3.id } },
+      event: { connect: { id: event1.id } },
+      reply: "pending",
+    },
+  });
+  //Connect all users to event2
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user1.id } },
+      event: { connect: { id: event2.id } },
+      reply: "accepted",
+    },
+  });
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user2.id } },
+      event: { connect: { id: event2.id } },
+      reply: "pending",
+    },
+  });
+
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user3.id } },
+      event: { connect: { id: event2.id } },
+      reply: "pending",
+    },
+  });
+  //Connect all users to event3
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user1.id } },
+      event: { connect: { id: event3.id } },
+      reply: "pending",
+    },
+  });
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user2.id } },
+      event: { connect: { id: event3.id } },
+      reply: "pending",
+    },
+  });
+
+  await prisma.eventAttendee.create({
+    data: {
+      user: { connect: { id: user3.id } },
+      event: { connect: { id: event3.id } },
+      reply: "accepted",
     },
   });
 

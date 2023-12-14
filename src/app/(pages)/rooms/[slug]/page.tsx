@@ -3,8 +3,31 @@ import { db } from "@/lib/prisma-client";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import RoomView from "@/app/_views/Room";
-import { Participant } from "@prisma/client";
+import { Location, Participant } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { getCalendarDays } from "@/app/_utils/helpers/date";
+
+async function getWeatherData(location?: Location) {
+  if (!location) {
+    return null;
+  } else if (location) {
+    const { latitude, longitude } = location;
+
+    const resp = await fetch(
+      `http://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${process.env.WEATHER_API_APP_ID}&units=metric&cnt=6`,
+      {
+        method: "GET",
+      }
+    );
+    if (resp.ok) {
+      const data = await resp.json();
+      return data.list;
+    } else {
+      console.log("Error fetching weather");
+      return null;
+    }
+  }
+}
 
 async function updateVisitedAt(participant: Participant) {
   try {
@@ -41,28 +64,41 @@ async function getData(params: { slug: string }) {
           },
         },
       },
+      include: {
+        cover: true,
+        location: true,
+        participants: {
+          include: {
+            user: {
+              include: {
+                avatar: true,
+                status: true,
+              },
+            },
+          },
+        },
+        note_widget: {
+          include: {
+            note_item: true,
+          },
+        },
+      },
     });
 
     if (!room) {
       redirect("/error");
     }
 
-    // Fetch data for NoteWidget and NoteItem
-    const notes = await db.noteWidget.findUnique({
-      where: {
-        room_fk: room.id,
-      },
-      include: {
-        note_item: true,
-      },
-    });
-
     const taskWidget = await db.taskWidget.findUnique({
       where: {
         room_fk: room.id,
       },
       include: {
-        task_item: true,
+        task_item: {
+          orderBy: {
+            order: "asc", // replace 'order' with the actual field you want to use for sorting
+          },
+        },
       },
     });
 
@@ -74,26 +110,29 @@ async function getData(params: { slug: string }) {
     });
 
     if (participant) {
-      // Call the function to update visited_at
       await updateVisitedAt(participant);
     }
 
+    const weatherData = await getWeatherData(room.location!);
+
+    const calendarDayData = await getCalendarDays();
+
     const data = {
       room,
-      session,
-      tasks: taskWidget?.task_item,
-      taskWidgetId: taskWidget!.id as string,
-      note: notes?.note_item[0],
+      taskWidget,
+      note: room.note_widget?.note_item[0],
+      weatherData,
+      calendarDayData,
     };
 
     return data;
   }
 }
 
-type RoomPageProps = {
+interface RoomPageProps {
   searchParams: { modal: string } | undefined | null;
   params: { slug: string };
-};
+}
 
 async function RoomPage({ params, searchParams }: RoomPageProps) {
   const data = await getData(params);
@@ -102,11 +141,11 @@ async function RoomPage({ params, searchParams }: RoomPageProps) {
     data && (
       <RoomView
         room={data.room}
-        sessionUser={data.session.user}
         modalParams={searchParams}
-        taskWidgetId={data.taskWidgetId}
-        tasks={data.tasks}
+        taskWidget={data.taskWidget}
         noteItem={data?.note}
+        weatherData={data.weatherData}
+        calendarDayData={data.calendarDayData}
       />
     )
   );

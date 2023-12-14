@@ -19,7 +19,6 @@ export const minAge = 13;
 //TASK TEXT//
 export const minText = 1;
 export const maxText = 20;
-// ---------- Notes
 
 // ---------- Notes
 
@@ -37,3 +36,6 @@ export const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 export const minRoomTitleLen = 2;
 export const maxRoomTitleLen = 50;
 export const maxParticipants = 12;
+
+//EVENT
+export const maxdescriptionLen = 155;

@@ -48,7 +48,11 @@ function CreateRoomForm() {
       >
         {({ errors, touched, isSubmitting, values, setFieldValue }) => (
           <Form>
-            <TitleInput error={errors.title} touched={touched.title} />
+            <TitleInput
+              error={errors.title}
+              touched={touched.title}
+              placeholder="Datababes"
+            />
 
             <EmailFieldArray
               setFieldValue={setFieldValue}

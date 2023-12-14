@@ -4,14 +4,15 @@ import { NoteItem } from "@prisma/client";
 import NoteList from "./NoteList";
 import Link from "next/link";
 import { CreateNoteForm } from "@/app/_models/notes";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import ErrorToast from "@/app/_components/toasts/ErrorToast";
 import { useRouter } from "next/navigation";
 
 interface NotesProps {
-  notes: NoteItem[];
-  room_id: string;
+  roomId: string;
+  notes?: NoteItem[];
   noteWidgetId: string;
+  roomTitle: string;
 }
 
 function Notes(props: NotesProps) {
@@ -24,45 +25,84 @@ function Notes(props: NotesProps) {
   const clearError = () => {
     setErrorMsg("");
   };
+  // On click på input felt, som sætter state
+  const [isTitle, setIsTitle] = useState(true);
 
-  // Formatting
-  const [format, setFormat] = useState("");
-  const handleFormatClick = (formatType: SetStateAction<string>) => {
-    if (format === formatType) {
-      setFormat(""); // Reset if clicked twice on the same format
+  //Format
+  const [textFormat, setTextFormat] = useState("");
+  const [titleFormat, setTitleFormat] = useState("");
+  //Alignment
+  const [textAlignment, setTextAlignment] = useState("");
+  const [titleAlignment, setTitleAlignment] = useState("");
+
+  //Handle alignment
+  const handleAlignmentClick = (alignmentType: string) => {
+    if (isTitle) {
+      //alignment title
+      if (titleAlignment === alignmentType) {
+        setTitleAlignment("");
+      } else {
+        setTitleAlignment(alignmentType);
+      }
     } else {
-      setFormat(formatType); // Set the format if not set already
+      //alignment text
+      if (textAlignment === alignmentType) {
+        setTextAlignment("");
+      } else {
+        setTextAlignment(alignmentType);
+      }
     }
   };
-
-  // Alignment
-  const [algignment, setAlignment] = useState("");
-  const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
-    if (algignment === alignmentType) {
-      setAlignment(""); // Reset if clicked twice on the same alignment
+  //Handle format
+  const handleFormatClick = (formatType: string) => {
+    if (isTitle) {
+      //format title
+      if (titleFormat === formatType) {
+        setTitleFormat("");
+      } else {
+        setTitleFormat(formatType);
+      }
     } else {
-      setAlignment(alignmentType); // Set the alignment if not set already
+      //format text
+      if (textFormat === formatType) {
+        setTextFormat("");
+      } else {
+        setTextFormat(formatType);
+      }
     }
   };
 
   return (
     <div>
-      {/* Breadcrumb, skal udvikles ordentligt */}
       <div className="mt-8">
-        <li className="flex gap-2 text-sm text-white opacity-80">
-          <Link href={"/rooms"}>
-            <ul>Room Name</ul> {/* skal mappes, så room name er displayed */}
-          </Link>
-          <ul>
+        <ul className="flex gap-2 mt-4 md:mt-7 text-sm">
+          <li>
+            <Link className={`mr-2`} href={`/rooms/${props.roomId}`}>
+              {props.roomTitle}
+            </Link>
+            <span>/</span>
+          </li>
+          <li>
             <button
               onClick={() => setDisplayForm(false)}
-              className="font-medium"
+              className={`mr-2 ${displayForm ? "font-normal" : "font-medium"}`}
             >
-              {" "}
               All Notes
             </button>
-          </ul>
-        </li>
+            {displayForm && <span>/</span>}
+          </li>
+          {displayForm && (
+            <li>
+              <button
+                onClick={() => setDisplayForm(true)}
+                className="font-medium"
+              >
+                New note
+              </button>
+            </li>
+          )}
+        </ul>
+
         <h1 className="text-h1 mt-4">
           {displayForm ? "New Note" : "All Notes"}
         </h1>
@@ -74,12 +114,20 @@ function Notes(props: NotesProps) {
             initialValues={{
               title: "",
               text: "",
+              text_format: textFormat,
+              title_format: titleFormat,
+              text_alignment: textAlignment,
+              title_alignment: titleAlignment,
               note_widget_fk: props.noteWidgetId,
             }}
             onSubmit={async (values: CreateNoteForm, actions) => {
               const formval = JSON.stringify({
                 title: values.title,
                 text: values.text,
+                text_format: textFormat,
+                title_format: titleFormat,
+                text_alignment: textAlignment,
+                title_alignment: titleAlignment,
                 note_widget_fk: values.note_widget_fk,
               });
               const resp = await fetch("/api/notes", {
@@ -91,7 +139,7 @@ function Notes(props: NotesProps) {
               });
               if (resp.ok) {
                 const data = await resp.json();
-                router.push(`/rooms/${props.room_id}/notes/${data.note.id}`);
+                router.push(`/rooms/${props.roomId}/notes/${data.note.id}`);
               } else {
                 const data = await resp.json();
                 actions.setSubmitting(false);
@@ -123,12 +171,15 @@ function Notes(props: NotesProps) {
                 <div className="bg-primary rounded-md w-full">
                   {/* Værktøjslinje */}
                   <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
-                    <div className="flex gap-6 text-h5 mt-2 mx-4">
+                    {/* Text Format */}
+                    <div className={`flex gap-6 text-h5 mt-2 mx-4`}>
                       {/* Bold */}
                       <button
                         type="button"
                         onClick={() => handleFormatClick("bold")}
-                        className="bold"
+                        className={`${
+                          isTitle && titleFormat.includes("bold") && "bold"
+                        }`}
                       >
                         B
                       </button>
@@ -136,7 +187,9 @@ function Notes(props: NotesProps) {
                       <button
                         type="button"
                         onClick={() => handleFormatClick("italic")}
-                        className="italic"
+                        className={`${
+                          textFormat.includes("italic") && "italic"
+                        }`}
                       >
                         I
                       </button>
@@ -144,16 +197,23 @@ function Notes(props: NotesProps) {
                       <button
                         type="button"
                         onClick={() => handleFormatClick("underline")}
-                        className="underline"
+                        className={`${
+                          textFormat.includes("underline") && "underline"
+                        }`}
                       >
                         U
                       </button>
                     </div>
-                    <div className="flex gap-6 mx-4">
+
+                    {/* Title Alignment */}
+                    <div className={`flex gap-6 mx-4`}>
                       {/* Align left */}
                       <button
                         type="button"
                         onClick={() => handleAlignmentClick("left")}
+                        className={
+                          titleAlignment.includes("left") ? "left" : ""
+                        }
                       >
                         {" "}
                         <svg
@@ -175,6 +235,9 @@ function Notes(props: NotesProps) {
                       <button
                         type="button"
                         onClick={() => handleAlignmentClick("center")}
+                        className={
+                          titleAlignment.includes("center") ? "center" : ""
+                        }
                       >
                         {" "}
                         <svg
@@ -195,8 +258,10 @@ function Notes(props: NotesProps) {
                       <button
                         type="button"
                         onClick={() => handleAlignmentClick("right")}
+                        className={
+                          titleAlignment.includes("right") ? "right" : ""
+                        }
                       >
-                        {" "}
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           width="18"
@@ -212,6 +277,7 @@ function Notes(props: NotesProps) {
                         </svg>
                       </button>
                     </div>
+                    {/* Text Alignment */}
                   </div>
                   {/* Værktøjslinje end */}
                   {/* Note Title Field */}
@@ -221,33 +287,48 @@ function Notes(props: NotesProps) {
                         type="text"
                         name="title"
                         placeholder="Title ..."
-                        className="w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary"
+                        className={`w-full rounded-md bg-primary bg text-white focus:outline-none text-xl focus:bg-primary-dark p-4 mt-2 placeholder-secondary ${
+                          titleFormat.includes("bold") ? "font-medium" : ""
+                        } ${titleFormat.includes("italic") ? "italic" : ""} ${
+                          titleFormat.includes("underline") ? "underline" : ""
+                        } ${
+                          titleAlignment === "left"
+                            ? "text-left"
+                            : titleAlignment === "center"
+                            ? "text-center"
+                            : titleAlignment === "right"
+                            ? "text-right"
+                            : ""
+                        }`}
+                        onClick={() => setIsTitle(true)}
                       />
                     </div>
                     {/* Note Text Field */}
                     <div className="flex items-center">
                       <Field
-                        as="textarea"
+                        as="textarea" // Change the type attribute to as="textarea"
                         name="text"
                         placeholder="Text ..."
                         rows={4}
-                        className={` ${
-                          format.includes("bold")
-                            ? "font-bold"
-                            : format.includes("italic")
+                        className={`${
+                          textFormat.includes("bold")
+                            ? "font-medium"
+                            : textFormat.includes("italic")
                             ? "italic"
-                            : format.includes("underline")
+                            : textFormat.includes("underline")
                             ? "underline"
                             : "normal"
-                        } ${
-                          algignment === "left"
+                        }
+                        ${
+                          textAlignment.includes("left")
                             ? "text-left"
-                            : algignment === "center"
+                            : textAlignment.includes("center")
                             ? "text-center"
-                            : algignment === "right"
+                            : textAlignment.includes("right")
                             ? "text-right"
-                            : ""
-                        } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
+                            : "normal"
+                        } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary `}
+                        onClick={() => setIsTitle(false)}
                       />
                     </div>
                     {/* Hidden Field for note_widget_fk */}
@@ -291,7 +372,7 @@ function Notes(props: NotesProps) {
         </div>
       )}
 
-      {!displayForm && <NoteList notes={props.notes} room_id={props.room_id} />}
+      {!displayForm && <NoteList notes={props.notes} roomId={props.roomId} />}
     </div>
   );
 }

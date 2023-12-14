@@ -63,7 +63,6 @@ function EditUserForm(props: EditUserFormProps) {
               if (data.updatedUser) {
                 update(data.updatedUser);
               }
-              console.log("Updated user");
             } else {
               setErrorMsg("An error occurred");
             }

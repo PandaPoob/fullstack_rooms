@@ -14,22 +14,33 @@ async function getData(params: { slug: string }) {
     redirect("/error");
   }
 
-  const notes = await db.noteWidget.findUnique({
+  const room = await db.room.findUnique({
     where: {
-      room_fk: params.slug,
+      id: params.slug,
+      participants: {
+        some: {
+          user_id: session.user.id as string,
+        },
+      },
     },
     include: {
-      note_item: true,
+      note_widget: {
+        include: {
+          note_item: true,
+        },
+      },
     },
   });
-  if (!notes) {
+
+  if (!room) {
     redirect("/error");
   }
 
   const data = {
     session,
-    notes: notes.note_item,
-    noteWidgetId: notes.id,
+    notes: room.note_widget?.note_item,
+    noteWidgetId: room.note_widget?.id,
+    roomTitle: room.title,
   };
   return data;
 }
@@ -39,9 +50,10 @@ async function NotePage({ params }: { params: { slug: string } }) {
   return (
     data && (
       <Notes
-        room_id={params.slug}
+        roomId={params.slug}
         notes={data.notes}
-        noteWidgetId={data.noteWidgetId}
+        noteWidgetId={data.noteWidgetId!}
+        roomTitle={data.roomTitle}
       />
     )
   );

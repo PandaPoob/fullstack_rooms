@@ -1,27 +1,35 @@
-import { User } from "next-auth";
-import { NoteItem, Room, TaskItem } from "@prisma/client";
+"use client";
+import { NoteItem, Room } from "@prisma/client";
 import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
 import NoteCard from "../Notes/NoteCard";
-import TaskWidget from "@/app/_components/TaskWidget";
-import TaskModal from "@/app/_components/TaskModal";
+import TaskWidget from "@/app/_views/Tasks/TaskWidget";
+import ParticipantsWidget from "@/app/_views/Particpants/ParticipantsWidget";
+import TaskModal from "@/app/_views/Tasks/TaskModal";
+import ServerModal from "@/app/_components/modals/ServerModal";
+import WeatherWidget from "./widgets/weather/WeatherWidget";
+import CalendarWidget from "./widgets/calendar/CalendarWidget";
+import { useSession } from "next-auth/react";
+import { ExpandedTaskWidget } from "@/app/_models/tasks";
+import { CalendarDay } from "@/app/_models/event";
 
 interface Roomprops {
   room: Room;
-  sessionUser: User;
   modalParams: { modal: string } | undefined | null;
-  taskWidgetId: string;
-  tasks?: TaskItem[];
+  taskWidget: ExpandedTaskWidget | null;
+  calendarDayData: CalendarDay[];
   noteItem?: NoteItem;
+  weatherData?: any;
 }
 
-async function RoomView(props: Roomprops) {
-  // rooms/id/notes/note_widget_fk
+function RoomView(props: Roomprops) {
+  const { data: session } = useSession();
+
   return (
-    <div>
+    <main>
       <div className="flex justify-between">
         <DigitalClock title={`Welcome, ${props.room.title}`} />
-        {props.room.admin_fk === props.sessionUser.id && (
+        {props.room.admin_fk === session?.user.id && (
           <Link
             className="self-start mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
             href={`/rooms/${props.room.id}/settings`}
@@ -42,48 +50,63 @@ async function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <div>Dashboard content here</div>
-      <section className="grid grid-cols-4 gap-4">
-        <div>
-          <Link href={`/rooms/${props.room.id}/notes`}>
-            {props.noteItem ? (
-              <NoteCard
-                title={props.noteItem.title}
-                text={props.noteItem.text}
-                date={props.noteItem.created_at}
-              />
-            ) : (
-              <p className="">No notes yet</p>
-            )}
-          </Link>
-        </div>
-        <div>
-          <Link href={`/rooms/${props.room.id}/?modal=true`}>
-            <>
-              <div className="bg-primary rounded-xl py-6 pl-6 my-2 h-[250px] flex-row">
-                <TaskWidget
-                  tasks={props.tasks}
-                  room={props.room}
-                  taskWidgetId={props.taskWidgetId}
-                  modalParams={props.modalParams}
-                />
-              </div>
-            </>
-          </Link>
+      <section className="lg:grid lg:grid-cols-2 lg:gap-3">
+        <div className="grid gap-3">
+          <WeatherWidget
+            roomData={props.room}
+            weatherData={props.weatherData}
+          />
 
-          {props.modalParams?.modal && (
-            <TaskModal
-              tasks={props.tasks}
-              room={props.room}
-              taskWidgetId={props.taskWidgetId}
-              modalParams={props.modalParams}
-            />
-          )}
+          <div className="md:flex md:gap-3">
+            <div className="md:w-1/2">
+              <Link href={`/rooms/${props.room.id}/notes`}>
+                {props.noteItem ? (
+                  <NoteCard
+                    title={props.noteItem.title}
+                    text={props.noteItem.text}
+                    date={props.noteItem.created_at}
+                  />
+                ) : (
+                  <p className="">No notes yet</p>
+                )}
+              </Link>
+            </div>
+
+            <div className="md:w-1/2">
+              <Link href={`/rooms/${props.room.id}/?modal=true`}>
+                <>
+                  <div className="bg-primary rounded-xl p-4 h-full max-h-[250px] flex-row">
+                    <TaskWidget
+                      tasks={props.taskWidget?.task_item}
+                      room={props.room}
+                      taskWidgetId={props.taskWidget!.id}
+                      modalParams={props.modalParams}
+                    />
+                  </div>
+                </>
+              </Link>
+
+              {props.modalParams?.modal && (
+                <ServerModal>
+                  <TaskModal
+                    tasks={props.taskWidget?.task_item}
+                    room={props.room}
+                    taskWidgetId={props.taskWidget!.id}
+                  />
+                </ServerModal>
+              )}
+            </div>
+          </div>
+          <div className="w-full p-4 bg-primary rounded-xl">
+            <ParticipantsWidget room={props.room} />
+          </div>
         </div>
-        <div>widget 3</div>
-        <div>widget 4</div>
+        <CalendarWidget
+          calendarDayData={props.calendarDayData}
+          roomId={props.room.id}
+        />
       </section>
-    </div>
+    </main>
   );
 }
 

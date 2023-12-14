@@ -19,7 +19,7 @@ function ErrorToast({
     <div
       className={`${
         msg ? "translate-y-0" : "-translate-y-10"
-      } fixed top-0 left-0 w-full bg-red-500 text-white p-4 text-center bg-primary transition duration-300`}
+      } fixed top-0 left-0 w-full bg-red-500 text-white p-4 text-center bg-primary transition duration-300 z-50`}
     >
       <p>{msg}</p>
     </div>
