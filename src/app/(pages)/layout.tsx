@@ -5,6 +5,9 @@ import "../globals.css";
 import localFont from "next/font/local";
 import { authOptions } from "@/lib/auth";
 import QueryProvider from "../_components/providers/QueryProvider";
+import Head from "next/head";
+import Favicon from "/public/favicon.svg";
+import { Metadata } from "next";
 
 const gotham = localFont({
   // src: "../_fonts/GothamBook.ttf",
@@ -22,6 +25,12 @@ const gotham = localFont({
   display: "swap",
 });
 
+export const metadata: Metadata = {
+  title: "Rooms",
+  description: "Welcome to rooms",
+  icons: [{ rel: "icon", url: Favicon.src }],
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -31,6 +40,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" className={`${gotham.variable}`}>
+      <Head>
+        <link rel="icon" href="/favicon.svg" />
+      </Head>
       <body className={"font-body"}>
         <QueryProvider>
           <AuthProvider>

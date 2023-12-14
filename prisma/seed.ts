@@ -89,6 +89,24 @@ async function main() {
     },
   });
 
+  // Note formatting
+  await prisma.noteFormat.createMany({
+    data: [
+      { formatting: "bold" },
+      { formatting: "italic" },
+      { formatting: "underline" },
+    ],
+  });
+
+  // Note formatting
+  await prisma.noteAlignment.createMany({
+    data: [
+      { alignment: "center" },
+      { alignment: "right" },
+      { alignment: "left" },
+    ],
+  });
+
   const taskWidget1 = await prisma.taskWidget.create({
     data: {
       room: { connect: { id: room1.id } },

@@ -1,42 +1,80 @@
 "use client";
-import { EditNote } from "@/app/_models/notes";
-import { NoteItem } from "@prisma/client";
+import { EditNote, ExpandedNoteItem } from "@/app/_models/notes";
 import { Field, Form, Formik } from "formik";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import ErrorToast from "@/app/_components/toasts/ErrorToast";
 import { useRouter } from "next/navigation";
+import BreadCrumb from "@/app/_components/navigation/Breadcrumb";
+import { formatDate } from "@/app/_utils/helpers/date";
 
 interface NoteProps {
-  noteItem: NoteItem;
+  noteItem: ExpandedNoteItem;
   roomId: string;
+  roomTitle?: string;
 }
 
 function Note(props: NoteProps) {
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
-  const [format, setFormat] = useState("");
+
+  // On click på input felt, som sætter state
+  const [isTitle, setIsTitle] = useState(true);
+
+  //Format
+  const [textFormat, setTextFormat] = useState(
+    props.noteItem.text_format?.formatting || ""
+  );
+  const [titleFormat, setTitleFormat] = useState(
+    props.noteItem.title_format?.formatting || ""
+  );
+  //Alignment
+  const [textAlignment, setTextAlignment] = useState(
+    props.noteItem.text_alignment?.alignment || ""
+  );
+  const [titleAlignment, setTitleAlignment] = useState(
+    props.noteItem.title_alignment?.alignment || ""
+  );
+
+  //Handle alignment
+  const handleAlignmentClick = (alignmentType: string) => {
+    if (isTitle) {
+      //alignment title
+      if (titleAlignment === alignmentType) {
+        setTitleAlignment("");
+      } else {
+        setTitleAlignment(alignmentType);
+      }
+    } else {
+      //alignment text
+      if (textAlignment === alignmentType) {
+        setTextAlignment("");
+      } else {
+        setTextAlignment(alignmentType);
+      }
+    }
+  };
+
+  //Handle format
+  const handleFormatClick = (formatType: string) => {
+    if (isTitle) {
+      //format title
+      if (titleFormat === formatType) {
+        setTitleFormat("");
+      } else {
+        setTitleFormat(formatType);
+      }
+    } else {
+      //format text
+      if (textFormat === formatType) {
+        setTextFormat("");
+      } else {
+        setTextFormat(formatType);
+      }
+    }
+  };
 
   const clearError = () => {
     setErrorMsg("");
-  };
-  // Formatting
-  const handleFormatClick = (formatType: SetStateAction<string>) => {
-    if (format === formatType) {
-      setFormat(""); // Reset if clicked twice on the same format
-    } else {
-      setFormat(formatType); // Set the format if not set already
-    }
-  };
-
-  // Alignment
-
-  const [algignment, setAlignment] = useState("");
-  const handleAlignmentClick = (alignmentType: SetStateAction<string>) => {
-    if (algignment === alignmentType) {
-      setAlignment(""); // Reset if clicked twice on the same alignment
-    } else {
-      setAlignment(alignmentType); // Set the alignment if not set already
-    }
   };
 
   const handleDelete = async () => {
@@ -51,6 +89,7 @@ function Note(props: NoteProps) {
     if (resp.ok) {
       const data = await resp.json();
       router.push(`/rooms/${props.roomId}/notes`);
+      router.refresh();
     } else {
       const data = await resp.json();
     }
@@ -58,7 +97,18 @@ function Note(props: NoteProps) {
 
   return (
     <div>
-      <h1 className="mt-12 text-h1">{props.noteItem.title}</h1>
+      <BreadCrumb
+        links={[
+          { title: props.roomTitle!, url: `/rooms/${props.roomId}` },
+          { title: "All notes", url: `/rooms/${props.roomId}/notes` },
+          {
+            title: props.noteItem.title,
+            url: `/rooms/${props.roomId}/notes/${props.noteItem.id}`,
+            isCurrent: true,
+          },
+        ]}
+      />
+      <h1 className="mt-5 text-h1">{props.noteItem.title}</h1>
       <Formik
         initialValues={{
           title: props.noteItem.title,
@@ -74,6 +124,10 @@ function Note(props: NoteProps) {
               id: props.noteItem.id,
               title: values.title,
               text: values.text,
+              text_format: textFormat,
+              title_format: textFormat,
+              text_alignment: textAlignment,
+              title_alignment: titleAlignment,
               note_widget_fk: values.note_widget_fk,
             }),
           });
@@ -93,7 +147,8 @@ function Note(props: NoteProps) {
           actions.setSubmitting(false);
         }}
       >
-        {({ isSubmitting }) => (
+        {/* touched, set et nyt state og lyt på det state som er senest er rørt ved afhægigt om det er title eller text - så sæt format efter det. */}
+        {({ isSubmitting, touched }) => (
           <Form className="grid gap-3 mt-2" autoComplete="off">
             {/* Submit Button */}
             <div className="flex justify-end gap-2 items-center">
@@ -129,12 +184,13 @@ function Note(props: NoteProps) {
             <div className="bg-primary rounded-md w-full">
               {/* Værktøjslinje */}
               <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
-                <div className="flex gap-6 text-h5 mt-2 mx-4">
+                {/* Format buttons */}
+                <div className={`flex gap-6 text-h5 mt-2 mx-4 `}>
                   {/* Bold */}
                   <button
                     type="button"
                     onClick={() => handleFormatClick("bold")}
-                    className="bold"
+                    className={`${textFormat.includes("bold") && "bold"}`}
                   >
                     B
                   </button>
@@ -142,7 +198,7 @@ function Note(props: NoteProps) {
                   <button
                     type="button"
                     onClick={() => handleFormatClick("italic")}
-                    className="italic"
+                    className={`${textFormat.includes("italic") && "italic"}`}
                   >
                     I
                   </button>
@@ -150,16 +206,21 @@ function Note(props: NoteProps) {
                   <button
                     type="button"
                     onClick={() => handleFormatClick("underline")}
-                    className="underline"
+                    className={`${
+                      textFormat.includes("underline") && "underline"
+                    }`}
                   >
                     U
                   </button>
                 </div>
+
+                {/* Alignment buttons */}
                 <div className="flex gap-6 mx-4">
                   {/* Align left */}
                   <button
                     type="button"
                     onClick={() => handleAlignmentClick("left")}
+                    className={titleAlignment.includes("left") ? "left" : ""}
                   >
                     {" "}
                     <svg
@@ -181,6 +242,9 @@ function Note(props: NoteProps) {
                   <button
                     type="button"
                     onClick={() => handleAlignmentClick("center")}
+                    className={
+                      titleAlignment.includes("center") ? "center" : ""
+                    }
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -200,6 +264,7 @@ function Note(props: NoteProps) {
                   <button
                     type="button"
                     onClick={() => handleAlignmentClick("right")}
+                    className={titleAlignment.includes("right") ? "right" : ""}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -216,6 +281,8 @@ function Note(props: NoteProps) {
                     </svg>
                   </button>
                 </div>
+                {/* Text Alignment */}
+                {/* div text here */}
               </div>
               {/* Værktøjslinje end */}
               {/* Note Title Field */}
@@ -225,7 +292,20 @@ function Note(props: NoteProps) {
                     type="text"
                     name="title"
                     placeholder="Title ..."
-                    className="w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary"
+                    className={`w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-xl mt-2 placeholder-secondary ${
+                      titleFormat.includes("bold") ? "font-medium" : ""
+                    } ${titleFormat.includes("italic") ? "italic" : ""} ${
+                      titleFormat.includes("underline") ? "underline" : ""
+                    }  ${
+                      titleAlignment === "left"
+                        ? "text-left"
+                        : titleAlignment === "center"
+                        ? "text-center"
+                        : titleAlignment === "right"
+                        ? "text-right"
+                        : ""
+                    }`}
+                    onClick={() => setIsTitle(true)}
                   />
                 </div>
                 {/* Note Text Field */}
@@ -235,30 +315,33 @@ function Note(props: NoteProps) {
                     name="text"
                     placeholder="Text ..."
                     rows={4}
-                    className={` ${
-                      format.includes("bold")
+                    className={`${
+                      textFormat.includes("bold")
                         ? "font-bold"
-                        : format.includes("italic")
+                        : textFormat.includes("italic")
                         ? "italic"
-                        : format.includes("underline")
+                        : textFormat.includes("underline")
                         ? "underline"
                         : "normal"
                     } ${
-                      algignment === "left"
+                      textAlignment === "left"
                         ? "text-left"
-                        : algignment === "center"
+                        : textAlignment === "center"
                         ? "text-center"
-                        : algignment === "right"
+                        : textAlignment === "right"
                         ? "text-right"
                         : ""
-                    } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary`}
+                    } w-full h-96 rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 placeholder-secondary ${
+                      touched.text && textFormat === "" ? "normal" : ""
+                    }`}
+                    onClick={() => setIsTitle(false)}
                   />
                 </div>
                 {/* Hidden Field for note_widget_fk */}
                 <Field type="hidden" name="note_widget_fk" />
               </div>
               <p className="flex justify-end text-xs text-secondary m-2">
-                Last edit by Cleo: March 25th 2023
+                Last edit: {formatDate(props.noteItem.updated_at)}
               </p>
             </div>
           </Form>
