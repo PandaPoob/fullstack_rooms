@@ -124,9 +124,9 @@ model TaskItem {
   updated_at     DateTime   @default(now())
   order          Int
   checked        Boolean
-  created_by_fk  String
   updated_by     String?
   created_by     User       @relation(fields: [created_by_fk], references: [id])
+  created_by_fk  String
   task_widget    TaskWidget @relation(fields: [task_widget_fk], references: [id])
 }
 

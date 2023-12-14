@@ -28,11 +28,11 @@ export async function POST(req: Request) {
     });
 
     // Alignment
-    const textAlignData = await db.noteAlignment.findFirst({
+    const titleAlignData = await db.noteAlignment.findFirst({
       where: { alignment: title_alignment },
     });
 
-    const titleAlignData = await db.noteAlignment.findFirst({
+    const textAlignData = await db.noteAlignment.findFirst({
       where: { alignment: text_alignment },
     });
 
@@ -121,6 +121,8 @@ export async function PUT(req: Request) {
   try {
     const { id, title, text } = await req.json();
 
+    const currentDate = new Date();
+    const isoDateString = currentDate.toISOString();
     // Opdater note item ID
     const updatedNote = await db.noteItem.update({
       where: {
@@ -129,7 +131,7 @@ export async function PUT(req: Request) {
       data: {
         title,
         text,
-        updated_at: new Date(), // Opdaterer updated_at timestamp
+        updated_at: isoDateString, // Opdaterer updated_at timestamp
       },
     });
 

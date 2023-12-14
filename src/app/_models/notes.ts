@@ -3,6 +3,10 @@ import { NoteAlignment, NoteFormat, NoteItem } from "@prisma/client";
 export interface CreateNoteForm {
   title: string;
   text: string;
+  text_format?: string;
+  title_format?: string;
+  text_alignment?: string;
+  title_alignment?: string;
   note_widget_fk: string;
 }
 

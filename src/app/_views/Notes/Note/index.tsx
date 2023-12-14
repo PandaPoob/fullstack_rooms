@@ -1,79 +1,81 @@
 "use client";
 import { EditNote, ExpandedNoteItem } from "@/app/_models/notes";
-import { NoteItem } from "@prisma/client";
 import { Field, Form, Formik } from "formik";
-import { SetStateAction, useState } from "react";
+import { useState } from "react";
 import ErrorToast from "@/app/_components/toasts/ErrorToast";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import BreadCrumb from "@/app/_components/navigation/Breadcrumb";
+import { formatDate } from "@/app/_utils/helpers/date";
 
 interface NoteProps {
   noteItem: ExpandedNoteItem;
   roomId: string;
+  roomTitle?: string;
 }
 
 function Note(props: NoteProps) {
-  console.log(props.noteItem.text_format);
   const router = useRouter();
   const [errorMsg, setErrorMsg] = useState("");
 
+  // On click på input felt, som sætter state
+  const [isTitle, setIsTitle] = useState(true);
+
+  //Format
   const [textFormat, setTextFormat] = useState(
     props.noteItem.text_format?.formatting || ""
   );
   const [titleFormat, setTitleFormat] = useState(
     props.noteItem.title_format?.formatting || ""
   );
-
+  //Alignment
+  const [textAlignment, setTextAlignment] = useState(
+    props.noteItem.text_alignment?.alignment || ""
+  );
   const [titleAlignment, setTitleAlignment] = useState(
     props.noteItem.title_alignment?.alignment || ""
   );
 
-  const [textAlignment, setTextAlignment] = useState(
-    props.noteItem.text_alignment?.alignment || ""
-  );
-
-  // Text format
-  const handleTextFormatClick = (formatType: string) => {
-    if (textFormat === formatType) {
-      setTextFormat(""); // Reset if clicked twice on the same format
+  //Handle alignment
+  const handleAlignmentClick = (alignmentType: string) => {
+    if (isTitle) {
+      //alignment title
+      if (titleAlignment === alignmentType) {
+        setTitleAlignment("");
+      } else {
+        setTitleAlignment(alignmentType);
+      }
     } else {
-      setTextFormat(formatType);
+      //alignment text
+      if (textAlignment === alignmentType) {
+        setTextAlignment("");
+      } else {
+        setTextAlignment(alignmentType);
+      }
     }
   };
 
-  // Title format
-  const handleTitleFormatClick = (formatType: string) => {
-    if (titleFormat === formatType) {
-      setTitleFormat(""); // Reset if clicked twice on the same format
+  //Handle format
+  const handleFormatClick = (formatType: string) => {
+    if (isTitle) {
+      //format title
+      if (titleFormat === formatType) {
+        setTitleFormat("");
+      } else {
+        setTitleFormat(formatType);
+      }
     } else {
-      setTitleFormat(formatType);
-    }
-  };
-
-  // Text Alignment
-
-  const handleTextAlignmentClick = (alignmentType: string) => {
-    if (textAlignment === alignmentType) {
-      setTextAlignment(""); // Reset if clicked twice on the same alignment
-    } else {
-      setTextAlignment(alignmentType); // Set the alignment if not set already
-    }
-  };
-
-  // Title Alignment
-  const handleTitleAlignmentClick = (alignmentType: string) => {
-    if (titleAlignment === alignmentType) {
-      setTitleAlignment(""); // Reset if clicked twice on the same alignment
-    } else {
-      setTitleAlignment(alignmentType); // Set the alignment if not set already
+      //format text
+      if (textFormat === formatType) {
+        setTextFormat("");
+      } else {
+        setTextFormat(formatType);
+      }
     }
   };
 
   const clearError = () => {
     setErrorMsg("");
   };
-
-  const [isTitle, setIsTitle] = useState(true); // On click på input felt, som sætter state
 
   const handleDelete = async () => {
     const resp = await fetch("/api/notes", {
@@ -87,6 +89,7 @@ function Note(props: NoteProps) {
     if (resp.ok) {
       const data = await resp.json();
       router.push(`/rooms/${props.roomId}/notes`);
+      router.refresh();
     } else {
       const data = await resp.json();
     }
@@ -94,40 +97,18 @@ function Note(props: NoteProps) {
 
   return (
     <div>
-      {/* <Link href={`/rooms/${props.room_id}/notes/`}>
-        <p>Go back</p>
-        
-      </Link> */}
-      <li className="flex gap-2 text-sm">
-        <ul>
-          <Link href={`/rooms/${props.roomId}`}>
-            <ul className="md:mt-10  text-secondary hover:text-white ease-in">
-              {props.roomId}
-            </ul>
-          </Link>
-        </ul>
-        <ul>
-          <p className="md:mt-10  text-secondary">/</p>
-        </ul>
-        <Link href={`/rooms/${props.roomId}/notes/`}>
-          <ul className="md:mt-10  text-secondary hover:text-white ease-in">
-            All Notes
-          </ul>
-        </Link>
-        <ul>
-          <p className="md:mt-10  text-secondary">/</p>
-        </ul>
-        <ul>
-          <ul className="md:mt-10 font-bold">{props.noteItem.title}</ul>
-        </ul>
-      </li>
-      {/* 
-      <Link className="flex gap-2" href={`/rooms/${props.roomId}/notes/`}>
-        <p className="md:mt-10">All notes</p>
-        <p className="md:mt-10">/</p>
-        <p className="md:mt-10 font-medium"> {props.noteItem.title}</p>
-      </Link> */}
-      <h1 className="mt-6 text-h1">{props.noteItem.title}</h1>
+      <BreadCrumb
+        links={[
+          { title: props.roomTitle!, url: `/rooms/${props.roomId}` },
+          { title: "All notes", url: `/rooms/${props.roomId}/notes` },
+          {
+            title: props.noteItem.title,
+            url: `/rooms/${props.roomId}/notes/${props.noteItem.id}`,
+            isCurrent: true,
+          },
+        ]}
+      />
+      <h1 className="mt-5 text-h1">{props.noteItem.title}</h1>
       <Formik
         initialValues={{
           title: props.noteItem.title,
@@ -203,16 +184,12 @@ function Note(props: NoteProps) {
             <div className="bg-primary rounded-md w-full">
               {/* Værktøjslinje */}
               <div className="flex p-2 justify-between border-b border-secondary border-opacity-20 ">
-                {/* Title buttons */}
-                <div
-                  className={`flex gap-6 text-h5 mt-2 mx-4 ${
-                    isTitle ? "hidden" : "block"
-                  }`}
-                >
+                {/* Format buttons */}
+                <div className={`flex gap-6 text-h5 mt-2 mx-4 `}>
                   {/* Bold */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("bold")}
+                    onClick={() => handleFormatClick("bold")}
                     className={`${textFormat.includes("bold") && "bold"}`}
                   >
                     B
@@ -220,7 +197,7 @@ function Note(props: NoteProps) {
                   {/* Italic */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("italic")}
+                    onClick={() => handleFormatClick("italic")}
                     className={`${textFormat.includes("italic") && "italic"}`}
                   >
                     I
@@ -228,40 +205,7 @@ function Note(props: NoteProps) {
                   {/* Underline */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("underline")}
-                    className={`${
-                      textFormat.includes("underline") && "underline"
-                    }`}
-                  >
-                    U
-                  </button>
-                </div>
-                {/* Text buttons */}
-                <div
-                  className={`flex gap-6 text-h5 mt-2 mx-4 ${
-                    !isTitle ? "hidden" : "block"
-                  }`}
-                >
-                  {/* Bold */}
-                  <button
-                    type="button"
-                    onClick={() => handleTextFormatClick("bold")}
-                    className={`${textFormat.includes("bold") && "bold"}`}
-                  >
-                    B
-                  </button>
-                  {/* Italic */}
-                  <button
-                    type="button"
-                    onClick={() => handleTextFormatClick("italic")}
-                    className={`${textFormat.includes("italic") && "italic"}`}
-                  >
-                    I
-                  </button>
-                  {/* Underline */}
-                  <button
-                    type="button"
-                    onClick={() => handleTextFormatClick("underline")}
+                    onClick={() => handleFormatClick("underline")}
                     className={`${
                       textFormat.includes("underline") && "underline"
                     }`}
@@ -270,12 +214,12 @@ function Note(props: NoteProps) {
                   </button>
                 </div>
 
-                {/* Title Alignment */}
+                {/* Alignment buttons */}
                 <div className="flex gap-6 mx-4">
                   {/* Align left */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("left")}
+                    onClick={() => handleAlignmentClick("left")}
                     className={titleAlignment.includes("left") ? "left" : ""}
                   >
                     {" "}
@@ -297,7 +241,7 @@ function Note(props: NoteProps) {
                   {/* Align center */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("center")}
+                    onClick={() => handleAlignmentClick("center")}
                     className={
                       titleAlignment.includes("center") ? "center" : ""
                     }
@@ -319,7 +263,7 @@ function Note(props: NoteProps) {
                   {/* Align right */}
                   <button
                     type="button"
-                    onClick={() => handleTitleFormatClick("right")}
+                    onClick={() => handleAlignmentClick("right")}
                     className={titleAlignment.includes("right") ? "right" : ""}
                   >
                     <svg
@@ -348,11 +292,19 @@ function Note(props: NoteProps) {
                     type="text"
                     name="title"
                     placeholder="Title ..."
-                    className={`w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-2xl mt-2 font-bold placeholder-secondary ${
-                      titleFormat.includes("bold") ? "font-bold" : ""
+                    className={`w-full rounded-md bg-primary text-white focus:outline-none focus:bg-primary-dark p-4 text-xl mt-2 placeholder-secondary ${
+                      titleFormat.includes("bold") ? "font-medium" : ""
                     } ${titleFormat.includes("italic") ? "italic" : ""} ${
                       titleFormat.includes("underline") ? "underline" : ""
-                    } ${touched.title && titleFormat === "" ? "normal" : ""}`}
+                    }  ${
+                      titleAlignment === "left"
+                        ? "text-left"
+                        : titleAlignment === "center"
+                        ? "text-center"
+                        : titleAlignment === "right"
+                        ? "text-right"
+                        : ""
+                    }`}
                     onClick={() => setIsTitle(true)}
                   />
                 </div>
@@ -389,7 +341,7 @@ function Note(props: NoteProps) {
                 <Field type="hidden" name="note_widget_fk" />
               </div>
               <p className="flex justify-end text-xs text-secondary m-2">
-                Last edit by Cleo: March 25th 2023
+                Last edit: {formatDate(props.noteItem.updated_at)}
               </p>
             </div>
           </Form>
