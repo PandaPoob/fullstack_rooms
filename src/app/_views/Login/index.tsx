@@ -5,7 +5,11 @@ import Link from "next/link";
 function Login() {
   return (
     <main className="grid justify-center my-20">
-      <Link href="/" className="flex justify-center justify-self-center">
+      <Link
+        href="/"
+        className="flex justify-center justify-self-center"
+        aria-label="Home"
+      >
         <div className="relative min-h-[4rem] min-w-[3.5rem] md:min-h-[6.5rem] md:min-w-[5.25rem] flex items-center">
           <Image
             src={"/logo.svg"}
