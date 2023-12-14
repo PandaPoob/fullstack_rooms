@@ -37,3 +37,9 @@ interface ExpandedAttendeeUser {
   email: string;
   avatar?: Avatar | null;
 }
+
+export interface CalendarDay {
+  date: string | number;
+  day: string;
+  fullDate: string;
+}

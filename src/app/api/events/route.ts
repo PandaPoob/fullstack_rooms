@@ -25,22 +25,52 @@ export async function GET(req: NextRequest) {
     }
     const { user } = resp.data;
 
-    const userEvents = await db.user.findUnique({
-      // Optionally, you can specify query parameters here
+    const roomId = req.nextUrl.searchParams.get("roomId");
+    const activeDate = req.nextUrl.searchParams.get("date");
+
+    if (!roomId || !activeDate) {
+      return NextResponse.json({
+        msg: "Required params not valid",
+        status: 400,
+      });
+    }
+
+    //find room events and ensure that the user is in this room
+    const room = await db.room.findUnique({
       where: {
-        id: user!.id,
+        id: roomId,
+        participants: {
+          some: {
+            user_id: user!.id,
+          },
+        },
       },
       include: {
-        eventsAttending: true,
+        events: {
+          include: {
+            attendees: true,
+          },
+        },
       },
     });
+    if (!room) {
+      return NextResponse.json({
+        msg: "Room not found",
+        status: 404,
+      });
+    }
 
-    console.log(userEvents?.eventsAttending);
-    //return user's events
+    const filteredEvents = room.events.filter((event) => {
+      const eventDate = new Date(event.start_time);
+      const formattedEventDate = eventDate.toISOString().split("T")[0]; // Extracting YYYY-MM-DD from the date
+
+      return formattedEventDate === activeDate;
+    });
 
     return NextResponse.json(
       {
         msg: "Ok",
+        filteredEvents,
       },
       { status: 200 }
     );
