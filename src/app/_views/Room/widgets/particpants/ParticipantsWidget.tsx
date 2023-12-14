@@ -7,7 +7,7 @@ interface ParticipantsProps {
   room: ExtendedRoom;
 }
 
-function Participants(props: ParticipantsProps) {
+function ParticipantsWidget(props: ParticipantsProps) {
   const { participants } = props.room;
 
   return (
@@ -54,4 +54,4 @@ function Participants(props: ParticipantsProps) {
   );
 }
 
-export default Participants;
+export default ParticipantsWidget;

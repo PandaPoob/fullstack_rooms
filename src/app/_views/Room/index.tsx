@@ -1,17 +1,17 @@
 "use client";
-import { NoteItem, Room } from "@prisma/client";
-import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
+import { NoteItem, Room } from "@prisma/client";
+import { CalendarDay } from "@/app/_models/event";
+import { ExpandedTaskWidget } from "@/app/_models/tasks";
+import { useSession } from "next-auth/react";
+import DigitalClock from "@/app/_components/layout/DigitalClock";
 import NoteCard from "../Notes/NoteCard";
-import TaskWidget from "@/app/_views/Tasks/TaskWidget";
-import ParticipantsWidget from "@/app/_views/Particpants/ParticipantsWidget";
+import TaskWidget from "@/app/_views/Room/widgets/task/TaskWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
 import ServerModal from "@/app/_components/modals/ServerModal";
 import WeatherWidget from "./widgets/weather/WeatherWidget";
 import CalendarWidget from "./widgets/calendar/CalendarWidget";
-import { useSession } from "next-auth/react";
-import { ExpandedTaskWidget } from "@/app/_models/tasks";
-import { CalendarDay } from "@/app/_models/event";
+import ParticipantsWidget from "./widgets/particpants/ParticipantsWidget";
 
 interface Roomprops {
   room: Room;

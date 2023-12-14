@@ -1,12 +1,12 @@
 "use client";
 
-type TaskItemProps = {
+type TaskListItemProps = {
   id: string;
   text: string;
   checked: boolean;
 };
 
-function TaskListItem({ id, text, checked }: TaskItemProps) {
+function TaskListItem({ id, text, checked }: TaskListItemProps) {
   return (
     <li className="flex gap-3 items-center py-1">
       <input

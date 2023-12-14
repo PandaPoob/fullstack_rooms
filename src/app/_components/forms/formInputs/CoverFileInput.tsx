@@ -1,4 +1,4 @@
-import { Field, FieldInputProps, FormikErrors, FormikTouched } from "formik";
+import { Field, FieldInputProps, FormikErrors } from "formik";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ExtendedRoom, RoomEditForm } from "@/app/_models/room";
