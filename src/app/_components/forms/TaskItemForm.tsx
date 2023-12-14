@@ -193,7 +193,7 @@ function TaskItemForm({
           <button
             type="button"
             onClick={handleMoveDown}
-            className="m-1 text-gray-300  text-mini"
+            className="hidden sm:block m-1 text-gray-300  text-mini"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -210,7 +210,7 @@ function TaskItemForm({
           <button
             type="button"
             onClick={handleMoveUp}
-            className="m-1 text-gray-300 text-mini"
+            className="hidden sm:block m-1 text-gray-300 text-mini"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -270,7 +270,7 @@ function TaskItemForm({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="bg-btn-gradient pb-2 pt-3 px-7 rounded-full text-mini mx-2"
+                  className="bg-btn-gradient py-2 px-3 md:px-7 rounded-full text-mini mx-2"
                 >
                   {isSubmitting ? (
                     <span>Deleting...</span>

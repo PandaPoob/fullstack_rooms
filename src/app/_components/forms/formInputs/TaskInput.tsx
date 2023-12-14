@@ -20,7 +20,7 @@ function TaskInput({
         />
         <label
           htmlFor="text"
-          className="absolute left-0 top-1 text-grey text-sm transition-all px-5
+          className="absolute left-0 top-1 text-darkGrey text-sm transition-all px-5
           peer-placeholder-shown:text-base peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2
           peer-focus:top-1 peer-focus:text-sm peer-focus:translate-y-0 "
         >

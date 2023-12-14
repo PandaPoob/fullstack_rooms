@@ -23,7 +23,7 @@ export default function TaskModal({
     <>
       <div className="w-full mt-3 text-center sm:mt-0  sm:text-left gap-3">
         <div className="flex justify-between items-start">
-          <h2 className="text-5xl leading-6 my-10 font-medium" id="modal-title">
+          <h2 className="text-h2 leading-6 my-10 font-normal" id="modal-title">
             Tasks
           </h2>
           <div className="absolute top-0 right-0 mr-4">
