@@ -12,8 +12,8 @@ interface TaskWidgetProps {
 function TaskWidget(props: TaskWidgetProps) {
   return (
     <>
-      <h3>Tasks</h3>
-      <ul className="h-full flex max-h-screen overflow-y-auto flex-col">
+      <h3 className="text-h3">Tasks</h3>
+      <ul className="flex h-full max-h-[200px] overflow-y-auto flex-col">
         {props.tasks?.map((taskitem) => (
           <TaskListItem
             key={taskitem.id}

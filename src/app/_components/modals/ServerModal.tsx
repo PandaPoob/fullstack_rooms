@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Room, TaskItem } from "@prisma/client";
 
 interface ServerModalProps {
   children?: ReactNode;
@@ -10,13 +9,13 @@ export default function ServerModal({ children }: ServerModalProps) {
 
   return (
     <div
-      className="fixed z-20 inset-0 overflow-y-auto "
+      className="fixed z-20 inset-0 overflow-y-auto"
       id="error-modal"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+      <div className="flex bg-bg_black bg-opacity-60 items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
         {/* span for top spacing */}
         <span
           className="hidden sm:inline-block sm:align-middle sm:h-screen"

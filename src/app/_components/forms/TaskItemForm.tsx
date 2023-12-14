@@ -173,7 +173,7 @@ function TaskItemForm({
                     type="checkbox"
                     checked={isChecked}
                     onChange={toggleChecked}
-                    className=" cursor-pointer bg-primary peer h-5 w-5 focus:ring-2 focus:ring-white focus:ring-offset-0  border border-gray-500 rounded-full"
+                    className="m-1 cursor-pointer bg-primary peer h-5 w-5 focus:ring-1 focus:ring-white focus:ring-offset-0  border border-gray-500 rounded-full"
                   />
                   <label
                     htmlFor={id}
