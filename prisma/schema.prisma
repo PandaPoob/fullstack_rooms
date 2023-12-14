@@ -9,19 +9,19 @@ datasource db {
 }
 
 model Room {
-  id           String      @default(cuid()) @id
+  id           String        @id @default(cuid())
   title        String
-  created_at   DateTime    @default(now())
-  updated_at   DateTime    @default(now())
-  admin        User        @relation(fields: [admin_fk], references: [id]) // one to one
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @default(now())
   admin_fk     String
   location     Location?   @relation(fields: [location_id], references: [id])
   location_id  Float?
   participants Participant[]   // Define the many-to-many relationship
   cover        Cover?       @relation("RoomCover", fields: [cover_id], references: [id])
   cover_id     String?      @unique
-  note_widget  NoteWidget?
+  admin        User          @relation(fields: [admin_fk], references: [id])
   task_widget  TaskWidget?
+  note_widget  NoteWidget?
   events       Event[]
 }
 
@@ -124,9 +124,9 @@ model TaskItem {
   updated_at     DateTime   @default(now())
   order          Int
   checked        Boolean
-  created_by_fk  String
   updated_by     String?
   created_by     User       @relation(fields: [created_by_fk], references: [id])
+  created_by_fk  String
   task_widget    TaskWidget @relation(fields: [task_widget_fk], references: [id])
 }
 
@@ -140,13 +140,35 @@ model NoteWidget {
 }
 
 model NoteItem {
-  id                String         @default(cuid()) @id
-  title             String
-  text              String
-  created_at        DateTime        @default(now())
-  updated_at        DateTime        @default(now())     
-  note_widget       NoteWidget      @relation(fields: [note_widget_fk], references: [id])
-  note_widget_fk    String       
+  id                 String         @id @default(cuid())
+  title              String
+  text               String
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @default(now())
+  note_widget_fk     String
+  text_format_fk     String?
+  title_format_fk    String?
+  text_alignment_fk  String?
+  title_alignment_fk String?
+  note_widget        NoteWidget     @relation(fields: [note_widget_fk], references: [id])
+  text_alignment     NoteAlignment? @relation("Text", fields: [text_alignment_fk], references: [id])
+  text_format        NoteFormat?    @relation("Text", fields: [text_format_fk], references: [id])
+  title_alignment    NoteAlignment? @relation("Title", fields: [title_alignment_fk], references: [id])
+  title_format       NoteFormat?    @relation("Title", fields: [title_format_fk], references: [id])
+}
+
+model NoteFormat {
+  id           String     @id @default(cuid())
+  formatting   String
+  text_format  NoteItem[] @relation("Text")
+  title_format NoteItem[] @relation("Title")
+}
+
+model NoteAlignment {
+  id              String     @id @default(cuid())
+  alignment       String
+  text_alignment  NoteItem[] @relation("Text")
+  title_alignment NoteItem[] @relation("Title")
 }
 
 model Event {
