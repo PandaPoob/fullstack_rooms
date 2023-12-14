@@ -1,4 +1,3 @@
-import { EventCreateForm } from "@/app/_models/event";
 import { UserId } from "@/app/_models/user";
 import { notifyUsers } from "@/app/_utils/apis/notification";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";

@@ -231,7 +231,7 @@ export async function PUT(req: NextRequest) {
           { status: 200 }
         );
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     } else if (Object.keys(updates).length !== 0 && !avatar_img) {
       //update user only

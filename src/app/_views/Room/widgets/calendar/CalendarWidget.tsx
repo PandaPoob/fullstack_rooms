@@ -29,7 +29,7 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
       const data = await resp.json();
       setEvents(data.filteredEvents);
     } else {
-      console.log("ERROR");
+      console.log("Error occurred while fetching events");
     }
 
     return null;

@@ -54,7 +54,6 @@ function EditRoomForm(props: EditRoomFormProps) {
             if (resp.ok) {
               const data = await resp.json();
               if (data.updatedRoom) {
-                console.log(data);
                 props.setRoom(data.updatedRoom);
               }
             } else {
