@@ -46,7 +46,7 @@ function WeatherWidget({ roomData, weatherData }: WeatherWidgetProps) {
             <div className="p-5">
               <p className="text-h3 mb-2">No location added</p>
               <p className="text-base text-darkGrey">
-                Only owner of the room can update a room's location
+                {"Only owner of the room can update a room's location"}
               </p>
             </div>
           )}
