@@ -14,20 +14,26 @@ function DefaultHome() {
           />
         </div>
 
-        <div className="mt-10 lg:mt-0 grid gap-20">
-          <h2 className="text-h2 lg:text-h1 font-medium leading-[134%]">
-            Share and organize your daily life with Rooms
-          </h2>
-          <Link href="/signup" className="text-h3 lg:text-h2 font-medium">
-            <span className="font-medium">Sign up today</span>
-          </Link>
-
-          <span className="text-h3 leading-[134%] font-medium lg:text-h2">
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium">
-              Log in
-            </Link>
-          </span>
+        <div className="mt-10 lg:mt-0 grid items-center justify-center">
+          <div>
+            <h1 className="text-h2 lg:text-h1 font-medium">
+              Share and organize your daily life with Rooms
+            </h1>
+            <div className="flex gap-7 justify-center lg:justify-start items-center mt-16 flex-wrap">
+              <Link
+                href="/signup"
+                className="primary-btn text-2xl font-medium w-full max-w-xs hover:bg-opacity-0 hover:text-white"
+              >
+                Create an account
+              </Link>
+              <Link
+                href="/login"
+                className="secondary-btn text-2xl font-medium w-full max-w-xs hover:bg-white hover:text-bg_black"
+              >
+                Go to login
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </main>

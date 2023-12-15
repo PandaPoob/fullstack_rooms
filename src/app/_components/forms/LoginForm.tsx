@@ -40,7 +40,7 @@ function LoginForm() {
             setErrorMsg(loginData.error);
             actions.setSubmitting(false);
           } else {
-            router.push("/rooms")
+            router.push("/rooms");
             router.refresh();
           }
         }}
@@ -54,7 +54,7 @@ function LoginForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
+              className="secondary-btn min-w-[12rem] min-h-[3.13rem] mx-auto"
             >
               {isSubmitting ? (
                 <svg

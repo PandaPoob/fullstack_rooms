@@ -1,4 +1,4 @@
-import { Field, FieldInputProps, FormikErrors, FormikTouched } from "formik";
+import { Field, FieldInputProps, FormikErrors } from "formik";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ExtendedRoom, RoomEditForm } from "@/app/_models/room";
@@ -80,7 +80,7 @@ function CoverFileInput({
             alt={"cover image"}
             style={{ objectFit: "cover" }}
             fill={true}
-            sizes="(max-width: 768px) 100vw, (min-width: 769px) 33vw"
+            sizes="(max-width: 768px) 100vw, (min-width: 769px) 50vw"
             className="filter group-hover:brightness-90 transition"
           />
           <label

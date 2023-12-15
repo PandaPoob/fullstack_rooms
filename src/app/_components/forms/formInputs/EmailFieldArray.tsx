@@ -145,7 +145,7 @@ function EmailFieldArray({
               handleInviteUser();
             }}
           >
-            Invite user
+            Add user
           </button>
         </div>
         {error && (

@@ -82,7 +82,7 @@ function ParticipantCard(props: ParticipantCardProps) {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="bg-btn-gradient text-xs py-2 px-6 mx-auto rounded-3xl flex items-center justify-center"
+                      className="text-xs py-1.5 px-6 mx-auto rounded-full flex items-center justify-center border border-secondary transition hover:border-warning hover:bg-warning hover:bg-opacity-5 hover:text-warning"
                     >
                       {isSubmitting ? (
                         <svg

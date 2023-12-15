@@ -1,5 +1,4 @@
 import { Avatar, Event, EventAttendee } from "@prisma/client";
-import { ExtendedUser } from "./user";
 
 export interface FormattedCalenderEvent {
   id: string;

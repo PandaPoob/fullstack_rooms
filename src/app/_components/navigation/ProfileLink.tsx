@@ -4,10 +4,12 @@ import getStatusColor from "@/app/_utils/helpers/getStatus";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 function ProfileLink() {
   const { data: session } = useSession();
   const [statusColor, setStatusColor] = useState("");
+  const pathname = usePathname();
 
   useEffect(() => {
     if (session?.user.status) {
@@ -21,7 +23,9 @@ function ProfileLink() {
         <>
           <Link
             href={`/profile`}
-            className="relative flex rounded-full border border-primary overflow-hidden"
+            className={`relative flex rounded-full border overflow-hidden hover:border-grey transition duration-200 ease-in-out ${
+              pathname.includes("profile") ? "border-grey" : "border-primary"
+            }`}
           >
             <div className="relative min-w-[3rem] h-full min-h-[3rem] overflow-hidden">
               <Image

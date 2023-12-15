@@ -9,14 +9,19 @@ interface CalendarEventsProps {
 function CalendarEvents({ events }: CalendarEventsProps) {
   return (
     <div
-      className={`mt-4 lg:max-h-[23rem] ${
-        events.length > 4 && "overflow-y-scroll pb-5"
+      className={`lg:max-h-[23rem] ${
+        events.length > 4 && "md:overflow-y-scroll pb-5"
       }`}
     >
       {events.length === 0 ? (
-        <div>No events during this day</div>
+        <div>
+          <p className="text-h3 mb-2">No events yet</p>
+          <p className="text-base text-darkGrey">
+            There are no events on this day
+          </p>
+        </div>
       ) : (
-        <ul className="grid gap-2">
+        <ul className="grid gap-2 mt-4">
           {events.map((e) => (
             <li
               key={e.id}
@@ -37,7 +42,7 @@ function CalendarEvents({ events }: CalendarEventsProps) {
               </Link>
             </li>
           ))}
-          <span className="absolute h-10 bottom-0 left-0 w-full bg-bg-gradient"></span>
+          <span className="absolute h-10 bottom-0 left-0 w-full md:bg-bg-gradient"></span>
         </ul>
       )}
     </div>

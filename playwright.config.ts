@@ -25,7 +25,7 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "https://fullstack-rooms-git-develop-pandapoob.vercel.app/",
-    /*    baseURL:"http://localhost:3000/", */ //For locally testing tests
+    // baseURL: "http://localhost:3000/", //For locally testing tests
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
