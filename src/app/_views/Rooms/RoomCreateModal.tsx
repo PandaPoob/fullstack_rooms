@@ -1,7 +1,11 @@
 "use client";
 import CreateRoomForm from "@/app/_components/forms/CreateRoomForm";
-import Modal from "@/app/_components/modals/Modal";
 import { useState } from "react";
+import dynamic from "next/dynamic";
+
+const DynamicModal = dynamic(() => import("@/app/_components/modals/Modal"), {
+  ssr: false,
+});
 
 function RoomCreateModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,9 +16,9 @@ function RoomCreateModal() {
         <span>Create new room</span>
       </button>
       {isOpen && (
-        <Modal setIsOpen={setIsOpen}>
+        <DynamicModal setIsOpen={setIsOpen}>
           <CreateRoomForm />
-        </Modal>
+        </DynamicModal>
       )}
     </>
   );

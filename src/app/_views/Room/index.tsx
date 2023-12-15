@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { NoteItem, Room } from "@prisma/client";
+import { NoteItem, Room, TaskItem } from "@prisma/client";
 import { CalendarDay } from "@/app/_models/event";
 import { ExpandedTaskWidget } from "@/app/_models/tasks";
 import { useSession } from "next-auth/react";
@@ -12,6 +12,7 @@ import ServerModal from "@/app/_components/modals/ServerModal";
 import WeatherWidget from "./widgets/weather/WeatherWidget";
 import CalendarWidget from "./widgets/calendar/CalendarWidget";
 import ParticipantsWidget from "./widgets/particpants/ParticipantsWidget";
+import { useState } from "react";
 
 interface Roomprops {
   room: Room;
@@ -24,6 +25,9 @@ interface Roomprops {
 
 function RoomView(props: Roomprops) {
   const { data: session } = useSession();
+  const [taskList, setTaskList] = useState<TaskItem[]>(
+    props.taskWidget?.task_item || []
+  );
 
   return (
     <main className="max-w-[79rem] xxl:ml-20">
@@ -50,8 +54,8 @@ function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <section className="grid gap-3 lg:flex lg:gap-8">
-        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] ">
+      <section className="grid gap-10 lg:flex lg:gap-8">
+        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] row-start-2 lg:row-start-1">
           <WeatherWidget
             roomData={props.room}
             weatherData={props.weatherData}
@@ -112,14 +116,11 @@ function RoomView(props: Roomprops) {
               >
                 <>
                   <div
-                    className={`h-[12rem] p-5 group-hover:bg-opacity-10 group-hover:bg-grey 
-                    ${
-                      props.taskWidget?.task_item.length === 0 &&
-                      "flex items-center"
-                    }`}
+                    className={`h-[12rem] p-5 group-hover:bg-opacity-10 group-hover:bg-grey rounded-xl
+                    ${taskList.length === 0 && "flex items-center"}`}
                   >
                     <TaskWidget
-                      tasks={props.taskWidget?.task_item}
+                      tasks={taskList}
                       room={props.room}
                       taskWidgetId={props.taskWidget!.id}
                       modalParams={props.modalParams}
@@ -131,7 +132,8 @@ function RoomView(props: Roomprops) {
               {props.modalParams?.modal && (
                 <ServerModal>
                   <TaskModal
-                    tasks={props.taskWidget?.task_item}
+                    taskList={taskList}
+                    setTaskList={setTaskList}
                     room={props.room}
                     taskWidgetId={props.taskWidget!.id}
                   />

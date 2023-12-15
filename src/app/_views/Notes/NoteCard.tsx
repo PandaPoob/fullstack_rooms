@@ -26,7 +26,7 @@ function NoteCard(props: NoteCardProps) {
       </div>
       {props.isWidget && (
         <p className="text-xs text-right text-darkGrey mt-auto ml-auto">
-          All tasks
+          All notes
         </p>
       )}
     </article>

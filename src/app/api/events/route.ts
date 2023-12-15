@@ -243,7 +243,9 @@ export async function POST(req: NextRequest) {
           console.error("Error: Pusher notification trigger in create event");
         }
       } catch (error) {
-        console.error("Error occurred while creating notifications");
+        console.error(
+          "Error occurred while creating notifications in create event"
+        );
       }
     }
 
@@ -311,6 +313,26 @@ export async function PUT(req: NextRequest) {
       );
     }
 
+    const event = await db.event.findUnique({
+      where: {
+        id: body.eventId,
+      },
+      select: {
+        admin_fk: true,
+        title: true,
+        room_id: true,
+      },
+    });
+
+    if (!event) {
+      return NextResponse.json(
+        {
+          error: "Event not found",
+        },
+        { status: 404 }
+      );
+    }
+
     const updatedAttendee = await db.eventAttendee.update({
       where: {
         user_id_event_id: {
@@ -333,6 +355,42 @@ export async function PUT(req: NextRequest) {
         },
       },
     });
+
+    //when attendee updates reply send notification to admin
+    try {
+      const notification = await db.notification.create({
+        data: {
+          read: false,
+          user: { connect: { id: event.admin_fk } },
+          meta_user: { connect: { id: user!.id } },
+          meta_action: "updated",
+          meta_target: "event reply",
+          meta_target_name: event.title,
+          meta_link: `/rooms/${event.room_id}/events/${body.eventId}`,
+        },
+        select: {
+          user_id: true,
+        },
+      });
+      const notificationArray = [];
+      notificationArray.push(notification);
+
+      //Send out notifications
+      const notificationResult = await notifyUsers(
+        notificationArray as UserId[],
+        {
+          msg: "Someone replied to your event!",
+        }
+      );
+
+      if (!notificationResult.success) {
+        console.error("Error: Pusher notification trigger in create event");
+      }
+    } catch (error) {
+      console.error(
+        "Error occurred while creating notifications in update event reply"
+      );
+    }
 
     return NextResponse.json(
       {
@@ -377,6 +435,15 @@ export async function DELETE(req: NextRequest) {
       where: {
         id: body.eventId,
       },
+      include: {
+        attendees: {
+          where: {
+            user_id: {
+              not: user!.id,
+            },
+          },
+        },
+      },
     });
 
     if (!event) {
@@ -403,6 +470,54 @@ export async function DELETE(req: NextRequest) {
         id: event.id,
       },
     });
+
+    //notifcations
+    if (event.attendees.length !== 0) {
+      try {
+        const notifications = await Promise.all(
+          event.attendees.map(async (a) => {
+            try {
+              const notification = await db.notification.create({
+                data: {
+                  read: false,
+                  user: { connect: { id: a.user_id } },
+                  meta_user: { connect: { id: user!.id } },
+                  meta_action: "deleted",
+                  meta_target: "event",
+                  meta_target_name: event.title,
+                },
+                select: {
+                  user_id: true,
+                },
+              });
+              return notification;
+            } catch (error) {
+              console.error(
+                `Error occurred while creating notification for ${a}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+
+        const notificationResult = await notifyUsers(
+          notifications as UserId[],
+          {
+            msg: "New room created!",
+          }
+        );
+
+        if (!notificationResult.success) {
+          console.error("Error: Pusher notification trigger in create room");
+        }
+      } catch (error) {
+        console.error(
+          "Error occurred while creating notifications in create room"
+        );
+      }
+    }
+
     return NextResponse.json(
       {
         msg: "Event succesfully deleted",

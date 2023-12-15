@@ -75,14 +75,14 @@ function ParticipantCard(props: ParticipantCardProps) {
             >
               {({ isSubmitting }) => {
                 return (
-                  <Form className="grid gap-3 xxl:px-20">
+                  <Form className="grid gap-3">
                     <Field type="hidden" name="roomId" id="roomId" />
                     <Field type="hidden" name="userId" id="userId" />
 
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="text-xs py-1.5 px-6 mx-auto rounded-full flex items-center justify-center border border-secondary transition hover:border-warning hover:bg-warning hover:bg-opacity-5 hover:text-warning"
+                      className="text-xs py-1.5 px-6 rounded-full flex items-center justify-center border border-secondary transition hover:border-warning hover:bg-warning hover:bg-opacity-5 hover:text-warning min-w-[4.8rem]"
                     >
                       {isSubmitting ? (
                         <svg

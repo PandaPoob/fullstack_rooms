@@ -140,6 +140,7 @@ function Notes(props: NotesProps) {
               if (resp.ok) {
                 const data = await resp.json();
                 router.push(`/rooms/${props.roomId}/notes/${data.note.id}`);
+                router.refresh();
               } else {
                 const data = await resp.json();
                 actions.setSubmitting(false);

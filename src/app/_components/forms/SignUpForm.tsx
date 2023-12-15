@@ -11,7 +11,14 @@ import PasswordInput from "./formInputs/PasswordInput";
 import createuserschema from "@/app/_utils/validation/schemas/user-signup-schema";
 import ErrorToast from "../toasts/ErrorToast";
 import { useState } from "react";
-import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const DynamicSuccess = dynamic(
+  () => import("@/app/_views/SignUp/SignUpSuccess"),
+  {
+    ssr: false,
+  }
+);
 
 function SignUpForm() {
   const [errorMsg, setErrorMsg] = useState("");
@@ -23,22 +30,9 @@ function SignUpForm() {
 
   return (
     <>
-      <div className={`${success ? "flex" : "hidden"} flex-col max-w-lg`}>
-        <h3 className="text-h3 lg:text-h2 mb-5">Registration Successful!</h3>
-        <p>
-          Before you can log in, please verify your email by clicking the
-          verification link sent to your inbox. If you do not see the email,
-          please check your spam folder.
-        </p>
-        <span className="mt-3">
-          Already verified your email? Go to{" "}
-          <Link href="/login" className="font-medium">
-            Login
-          </Link>
-        </span>
-      </div>
-
-      <div className={`${success ? "hidden" : "block"}`}>
+      {success ? (
+        <DynamicSuccess />
+      ) : (
         <Formik
           initialValues={{
             first_name: "",
@@ -140,8 +134,9 @@ function SignUpForm() {
             </Form>
           )}
         </Formik>
-        <ErrorToast msg={errorMsg} onDismiss={clearError} />
-      </div>
+      )}
+
+      <ErrorToast msg={errorMsg} onDismiss={clearError} />
     </>
   );
 }

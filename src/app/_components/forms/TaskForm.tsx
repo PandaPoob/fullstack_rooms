@@ -12,8 +12,8 @@ import { useSession } from "next-auth/react";
 interface TaskWidgetProps {
   room: Room;
   taskWidgetId: string;
-  taskList: TaskItem[];
-  setTaskList: (tasks: TaskItem[]) => void;
+  taskList?: TaskItem[];
+  setTaskList: (taskList: TaskItem[]) => void;
 }
 
 function TaskForm({
@@ -59,8 +59,13 @@ function TaskForm({
             if (resp.ok) {
               setSuccess(true);
               const data = await resp.json();
-              const updatedTasks = [...taskList, data.createdTask];
-              setTaskList(updatedTasks);
+              if (taskList) {
+                const updatedTasks = [...taskList, data.createdTask];
+                setTaskList(updatedTasks);
+              } else {
+                const updatedTasks = [data.createdTask];
+                setTaskList(updatedTasks);
+              }
 
               actions.resetForm({
                 values: {
@@ -83,43 +88,43 @@ function TaskForm({
         }}
       >
         {({ isSubmitting, errors, touched }) => (
-          <Form className="sm:block md:flex gap-2">
+          <Form className="flex gap-2 w-full mt-3">
             <TaskInput error={errors.text} touched={touched.text} />
+
             <Field type="hidden" name="task_widget_fk" />
             <Field type="hidden" name="created_by_fk" />
             <Field type="hidden" name="roomId" />
-            <div className="w-full">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="bg-btn-gradient text-h5 px-10 mx-auto min-w-[10rem] w-full min-h-[3rem] rounded-3xl flex items-center justify-center"
-              >
-                {isSubmitting ? (
-                  <svg
-                    className="animate-spin h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                ) : (
-                  <span className="whitespace-nowrap">+ Add Task</span>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="bg-grey text-sm md:text-h5 min-h-[3rem] w-[30%]
+                rounded-r-lg flex items-center justify-center transition enabled:hover:bg-opacity-50"
+            >
+              {isSubmitting ? (
+                <svg
+                  className="animate-spin h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+              ) : (
+                <span>Add Task</span>
+              )}
+            </button>
           </Form>
         )}
       </Formik>

@@ -9,7 +9,7 @@ interface CalendarEventsProps {
 function CalendarEvents({ events }: CalendarEventsProps) {
   return (
     <div
-      className={`lg:max-h-[23rem] ${
+      className={`lg:max-h-[23rem] min-h-[5rem] ${
         events.length > 4 && "md:overflow-y-scroll pb-5"
       }`}
     >
@@ -21,7 +21,7 @@ function CalendarEvents({ events }: CalendarEventsProps) {
           </p>
         </div>
       ) : (
-        <ul className="grid gap-2 mt-4">
+        <ul className="grid gap-2">
           {events.map((e) => (
             <li
               key={e.id}
@@ -42,7 +42,7 @@ function CalendarEvents({ events }: CalendarEventsProps) {
               </Link>
             </li>
           ))}
-          <span className="absolute h-10 bottom-0 left-0 w-full md:bg-bg-gradient"></span>
+          <span className="absolute h-10 bottom-0 left-0 w-full lg:bg-bg-gradient"></span>
         </ul>
       )}
     </div>

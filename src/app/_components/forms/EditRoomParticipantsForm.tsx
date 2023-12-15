@@ -60,7 +60,7 @@ function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
       >
         {({ isSubmitting, errors, values, setFieldValue }) => {
           return (
-            <Form className="grid gap-3 xxl:px-20">
+            <Form className="grid gap-3">
               <EmailFieldArray
                 setFieldValue={setFieldValue}
                 emails={values.emails}
@@ -68,9 +68,7 @@ function EditRoomParticipantsForm(props: EditRoomParticipantsFormProps) {
                 isEditRoom
                 participants={props.participants}
               />
-
               <Field type="hidden" name="roomId" id="roomId" />
-
               <button
                 type="submit"
                 disabled={isSubmitting}
