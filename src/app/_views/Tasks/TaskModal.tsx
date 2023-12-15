@@ -21,7 +21,7 @@ export default function TaskModal({
 
   return (
     <>
-      <div className="w-full mt-3 text-center sm:mt-0  sm:text-left gap-3">
+      <div className="w-full mt-3 text-center sm:mt-0 sm:text-left gap-3">
         <div className="flex justify-between items-start">
           <h2 className="text-h2 leading-6 my-10 font-normal" id="modal-title">
             Tasks

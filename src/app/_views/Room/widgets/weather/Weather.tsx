@@ -10,7 +10,7 @@ interface WeatherProps {
 function Weather({ weatherData, locationData }: WeatherProps) {
   const [weather, setWeather] = useState(weatherData);
   return (
-    <div className="p-4 flex gap-6">
+    <div className="flex gap-6 p-5">
       <div className="whitespace-nowrap">
         <h2 className="text-base font-medium mb-1 ">{locationData.city}</h2>
         <h3 className="text-h2 mb-2">{Math.round(weather[0].main.temp)}°</h3>

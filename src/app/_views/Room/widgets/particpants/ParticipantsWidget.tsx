@@ -12,8 +12,10 @@ function ParticipantsWidget(props: ParticipantsProps) {
 
   return (
     <>
-      <h3 className="text-h3 font-medium">Participants</h3>
-      <p className="text-mini text-grey">{participants?.length} participants</p>
+      <h3 className="text-h3 font-medium mb-2">Participants</h3>
+      <p className="text-mini text-darkGrey">
+        {participants?.length} participants
+      </p>
       <div className="flex flex-wrap">
         {participants?.map((participant) => (
           <div
