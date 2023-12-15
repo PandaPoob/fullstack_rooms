@@ -23,7 +23,7 @@ function Modal(props: ModalProps) {
             <path
               d="M13 1L7 7M1 13L7 7M7 7L1 1M7 7L13 13"
               stroke="#8F8F8F"
-              stroke-width="1.5"
+              strokeWidth="1.5"
             />
           </svg>
         </button>

@@ -21,18 +21,33 @@ export default function TaskModal({
 
   return (
     <>
-      <div className="w-full mt-3 text-center sm:mt-0 sm:text-left gap-3">
+      <div className="w-full mt-3 sm:mt-0 sm:text-left gap-3">
         <div className="flex justify-between items-start">
-          <h2 className="text-h2 leading-6 my-10 font-normal" id="modal-title">
+          <h2
+            className="text-h2 leading-6 my-4 md:my-10 font-normal"
+            id="modal-title"
+          >
             Tasks
           </h2>
           <div className="absolute top-0 right-0 mr-4">
             <Link
               href={`/rooms/${room.id}/`}
               type="button"
-              className="w-full inline-flex justify-center px-4 py-2 text-base font-medium text-white hover:bg-blue-700  sm:ml-3 sm:w-auto sm:text-sm"
+              className="w-full grid transition hover:bg-white hover:bg-opacity-5 p-2 rounded-full"
             >
-              &#10005;
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 14 14"
+                fill="none"
+              >
+                <path
+                  d="M13 1L7 7M1 13L7 7M7 7L1 1M7 7L13 13"
+                  stroke="#8F8F8F"
+                  strokeWidth="1.5"
+                />
+              </svg>
             </Link>
           </div>
         </div>
@@ -57,7 +72,7 @@ export default function TaskModal({
         <hr className="border border-primary my-4 " />
       </div>
       <div className="h-full">
-        <ul className="max-h-[50%] md:max-h-[65%] h-full flex overflow-y-scroll	flex-col">
+        <ul className="max-h-[50%] md:max-h-[65%] h-full flex overflow-y-scroll	flex-col gap-4">
           {!showOnlyChecked
             ? taskList?.map((taskitem) => (
                 <TaskItemForm

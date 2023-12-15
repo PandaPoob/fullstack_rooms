@@ -50,8 +50,8 @@ function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <section className="grid gap-3 lg:flex lg:gap-8">
-        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] ">
+      <section className="grid gap-10 lg:flex lg:gap-8">
+        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] row-start-2 lg:row-start-1">
           <WeatherWidget
             roomData={props.room}
             weatherData={props.weatherData}
@@ -112,7 +112,7 @@ function RoomView(props: Roomprops) {
               >
                 <>
                   <div
-                    className={`h-[12rem] p-5 group-hover:bg-opacity-10 group-hover:bg-grey 
+                    className={`h-[12rem] p-5 group-hover:bg-opacity-10 group-hover:bg-grey rounded-xl
                     ${
                       props.taskWidget?.task_item.length === 0 &&
                       "flex items-center"
