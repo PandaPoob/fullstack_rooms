@@ -12,8 +12,8 @@ import { useSession } from "next-auth/react";
 interface TaskWidgetProps {
   room: Room;
   taskWidgetId: string;
-  taskList: TaskItem[];
-  setTaskList: (tasks: TaskItem[]) => void;
+  taskList?: TaskItem[];
+  setTaskList: (taskList: TaskItem[]) => void;
 }
 
 function TaskForm({
@@ -59,8 +59,13 @@ function TaskForm({
             if (resp.ok) {
               setSuccess(true);
               const data = await resp.json();
-              const updatedTasks = [...taskList, data.createdTask];
-              setTaskList(updatedTasks);
+              if (taskList) {
+                const updatedTasks = [...taskList, data.createdTask];
+                setTaskList(updatedTasks);
+              } else {
+                const updatedTasks = [data.createdTask];
+                setTaskList(updatedTasks);
+              }
 
               actions.resetForm({
                 values: {

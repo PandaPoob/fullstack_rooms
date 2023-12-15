@@ -6,18 +6,19 @@ import TaskItemForm from "@/app/_components/forms/TaskItemForm";
 import { useState } from "react";
 
 interface TaskWidgetProps {
-  tasks?: TaskItem[];
+  taskList?: TaskItem[];
   room: Room;
   taskWidgetId: string;
+  setTaskList: (taskList: TaskItem[]) => void;
 }
 
 export default function TaskModal({
-  tasks,
+  taskList,
   room,
   taskWidgetId,
+  setTaskList,
 }: TaskWidgetProps) {
   const [showOnlyChecked, setShowOnlyChecked] = useState(false);
-  const [taskList, setTaskList] = useState<TaskItem[]>(tasks || []);
 
   return (
     <>
@@ -72,37 +73,39 @@ export default function TaskModal({
         <hr className="border border-primary my-4 " />
       </div>
       <div className="h-full">
-        <ul className="max-h-[50%] md:max-h-[65%] h-full flex overflow-y-scroll	flex-col gap-4">
-          {!showOnlyChecked
-            ? taskList?.map((taskitem) => (
-                <TaskItemForm
-                  room={room}
-                  taskWidgetId={taskWidgetId}
-                  key={taskitem.id}
-                  id={taskitem.id}
-                  text={taskitem.text}
-                  checked={taskitem.checked}
-                  order={taskitem.order}
-                  taskList={taskList}
-                  setTaskList={setTaskList}
-                />
-              ))
-            : taskList
-                .filter((task) => task.checked)
-                .map((task) => (
+        {taskList && taskList?.length !== 0 && (
+          <ul className="max-h-[50%] md:max-h-[65%] h-full flex overflow-y-scroll	flex-col gap-4">
+            {!showOnlyChecked
+              ? taskList?.map((taskitem) => (
                   <TaskItemForm
                     room={room}
                     taskWidgetId={taskWidgetId}
-                    key={task.id}
-                    id={task.id}
-                    text={task.text}
-                    checked={task.checked}
-                    order={task.order}
+                    key={taskitem.id}
+                    id={taskitem.id}
+                    text={taskitem.text}
+                    checked={taskitem.checked}
+                    order={taskitem.order}
                     taskList={taskList}
                     setTaskList={setTaskList}
                   />
-                ))}
-        </ul>
+                ))
+              : taskList
+                  .filter((task) => task.checked)
+                  .map((task) => (
+                    <TaskItemForm
+                      room={room}
+                      taskWidgetId={taskWidgetId}
+                      key={task.id}
+                      id={task.id}
+                      text={task.text}
+                      checked={task.checked}
+                      order={task.order}
+                      taskList={taskList}
+                      setTaskList={setTaskList}
+                    />
+                  ))}
+          </ul>
+        )}
       </div>
     </>
   );
