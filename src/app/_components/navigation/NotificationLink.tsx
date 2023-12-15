@@ -4,10 +4,12 @@ import { useSession } from "next-auth/react";
 import { useQuery, useQueryClient } from "react-query";
 import Pusher from "pusher-js";
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 function useNotifications() {
   const { data: session } = useSession();
   const userId = session?.user.id as string;
+  const pathname = usePathname();
 
   return useQuery(["notifications", userId], async () => {
     if (!session) {
@@ -33,6 +35,7 @@ function NotificationLink() {
   const { data: session } = useSession();
   const { data, isLoading } = useNotifications();
   const queryClient = useQueryClient();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (session) {
@@ -63,7 +66,9 @@ function NotificationLink() {
     <li className="relative">
       <Link
         href="/notifications"
-        className="py-3 px-[0.88rem]  rounded-full border border-primary w-full flex justify-center items-center"
+        className={`py-3 px-[0.88rem] rounded-full border w-full flex justify-center items-center hover:border-grey transition duration-200 ease-in-out ${
+          pathname.includes("notifications") ? "border-grey" : "border-primary"
+        }`}
       >
         <svg
           width="26"
