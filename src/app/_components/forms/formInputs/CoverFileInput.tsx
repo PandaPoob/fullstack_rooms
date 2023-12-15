@@ -80,7 +80,7 @@ function CoverFileInput({
             alt={"cover image"}
             style={{ objectFit: "cover" }}
             fill={true}
-            sizes="(max-width: 768px) 100vw, (min-width: 769px) 33vw"
+            sizes="(max-width: 768px) 100vw, (min-width: 769px) 50vw"
             className="filter group-hover:brightness-90 transition"
           />
           <label

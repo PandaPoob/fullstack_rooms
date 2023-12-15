@@ -88,6 +88,7 @@ function AvatarFileInput({
             alt={"avatar picture"}
             style={{ objectFit: "cover" }}
             fill={true}
+            sizes="(max-width: 768px) 100vw, (min-width: 769px) 33vw"
             className="filter group-hover:brightness-90 transition"
           />
           <label
