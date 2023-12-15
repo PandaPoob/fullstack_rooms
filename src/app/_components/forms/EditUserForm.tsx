@@ -112,7 +112,7 @@ function EditUserForm(props: EditUserFormProps) {
               <button
                 type="submit"
                 disabled={isSubmitting || !isValid}
-                className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem]"
+                className="secondary-btn min-w-[12rem] min-h-[3.13rem] mt-6 mx-auto"
               >
                 {isSubmitting ? (
                   <svg

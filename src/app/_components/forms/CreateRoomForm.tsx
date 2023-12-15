@@ -63,11 +63,11 @@ function CreateRoomForm() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-btn-gradient text-h5 py-4 mx-auto min-w-[14rem] rounded-3xl flex items-center justify-center min-h-[3.13rem] mt-6"
+              className="primary-btn min-w-[12rem] min-h-[3.13rem] mt-6 mx-auto"
             >
               {isSubmitting ? (
                 <svg
-                  className="animate-spin h-4 w-4 text-white"
+                  className="animate-spin h-4 w-4 text-primary"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

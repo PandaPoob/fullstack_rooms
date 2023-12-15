@@ -84,7 +84,7 @@ function LocationForm({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-white text-h5 text-grey py-2 px-3 rounded-full flex items-center border border-white justify-center hover:bg-opacity-0 hover:text-white transition min-w-[9.7rem] min-h-[2.3rem]"
+                className="bg-white text-h5 text-bg_black py-2 px-3 rounded-full flex items-center border border-white justify-center hover:bg-opacity-0 hover:text-white transition min-w-[9.7rem] min-h-[2.3rem]"
               >
                 {isSubmitting ? (
                   <svg
