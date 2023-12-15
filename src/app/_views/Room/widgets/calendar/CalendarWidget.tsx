@@ -47,7 +47,7 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
   };
 
   return (
-    <div className="w-full md:w-1/2 max-w-[39.5rem] relative ">
+    <div className="w-full lg:w-1/2 max-w-[39.5rem] relative ">
       <CalendarDays
         calendarDayData={calendarDayData}
         onCallBack={onCallBack}

@@ -27,11 +27,11 @@ function RoomView(props: Roomprops) {
 
   return (
     <main className="max-w-[79rem] xxl:ml-20">
-      <div className="flex justify-between">
+      <div className="flex md:justify-between justify-end mb-2 md:mb-0">
         <DigitalClock title={`Welcome, ${props.room.title}`} />
         {props.room.admin_fk === session?.user.id && (
           <Link
-            className="self-start mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
+            className="self-start md:mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
             href={`/rooms/${props.room.id}/settings`}
           >
             <svg
@@ -50,14 +50,14 @@ function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <section className="lg:flex lg:gap-8">
-        <div className="grid gap-3 w-full md:w-1/2 max-w-[39.5rem] ">
+      <section className="grid gap-3 lg:flex lg:gap-8">
+        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] ">
           <WeatherWidget
             roomData={props.room}
             weatherData={props.weatherData}
           />
 
-          <div className="md:flex md:gap-3">
+          <div className="grid md:flex gap-3">
             <div className="md:w-1/2">
               <Link
                 href={`/rooms/${props.room.id}/notes`}
