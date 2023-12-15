@@ -36,7 +36,7 @@ function DeleteEventForm({
   return (
     <button
       onClick={() => handleOnChange()}
-      className="text-sm text-warning text-opacity-80 transition px-2 py-1 rounded-md
+      className="text-sm text-warning text-opacity-80 transition px-3 py-1 rounded-full
     hover:bg-warning hover:bg-opacity-10 hover:border-warning hover:text-opacity-100"
     >
       Delete event

@@ -10,7 +10,7 @@ interface WeatherProps {
 function Weather({ weatherData, locationData }: WeatherProps) {
   const [weather, setWeather] = useState(weatherData);
   return (
-    <div className="p-4 flex gap-6">
+    <div className="flex gap-6 p-5 flex-wrap md:flex-nowrap">
       <div className="whitespace-nowrap">
         <h2 className="text-base font-medium mb-1 ">{locationData.city}</h2>
         <h3 className="text-h2 mb-2">{Math.round(weather[0].main.temp)}°</h3>
@@ -21,7 +21,7 @@ function Weather({ weatherData, locationData }: WeatherProps) {
           Feels like: {Math.round(weather[0].main.feels_like)}
         </p>
       </div>
-      <ul className="flex justify-evenly w-full border-l border-grey border-opacity-30">
+      <ul className="grid grid-cols-6 pt-3 md:pt-0 md:flex md:justify-evenly w-full border-t md:border-t-0 md:border-l border-grey border-opacity-30">
         {weather.map((w: any, index: number) => (
           <WeatherCard key={w.dt} w={w} index={index} />
         ))}

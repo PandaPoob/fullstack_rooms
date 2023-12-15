@@ -47,7 +47,7 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
   };
 
   return (
-    <div className="w-full max-w-[39.5rem] relative ">
+    <div className="w-full lg:w-1/2 max-w-[39.5rem] relative ">
       <CalendarDays
         calendarDayData={calendarDayData}
         onCallBack={onCallBack}
@@ -56,7 +56,7 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
       <div className="flex mt-2">
         <Link
           href={`/rooms/${roomId}/events`}
-          className="text-xs text-right ml-auto"
+          className="text-xs text-right ml-auto text-darkGrey transition hover:text-white"
         >
           All events
         </Link>

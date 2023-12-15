@@ -14,8 +14,8 @@ function FirstNameInput({
           type="first_name"
           name="first_name"
           id="first_name"
-          className={`bg-primary text-white h-14 peer placeholder:text-primary focus:outline-none focus:border-secondary focus:border px-5 pt-3 rounded-lg 
-          peer-visible:bg-white ${error && touched && "border border-warning"}`}
+          className={`bg-primary text-white h-14 peer border border-primary placeholder:text-primary focus:outline-none focus:border-secondary focus:border px-5 pt-3 rounded-lg 
+          peer-visible:bg-white ${error && touched && "border-warning"}`}
           placeholder="First name"
         />
         <label

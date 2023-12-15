@@ -16,26 +16,24 @@ export const dateFormat = /^\d{4}-\d{2}-\d{2}$/; //YYYY-MM-DD
 //AGE//
 export const minAge = 13;
 
-//TASK TEXT//
+//TASK//
 export const minText = 1;
-export const maxText = 20;
+export const maxText = 50;
 
-// ---------- Notes
-
-// TITLE
+//NOTES//
 export const minTitleNoteLen = 2;
 export const maxTitleNoteLen = 50;
 
 export const minTextNoteLen = 2;
-export const maxTextNoteLen = 50;
+export const maxTextNoteLen = 250;
 //FILE//
 export const maxFileSize = 500000;
 export const acceptedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-//ROOM
+//ROOM//
 export const minRoomTitleLen = 2;
 export const maxRoomTitleLen = 50;
 export const maxParticipants = 12;
 
-//EVENT
+//EVENT//
 export const maxdescriptionLen = 155;

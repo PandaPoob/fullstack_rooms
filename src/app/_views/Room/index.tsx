@@ -1,17 +1,17 @@
 "use client";
-import { NoteItem, Room } from "@prisma/client";
-import DigitalClock from "@/app/_components/layout/DigitalClock";
 import Link from "next/link";
+import { NoteItem, Room } from "@prisma/client";
+import { CalendarDay } from "@/app/_models/event";
+import { ExpandedTaskWidget } from "@/app/_models/tasks";
+import { useSession } from "next-auth/react";
+import DigitalClock from "@/app/_components/layout/DigitalClock";
 import NoteCard from "../Notes/NoteCard";
-import TaskWidget from "@/app/_views/Tasks/TaskWidget";
-import ParticipantsWidget from "@/app/_views/Particpants/ParticipantsWidget";
+import TaskWidget from "@/app/_views/Room/widgets/task/TaskWidget";
 import TaskModal from "@/app/_views/Tasks/TaskModal";
 import ServerModal from "@/app/_components/modals/ServerModal";
 import WeatherWidget from "./widgets/weather/WeatherWidget";
 import CalendarWidget from "./widgets/calendar/CalendarWidget";
-import { useSession } from "next-auth/react";
-import { ExpandedTaskWidget } from "@/app/_models/tasks";
-import { CalendarDay } from "@/app/_models/event";
+import ParticipantsWidget from "./widgets/particpants/ParticipantsWidget";
 
 interface Roomprops {
   room: Room;
@@ -26,12 +26,12 @@ function RoomView(props: Roomprops) {
   const { data: session } = useSession();
 
   return (
-    <main>
-      <div className="flex justify-between">
+    <main className="max-w-[79rem] xxl:ml-20">
+      <div className="flex md:justify-between justify-end mb-2 md:mb-0">
         <DigitalClock title={`Welcome, ${props.room.title}`} />
         {props.room.admin_fk === session?.user.id && (
           <Link
-            className="self-start mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
+            className="self-start md:mt-7 hover:bg-white hover:bg-opacity-10 p-2 rounded-md"
             href={`/rooms/${props.room.id}/settings`}
           >
             <svg
@@ -50,32 +50,74 @@ function RoomView(props: Roomprops) {
           </Link>
         )}
       </div>
-      <section className="lg:grid lg:grid-cols-2 lg:gap-3">
-        <div className="grid gap-3">
+      <section className="grid gap-3 lg:flex lg:gap-8">
+        <div className="grid gap-3 w-full lg:w-1/2 max-w-[39.5rem] ">
           <WeatherWidget
             roomData={props.room}
             weatherData={props.weatherData}
           />
 
-          <div className="md:flex md:gap-3">
+          <div className="grid md:flex gap-3">
             <div className="md:w-1/2">
-              <Link href={`/rooms/${props.room.id}/notes`}>
+              <Link
+                href={`/rooms/${props.room.id}/notes`}
+                className="grid bg-primary rounded-xl group h-[12rem]"
+              >
                 {props.noteItem ? (
                   <NoteCard
                     title={props.noteItem.title}
                     text={props.noteItem.text}
                     date={props.noteItem.created_at}
+                    isWidget
                   />
                 ) : (
-                  <p className="">No notes yet</p>
+                  <div className="p-5 group-hover:bg-opacity-10 group-hover:bg-grey flex flex-col justify-center">
+                    <div className="h-full flex flex-col justify-center">
+                      <p className="text-h3 mb-2">No notes yet</p>
+                      <p className="text-base text-darkGrey mb-2">
+                        There are not any notes yet
+                      </p>
+                    </div>
+                    <svg
+                      className="ml-auto mt-auto"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="19"
+                      viewBox="0 0 20 19"
+                      fill="none"
+                    >
+                      <path
+                        d="M18.1 6.7502V18.0002H1V2.7002H12.4"
+                        stroke="#E4E4E4"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M9.64645 9.54802L9.29289 9.90158L10 10.6087L10.3536 10.2551L9.64645 9.54802ZM16.6536 3.95512C16.8488 3.75985 16.8488 3.44327 16.6536 3.24801C16.4583 3.05275 16.1417 3.05275 15.9465 3.24801L16.6536 3.95512ZM10.3536 10.2551L16.6536 3.95512L15.9465 3.24801L9.64645 9.54802L10.3536 10.2551Z"
+                        fill="#E4E4E4"
+                      />
+                      <path
+                        d="M16.8464 2.34684L16.4928 2.70039L17.2 3.4075L17.5535 3.05395L16.8464 2.34684ZM19.3535 1.25394C19.5488 1.05868 19.5488 0.742099 19.3535 0.546837C19.1582 0.351575 18.8417 0.351575 18.6464 0.546837L19.3535 1.25394ZM17.5535 3.05395L19.3535 1.25394L18.6464 0.546837L16.8464 2.34684L17.5535 3.05395Z"
+                        fill="#E4E4E4"
+                      />
+                    </svg>
+                  </div>
                 )}
               </Link>
             </div>
 
             <div className="md:w-1/2">
-              <Link href={`/rooms/${props.room.id}/?modal=true`}>
+              <Link
+                href={`/rooms/${props.room.id}/?modal=true`}
+                className="bg-primary rounded-xl grid group"
+              >
                 <>
-                  <div className="bg-primary rounded-xl p-4 h-full max-h-[250px] flex-row">
+                  <div
+                    className={`h-[12rem] p-5 group-hover:bg-opacity-10 group-hover:bg-grey 
+                    ${
+                      props.taskWidget?.task_item.length === 0 &&
+                      "flex items-center"
+                    }`}
+                  >
                     <TaskWidget
                       tasks={props.taskWidget?.task_item}
                       room={props.room}
@@ -97,7 +139,7 @@ function RoomView(props: Roomprops) {
               )}
             </div>
           </div>
-          <div className="w-full p-4 bg-primary rounded-xl">
+          <div className="w-full p-5 bg-primary rounded-xl">
             <ParticipantsWidget room={props.room} />
           </div>
         </div>

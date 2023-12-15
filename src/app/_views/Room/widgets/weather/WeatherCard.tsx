@@ -9,7 +9,7 @@ function WeatherCard({ w, index }: any) {
   }
 
   return (
-    <li className="grid justify-center">
+    <li className="grid justify-start md:justify-center">
       <span className="flex justify-center items-center text-sm">
         {index === 0 ? "Now" : formatHour(w.dt_txt)}
       </span>

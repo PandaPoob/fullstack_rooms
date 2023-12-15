@@ -12,7 +12,7 @@ function CalendarDays({
   activeDate,
 }: CalendarDaysProps) {
   return (
-    <ul className="grid grid-cols-7 xxl:flex gap-3">
+    <ul className="grid grid-cols-7 xxl:flex gap-1 md:gap-3">
       {calendarDayData.map((d, index) => (
         <li key={d.fullDate} className={`rounded-md w-full`}>
           <button
@@ -24,7 +24,9 @@ function CalendarDays({
             }`}
           >
             <span className="font-medium text-h4">{d.date}</span>
-            <span className="text-base">{index === 0 ? "Today" : d.day}</span>
+            <span className="text-sm md:text-base">
+              {index === 0 ? "Today" : d.day}
+            </span>
           </button>
         </li>
       ))}
