@@ -150,7 +150,7 @@ function CreateEventForm({
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="primary-btn min-w-[12rem] min-h-[3.13rem] mt-6 mx-auto"
+                className="primary-btn min-w-[12rem] min-h-[3.13rem] mt-6 md:mt-2 mx-auto"
               >
                 {isSubmitting ? (
                   <svg

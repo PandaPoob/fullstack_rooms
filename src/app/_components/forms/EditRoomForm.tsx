@@ -92,7 +92,7 @@ function EditRoomForm(props: EditRoomFormProps) {
               <button
                 type="submit"
                 disabled={isSubmitting || !isValid}
-                className="secondary-btn min-w-[12rem] min-h-[3.13rem] mt-6 mx-auto"
+                className="secondary-btn min-w-[12rem] min-h-[3.13rem] mx-auto"
               >
                 {isSubmitting ? (
                   <svg
