@@ -177,40 +177,49 @@ export async function POST(req: NextRequest) {
       },
     });
     if (newRoom.participants.length !== 0) {
-      const notifications = await Promise.all(
-        newRoom.participants.map(async (p) => {
-          try {
-            const notification = await db.notification.create({
-              data: {
-                read: false,
-                user: { connect: { id: p.user_id } },
-                meta_user: { connect: { id: user!.id } },
-                meta_action: "created",
-                meta_target: "room",
-                meta_target_name: newRoom.title,
-                meta_link: `/rooms/${newRoom.id}`,
-              },
-              select: {
-                user_id: true,
-              },
-            });
-            return notification;
-          } catch (error) {
-            console.error(
-              `Error occurred while creating notification for ${p}:`,
-              error
-            );
-            return null;
+      try {
+        const notifications = await Promise.all(
+          newRoom.participants.map(async (p) => {
+            try {
+              const notification = await db.notification.create({
+                data: {
+                  read: false,
+                  user: { connect: { id: p.user_id } },
+                  meta_user: { connect: { id: user!.id } },
+                  meta_action: "created",
+                  meta_target: "room",
+                  meta_target_name: newRoom.title,
+                  meta_link: `/rooms/${newRoom.id}`,
+                },
+                select: {
+                  user_id: true,
+                },
+              });
+              return notification;
+            } catch (error) {
+              console.error(
+                `Error occurred while creating notification for ${p}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+
+        const notificationResult = await notifyUsers(
+          notifications as UserId[],
+          {
+            msg: "New room created!",
           }
-        })
-      );
+        );
 
-      const notificationResult = await notifyUsers(notifications as UserId[], {
-        msg: "New room created!",
-      });
-
-      if (!notificationResult.success) {
-        console.error("Error: Pusher notification trigger in create room");
+        if (!notificationResult.success) {
+          console.error("Error: Pusher notification trigger in create room");
+        }
+      } catch (error) {
+        console.error(
+          "Error occurred while creating notifications in create room"
+        );
       }
     }
 

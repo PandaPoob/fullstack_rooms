@@ -44,7 +44,7 @@ async function getData(
       },
     });
 
-    if (!room || !room.events) {
+    if (!room || room.events.length === 0) {
       redirect("/error");
     }
 

@@ -99,40 +99,49 @@ export async function POST(req: NextRequest) {
 
     // Create notifications
     if (otherParticipations.length !== 0) {
-      const notifications = await Promise.all(
-        otherParticipations.map(async (p) => {
-          try {
-            const notification = await db.notification.create({
-              data: {
-                read: false,
-                user: { connect: { id: p.user_id } },
-                meta_user: { connect: { id: user!.id } },
-                meta_action: "created",
-                meta_target: "task",
-                meta_target_name: createdTask.text,
-                meta_link: `/rooms/${room.id}/?modal=true`,
-              },
-              select: {
-                user_id: true,
-              },
-            });
-            return notification;
-          } catch (error) {
-            console.error(
-              `Error occurred while creating notification for ${p}:`,
-              error
-            );
-            return null;
+      try {
+        const notifications = await Promise.all(
+          otherParticipations.map(async (p) => {
+            try {
+              const notification = await db.notification.create({
+                data: {
+                  read: false,
+                  user: { connect: { id: p.user_id } },
+                  meta_user: { connect: { id: user!.id } },
+                  meta_action: "created",
+                  meta_target: "task",
+                  meta_target_name: createdTask.text,
+                  meta_link: `/rooms/${room.id}/?modal=true`,
+                },
+                select: {
+                  user_id: true,
+                },
+              });
+              return notification;
+            } catch (error) {
+              console.error(
+                `Error occurred while creating notification for ${p}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+
+        const notificationResult = await notifyUsers(
+          notifications as UserId[],
+          {
+            msg: "Created a task!",
           }
-        })
-      );
+        );
 
-      const notificationResult = await notifyUsers(notifications as UserId[], {
-        msg: "Created a task!",
-      });
-
-      if (!notificationResult.success) {
-        console.error("Error: Pusher notification trigger for task actions");
+        if (!notificationResult.success) {
+          console.error("Error: Pusher notification trigger for task actions");
+        }
+      } catch (error) {
+        console.error(
+          "Error occurred while creating notifications in create task"
+        );
       }
     }
 
@@ -283,43 +292,51 @@ export async function PUT(req: NextRequest) {
 
       // Create notifications
       if (otherParticipations.length !== 0) {
-        const notifications = await Promise.all(
-          otherParticipations.map(async (p) => {
-            try {
-              const notification = await db.notification.create({
-                data: {
-                  read: false,
-                  user: { connect: { id: p.user_id } },
-                  meta_user: { connect: { id: user!.id } },
-                  meta_action: "edited",
-                  meta_target: "task",
-                  meta_target_name: updatedTask.text,
-                  meta_link: `/rooms/${room.id}/?modal=true`,
-                },
-                select: {
-                  user_id: true,
-                },
-              });
-              return notification;
-            } catch (error) {
-              console.error(
-                `Error occurred while editing a notification for ${p}:`,
-                error
-              );
-              return null;
+        try {
+          const notifications = await Promise.all(
+            otherParticipations.map(async (p) => {
+              try {
+                const notification = await db.notification.create({
+                  data: {
+                    read: false,
+                    user: { connect: { id: p.user_id } },
+                    meta_user: { connect: { id: user!.id } },
+                    meta_action: "edited",
+                    meta_target: "task",
+                    meta_target_name: updatedTask.text,
+                    meta_link: `/rooms/${room.id}/?modal=true`,
+                  },
+                  select: {
+                    user_id: true,
+                  },
+                });
+                return notification;
+              } catch (error) {
+                console.error(
+                  `Error occurred while editing a notification for ${p}:`,
+                  error
+                );
+                return null;
+              }
+            })
+          );
+
+          const notificationResult = await notifyUsers(
+            notifications as UserId[],
+            {
+              msg: "Added to room!",
             }
-          })
-        );
+          );
 
-        const notificationResult = await notifyUsers(
-          notifications as UserId[],
-          {
-            msg: "Added to room!",
+          if (!notificationResult.success) {
+            console.error(
+              "Error: Pusher notification trigger for task actions"
+            );
           }
-        );
-
-        if (!notificationResult.success) {
-          console.error("Error: Pusher notification trigger for task actions");
+        } catch (error) {
+          console.error(
+            "Error occurred while creating notifications in update task"
+          );
         }
       }
 
@@ -460,40 +477,48 @@ export async function DELETE(req: NextRequest) {
 
     // Create notifications
     if (otherParticipations.length !== 0) {
-      const notifications = await Promise.all(
-        otherParticipations.map(async (p) => {
-          try {
-            const notification = await db.notification.create({
-              data: {
-                read: false,
-                user: { connect: { id: p.user_id } },
-                meta_user: { connect: { id: user!.id } },
-                meta_action: "deleted",
-                meta_target: "task",
-                meta_target_name: deletedTask.text,
-                meta_link: `/rooms/${room.id}/?modal=true`,
-              },
-              select: {
-                user_id: true,
-              },
-            });
-            return notification;
-          } catch (error) {
-            console.error(
-              `Error occurred while creating notification for ${p}:`,
-              error
-            );
-            return null;
+      try {
+        const notifications = await Promise.all(
+          otherParticipations.map(async (p) => {
+            try {
+              const notification = await db.notification.create({
+                data: {
+                  read: false,
+                  user: { connect: { id: p.user_id } },
+                  meta_user: { connect: { id: user!.id } },
+                  meta_action: "deleted",
+                  meta_target: "task",
+                  meta_target_name: deletedTask.text,
+                  meta_link: `/rooms/${room.id}/?modal=true`,
+                },
+                select: {
+                  user_id: true,
+                },
+              });
+              return notification;
+            } catch (error) {
+              console.error(
+                `Error occurred while creating notification for ${p}:`,
+                error
+              );
+              return null;
+            }
+          })
+        );
+        const notificationResult = await notifyUsers(
+          notifications as UserId[],
+          {
+            msg: "Deleted a task!",
           }
-        })
-      );
+        );
 
-      const notificationResult = await notifyUsers(notifications as UserId[], {
-        msg: "Deleted a task!",
-      });
-
-      if (!notificationResult.success) {
-        console.error("Error: Pusher notification trigger for task actions");
+        if (!notificationResult.success) {
+          console.error("Error: Pusher notification trigger for task actions");
+        }
+      } catch (error) {
+        console.error(
+          "Error occurred while creating notifications in delete task"
+        );
       }
     }
 
