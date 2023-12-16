@@ -15,7 +15,7 @@ test("checks the navigation flow of a user that is not logged in", async ({
   //We expect to be routed to signup
   await expect(page).toHaveURL("/signup/");
   //Signup should have h1
-  await expect(page.locator("h1")).toContainText("Create an account");
+  await expect(page.locator("h1")).toContainText("Create your account");
 
   //We route back to home
   await page.getByRole("link").click();
