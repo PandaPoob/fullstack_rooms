@@ -75,7 +75,7 @@ function SearchCitiesForm({
                 <button
                   type="submit"
                   disabled={isSubmitting || !isValid}
-                  className="bg-grey text-h5 py-4 mx-auto min-w-[6rem] md:min-w-[10rem] rounded-r-lg flex items-center justify-center min-h-[3.13rem] transition hover:bg-opacity-50"
+                  className="bg-grey text-h5 py-4 mx-auto min-w-[6rem] md:min-w-[10rem] rounded-r-lg flex items-center justify-center min-h-[3.13rem] transition enabled:hover:bg-opacity-50"
                 >
                   {isSubmitting ? (
                     <svg

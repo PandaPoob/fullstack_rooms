@@ -100,40 +100,46 @@ export async function POST(req: NextRequest) {
     );
 
     //Create notifications
-    const notifications = await Promise.all(
-      newParticipants.map(async (p) => {
-        try {
-          const notification = await db.notification.create({
-            data: {
-              read: false,
-              user: { connect: { id: p.user_id } },
-              meta_user: { connect: { id: user!.id } },
-              meta_action: "invited",
-              meta_target: "room",
-              meta_target_name: room.title,
-              meta_link: `/rooms/${room.id}`,
-            },
-            select: {
-              user_id: true,
-            },
-          });
-          return notification;
-        } catch (error) {
-          console.error(
-            `Error occurred while creating notification for ${p}:`,
-            error
-          );
-          return null;
-        }
-      })
-    );
+    try {
+      const notifications = await Promise.all(
+        newParticipants.map(async (p) => {
+          try {
+            const notification = await db.notification.create({
+              data: {
+                read: false,
+                user: { connect: { id: p.user_id } },
+                meta_user: { connect: { id: user!.id } },
+                meta_action: "invited",
+                meta_target: "room",
+                meta_target_name: room.title,
+                meta_link: `/rooms/${room.id}`,
+              },
+              select: {
+                user_id: true,
+              },
+            });
+            return notification;
+          } catch (error) {
+            console.error(
+              `Error occurred while creating notification for ${p}:`,
+              error
+            );
+            return null;
+          }
+        })
+      );
 
-    const notificationResult = await notifyUsers(notifications as UserId[], {
-      msg: "Added to room!",
-    });
+      const notificationResult = await notifyUsers(notifications as UserId[], {
+        msg: "Added to room!",
+      });
 
-    if (!notificationResult.success) {
-      console.error("Error: Pusher notification trigger in invite to room");
+      if (!notificationResult.success) {
+        console.error("Error: Pusher notification trigger in invite to room");
+      }
+    } catch (error) {
+      console.error(
+        "Error occurred while creating notifications in create participants"
+      );
     }
 
     return NextResponse.json(
@@ -232,35 +238,37 @@ export async function DELETE(req: NextRequest) {
         id: existingParticipant.id,
       },
     });
+    try {
+      const notification = await db.notification.create({
+        data: {
+          read: false,
+          user: { connect: { id: deletedParticipant.user_id } },
+          meta_user: { connect: { id: user!.id } },
+          meta_action: "removed",
+          meta_target: "room",
+          meta_target_name: room.title,
+        },
+        select: {
+          user_id: true,
+        },
+      });
+      const notificationArray = [];
+      notificationArray.push(notification);
+      const notificationResult = await notifyUsers(
+        notificationArray as UserId[],
+        {
+          msg: "Removed from room!",
+        }
+      );
 
-    const notification = await db.notification.create({
-      data: {
-        read: false,
-        user: { connect: { id: deletedParticipant.user_id } },
-        meta_user: { connect: { id: user!.id } },
-        meta_action: "removed",
-        meta_target: "room",
-        meta_target_name: room.title,
-      },
-      select: {
-        user_id: true,
-      },
-    });
-
-    const notificationArray = [];
-    notificationArray.push(notification);
-
-    const notificationResult = await notifyUsers(
-      notificationArray as UserId[],
-      {
-        msg: "Removed from room!",
+      if (!notificationResult.success) {
+        console.error("Error: Pusher notification trigger in delete from room");
       }
-    );
-
-    if (!notificationResult.success) {
-      console.error("Error: Pusher notification trigger in delete from room");
+    } catch (error) {
+      console.error(
+        "Error occurred while creating notifications in delete participants"
+      );
     }
-
     return NextResponse.json(
       {
         msg: "Ok",

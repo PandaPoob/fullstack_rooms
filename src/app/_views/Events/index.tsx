@@ -6,10 +6,14 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import { FormattedCalenderEvent } from "@/app/_models/event";
 import { useState } from "react";
 import { EventSourceInput } from "@fullcalendar/core/index.js";
-import Modal from "@/app/_components/modals/Modal";
 import CreateEventForm from "@/app/_components/forms/CreateEventForm";
 import ErrorToast from "@/app/_components/toasts/ErrorToast";
 import BreadCrumb from "@/app/_components/navigation/Breadcrumb";
+import dynamic from "next/dynamic";
+
+const DynamicModal = dynamic(() => import("@/app/_components/modals/Modal"), {
+  ssr: false,
+});
 
 interface EventsViewProps {
   roomEvents: FormattedCalenderEvent[] | null;
@@ -75,14 +79,14 @@ function EventsView({
         />
       </div>
       {isOpen && (
-        <Modal setIsOpen={setIsOpen}>
+        <DynamicModal setIsOpen={setIsOpen}>
           <CreateEventForm
             defaultRoom={roomId}
             options={roomOptions}
             chosenDate={chosenDate}
             onCallBack={onCallBack}
           />
-        </Modal>
+        </DynamicModal>
       )}
       <ErrorToast msg={responseMsg} onDismiss={clearResponseMsg} />
     </main>

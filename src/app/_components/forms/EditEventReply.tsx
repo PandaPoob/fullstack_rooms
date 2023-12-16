@@ -25,7 +25,7 @@ function EditEventReply({
 
   const options = [
     {
-      title: "Going",
+      title: "Accept",
       value: "accepted",
     },
     {

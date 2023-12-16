@@ -170,7 +170,7 @@ function EmailFieldArray({
               <div className="flex justify-start items-start gap-2 flex-wrap">
                 {form.values.emails.map((email: string, index: number) => (
                   <button
-                    className="flex gap-2 items-center bg-dark text-darkGrey p-2 rounded-lg transition hover:bg-opacity-50"
+                    className="flex gap-2 items-center bg-dark text-darkGrey p-2 rounded-lg transition enabled:hover:bg-opacity-50"
                     key={email + index}
                     type="button"
                     onClick={() => remove(index)}

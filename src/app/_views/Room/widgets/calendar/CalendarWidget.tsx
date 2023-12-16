@@ -53,7 +53,7 @@ function CalendarWidget({ calendarDayData, roomId }: CalendarWidgetProps) {
         onCallBack={onCallBack}
         activeDate={activeDate}
       />
-      <div className="flex mt-2">
+      <div className="flex my-2">
         <Link
           href={`/rooms/${roomId}/events`}
           className="text-xs text-right ml-auto text-darkGrey transition hover:text-white"
