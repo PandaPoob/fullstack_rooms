@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 function useNotifications() {
   const { data: session } = useSession();
   const userId = session?.user.id as string;
-  const pathname = usePathname();
 
   return useQuery(["notifications", userId], async () => {
     if (!session) {
