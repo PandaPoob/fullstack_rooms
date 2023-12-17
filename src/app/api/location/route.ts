@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
       });
     }
     const file = await fs.readFile(
-      process.cwd() + "/src/app/assets/data/city.list.json",
+      process.cwd() + "/city.list.json",
       "utf8"
     );
 
@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
+    console.error(error)
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
