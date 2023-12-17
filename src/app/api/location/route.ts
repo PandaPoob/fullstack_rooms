@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { promises as fs } from "fs";
 import { authenticateUser } from "@/app/_utils/authentication/authenticateUser";
 import { db } from "@/lib/prisma-client";
 import locationschema from "@/app/_utils/validation/schemas/location-schema";
-import { readFileSync } from 'fs';
-import path from 'path';
+
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,14 +26,7 @@ export async function GET(req: NextRequest) {
         status: 500,
       });
     }
-/* 
-    const file = path.join(process.cwd(), '/city.list.json');
-    const data = readFileSync(file, 'utf8');
-    const cities = JSON.parse(data);
 
-    
-
- */
     const cities = await resp.json();
 
     // Function to find the best matches based on the search query
