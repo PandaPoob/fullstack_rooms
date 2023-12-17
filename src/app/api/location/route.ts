@@ -16,9 +16,27 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    const resp = await fetch(
+      `https://fullstack-rooms.vercel.app/city.list.json`,
+      {
+        method: "GET",
+      }
+    );
+    if (!resp.ok) {
+      return NextResponse.json({
+        msg: "Locations could not be fetched",
+        status: 500,
+      });
+    }
+/* 
     const file = path.join(process.cwd(), '/city.list.json');
     const data = readFileSync(file, 'utf8');
     const cities = JSON.parse(data);
+
+    
+
+ */
+    const cities = await resp.json();
 
     // Function to find the best matches based on the search query
     const findBestMatches = (searchQuery: string) => {
