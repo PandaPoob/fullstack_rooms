@@ -12,9 +12,10 @@ import { useState } from "react";
 interface EventViewProps {
   roomData: { id: string; title: string };
   eventData: ExpandedEvent;
+  dates: {start: string, end?: string}
 }
 
-function EventView({ roomData, eventData }: EventViewProps) {
+function EventView({ roomData, eventData, dates }: EventViewProps) {
   const { data: session } = useSession();
   const [responseMsg, setResponseMsg] = useState("");
   const [attendees, setAttendees] = useState<
@@ -43,11 +44,11 @@ function EventView({ roomData, eventData }: EventViewProps) {
         <div className="lg:w-[70%] xl:w-3/4 xxl:w-4/5 bg-dark rounded-xl p-7 xxl:px-14">
           <div className="flex justify-between flex-wrap">
             <h3 className="text-h3 mb-2 flex gap-3 flex-wrap">
-              <span>{formatDate(eventData.start_time, true)}</span>
-              {eventData.end_time ? (
+              <span>{dates.start}</span>
+              {dates.end ? (
                 <>
                   <span>-</span>
-                  <span>{formatDate(eventData.end_time, true)}</span>
+                  <span>{dates.end}</span>
                 </>
               ) : (
                 <span className="text-darkGrey font-normal">All day</span>
