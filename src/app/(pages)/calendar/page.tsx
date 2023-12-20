@@ -19,6 +19,7 @@ async function getData(id: string) {
     },
   });
 
+  //meow
   const userEvents = await db.user.findUnique({
     where: {
       id: id,
